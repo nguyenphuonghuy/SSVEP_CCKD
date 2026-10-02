@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -N att_be_s3026
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=08:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+OUT_DIR=$PROJ/results/module2/tier4_attention_ms/benchmark_s3026_8seed
+LOG=$PROJ/logs/att_benchmark_s3026_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Multi-split Attention Transfer on benchmark, split_seed=3026."
+  "$PY" training/train_cckd.py \
+    --dataset benchmark --data_root "$DATA_ROOT" \
+    --backbone fbtcnn --n_bands 3 --window_s 1.0 --split_seed 3026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes attention \
+    --epochs 100 --tau 4.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

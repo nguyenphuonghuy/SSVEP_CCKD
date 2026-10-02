@@ -1,0 +1,28 @@
+#!/bin/bash
+#PBS -N w05_bt_s4026
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=12:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module2/tier2_window_ms/beta_w05_s4026_8seed
+LOG=$PROJ/logs/w05_beta_s4026_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Tier 2 multi-split: window_s=0.5s on beta, split_seed=4026, 8 seeds, relational."
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone fbtcnn --n_bands 3 --window_s 0.5 \
+    --split_seed 4026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes relational \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

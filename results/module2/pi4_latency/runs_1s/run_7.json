@@ -1,0 +1,167 @@
+{
+  "device": "Raspberry Pi 4",
+  "platform": "Linux-6.12.75+rpt-rpi-v8-aarch64-with-glibc2.41",
+  "python": "3.13.5",
+  "torch": "2.13.0+cpu",
+  "window_s": 1.0,
+  "n_samples": 250,
+  "n_bands": 3,
+  "note": "Randomly-initialized weights (seed=0) -- latency depends only on architecture/input size, not learned weight values. total_pipeline_mean_ms = filter-bank (scipy) + model forward pass, matching the real end-to-end per-trial inference cost.",
+  "configs": {
+    "1_threads": {
+      "teacher_9C": {
+        "n_channels": 9,
+        "n_params": 90536,
+        "filterbank": {
+          "mean_ms": 6.05188798000313,
+          "std_ms": 0.09620096996240005,
+          "median_ms": 6.029542000078436,
+          "p95_ms": 6.247427900143521,
+          "p99_ms": 6.440704570068191,
+          "min_ms": 5.927720000045156,
+          "max_ms": 6.548544999986916,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 11.280428315002382,
+          "std_ms": 0.06733490441067698,
+          "median_ms": 11.270483499970396,
+          "p95_ms": 11.370246750186652,
+          "p99_ms": 11.525296369977694,
+          "min_ms": 11.185744000158593,
+          "max_ms": 11.820902000181377,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 17.332316295005512
+      },
+      "student_3C": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.614960779990952,
+          "std_ms": 0.10244750064675168,
+          "median_ms": 5.589973499922962,
+          "p95_ms": 5.741420549952636,
+          "p99_ms": 6.156474910019368,
+          "min_ms": 5.526744000007966,
+          "max_ms": 6.407084000102259,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 11.212624404992084,
+          "std_ms": 0.051148408243394464,
+          "median_ms": 11.204345500118507,
+          "p95_ms": 11.286513350023597,
+          "p99_ms": 11.367365239952958,
+          "min_ms": 11.124837000124899,
+          "max_ms": 11.52555399994526,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 16.827585184983036
+      },
+      "student_1C": {
+        "n_channels": 1,
+        "n_params": 90408,
+        "filterbank": {
+          "mean_ms": 5.4547536949962705,
+          "std_ms": 0.07549223537377385,
+          "median_ms": 5.438540999989527,
+          "p95_ms": 5.564563100028863,
+          "p99_ms": 5.66753652000898,
+          "min_ms": 5.376911999974254,
+          "max_ms": 6.170345999862548,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 11.160918169997558,
+          "std_ms": 0.059598161440920644,
+          "median_ms": 11.148568000066916,
+          "p95_ms": 11.276734500120256,
+          "p99_ms": 11.437072630149032,
+          "min_ms": 11.054874999899766,
+          "max_ms": 11.491554000031101,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 16.61567186499383
+      }
+    },
+    "4_threads": {
+      "teacher_9C": {
+        "n_channels": 9,
+        "n_params": 90536,
+        "filterbank": {
+          "mean_ms": 6.0816581700134975,
+          "std_ms": 0.09986983377149876,
+          "median_ms": 6.053412000028402,
+          "p95_ms": 6.244296000068061,
+          "p99_ms": 6.516966069993941,
+          "min_ms": 5.9594409999590425,
+          "max_ms": 6.749524000042584,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 8.197297175006497,
+          "std_ms": 0.22841786108417161,
+          "median_ms": 8.142217999989043,
+          "p95_ms": 8.483411250028894,
+          "p99_ms": 9.489138990008993,
+          "min_ms": 8.010710999997173,
+          "max_ms": 9.945518999984415,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 14.278955345019995
+      },
+      "student_3C": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.676450219995104,
+          "std_ms": 0.14826529116395304,
+          "median_ms": 5.643703999908212,
+          "p95_ms": 5.829554950105376,
+          "p99_ms": 5.960625220066048,
+          "min_ms": 5.572205999897051,
+          "max_ms": 7.4474959999406565,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 8.004528944998128,
+          "std_ms": 0.2202358911358516,
+          "median_ms": 7.972877999918637,
+          "p95_ms": 8.12244025006521,
+          "p99_ms": 8.781668320025343,
+          "min_ms": 7.8922489999513346,
+          "max_ms": 10.585935999870344,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 13.680979164993232
+      },
+      "student_1C": {
+        "n_channels": 1,
+        "n_params": 90408,
+        "filterbank": {
+          "mean_ms": 5.434868705011695,
+          "std_ms": 0.08734341225749447,
+          "median_ms": 5.406059000051755,
+          "p95_ms": 5.604521000168461,
+          "p99_ms": 5.825677740185711,
+          "min_ms": 5.3313200000957295,
+          "max_ms": 5.872312000064994,
+          "n_trials": 200
+        },
+        "model_forward": {
+          "mean_ms": 7.95337550999875,
+          "std_ms": 0.17545098743544552,
+          "median_ms": 7.924943499915571,
+          "p95_ms": 8.048198650067206,
+          "p99_ms": 8.264785009971535,
+          "min_ms": 7.844657000077859,
+          "max_ms": 9.614300999828629,
+          "n_trials": 200
+        },
+        "total_pipeline_mean_ms": 13.388244215010445
+      }
+    }
+  },
+  "peak_rss_mb": 298.35
+}

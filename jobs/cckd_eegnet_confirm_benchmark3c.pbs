@@ -1,0 +1,48 @@
+#!/bin/bash
+#PBS -N cckd_eegnet_confirm
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=08:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+LOG=$PROJ/logs/cckd_eegnet_confirm_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Goal: confirmatory replication (8 seeds instead of 3, 3C only) for the"
+  echo "two best candidates from the EEGNet strategy sweep on Benchmark-3C:"
+  echo "  hybrid lambda_sp=5 (delta=+0.81pp, p=0.0488, n=3 seeds)"
+  echo "  logit  tau=8        (delta=+0.75pp, p=0.0371, n=3 seeds)"
+  echo "to check whether these survive a larger seed count (guards against"
+  echo "multiple-comparisons false positives from the earlier sweep)."
+
+  echo "=== CONFIRM: mode=hybrid tau=4 lambda_sp=5 (8 seeds) ==="
+  OUT_DIR="$PROJ/results/module2/eegnet_confirm_benchmark3c/hybrid_lsp5_8seed"
+  mkdir -p "$OUT_DIR"
+  "$PY" training/train_cckd.py \
+    --dataset benchmark --data_root "$DATA_ROOT" \
+    --backbone eegnet --window_s 1.0 \
+    --students 3C \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes hybrid \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 5 \
+    --output_dir "$OUT_DIR" --device cuda
+
+  echo "=== CONFIRM: mode=logit tau=8 (8 seeds) ==="
+  OUT_DIR="$PROJ/results/module2/eegnet_confirm_benchmark3c/logit_tau8_8seed"
+  mkdir -p "$OUT_DIR"
+  "$PY" training/train_cckd.py \
+    --dataset benchmark --data_root "$DATA_ROOT" \
+    --backbone eegnet --window_s 1.0 \
+    --students 3C \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes logit \
+    --epochs 100 --tau 8.0 --lambda_kd 1.0 --lambda_sp 100 \
+    --output_dir "$OUT_DIR" --device cuda
+
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

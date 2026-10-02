@@ -1,0 +1,438 @@
+{
+  "method": "naive_ensemble",
+  "ensemble_mean_acc": 0.604761904761905,
+  "ensemble_std_acc": 0.2174759219867591,
+  "ensemble_min_acc": 0.14583333333333334,
+  "ensemble_max_acc": 0.9625,
+  "best_single_mean_acc": 0.605595238095238,
+  "mean_gain_over_best_single": -0.0008333333333333304,
+  "n_folds_positive_gain": 17,
+  "n_subjects": 35,
+  "per_extractor_means": {
+    "temporal_cnn": 0.5174999999999998,
+    "freq_domain_cnn": 0.2911904761904762,
+    "spatial_temporal_cnn": 0.605595238095238
+  },
+  "folds": [
+    {
+      "subject": 1,
+      "fold": 1,
+      "ensemble_acc": 0.6375,
+      "per_extractor": {
+        "temporal_cnn": 0.5791666666666667,
+        "freq_domain_cnn": 0.26666666666666666,
+        "spatial_temporal_cnn": 0.6625
+      },
+      "best_single_acc": 0.6625,
+      "ensemble_gain": -0.025000000000000022
+    },
+    {
+      "subject": 2,
+      "fold": 2,
+      "ensemble_acc": 0.3375,
+      "per_extractor": {
+        "temporal_cnn": 0.2375,
+        "freq_domain_cnn": 0.1875,
+        "spatial_temporal_cnn": 0.3541666666666667
+      },
+      "best_single_acc": 0.3541666666666667,
+      "ensemble_gain": -0.016666666666666663
+    },
+    {
+      "subject": 3,
+      "fold": 3,
+      "ensemble_acc": 0.7916666666666666,
+      "per_extractor": {
+        "temporal_cnn": 0.6791666666666667,
+        "freq_domain_cnn": 0.4125,
+        "spatial_temporal_cnn": 0.775
+      },
+      "best_single_acc": 0.775,
+      "ensemble_gain": 0.016666666666666607
+    },
+    {
+      "subject": 4,
+      "fold": 4,
+      "ensemble_acc": 0.6958333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.6,
+        "freq_domain_cnn": 0.4708333333333333,
+        "spatial_temporal_cnn": 0.6708333333333333
+      },
+      "best_single_acc": 0.6708333333333333,
+      "ensemble_gain": 0.025000000000000022
+    },
+    {
+      "subject": 5,
+      "fold": 5,
+      "ensemble_acc": 0.39166666666666666,
+      "per_extractor": {
+        "temporal_cnn": 0.35833333333333334,
+        "freq_domain_cnn": 0.16666666666666666,
+        "spatial_temporal_cnn": 0.4041666666666667
+      },
+      "best_single_acc": 0.4041666666666667,
+      "ensemble_gain": -0.012500000000000011
+    },
+    {
+      "subject": 6,
+      "fold": 6,
+      "ensemble_acc": 0.525,
+      "per_extractor": {
+        "temporal_cnn": 0.44166666666666665,
+        "freq_domain_cnn": 0.24583333333333332,
+        "spatial_temporal_cnn": 0.5041666666666667
+      },
+      "best_single_acc": 0.5041666666666667,
+      "ensemble_gain": 0.02083333333333337
+    },
+    {
+      "subject": 7,
+      "fold": 7,
+      "ensemble_acc": 0.5291666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.43333333333333335,
+        "freq_domain_cnn": 0.2375,
+        "spatial_temporal_cnn": 0.5541666666666667
+      },
+      "best_single_acc": 0.5541666666666667,
+      "ensemble_gain": -0.025000000000000022
+    },
+    {
+      "subject": 8,
+      "fold": 8,
+      "ensemble_acc": 0.6,
+      "per_extractor": {
+        "temporal_cnn": 0.5125,
+        "freq_domain_cnn": 0.22916666666666666,
+        "spatial_temporal_cnn": 0.5916666666666667
+      },
+      "best_single_acc": 0.5916666666666667,
+      "ensemble_gain": 0.008333333333333304
+    },
+    {
+      "subject": 9,
+      "fold": 9,
+      "ensemble_acc": 0.7041666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.5833333333333334,
+        "freq_domain_cnn": 0.3,
+        "spatial_temporal_cnn": 0.6833333333333333
+      },
+      "best_single_acc": 0.6833333333333333,
+      "ensemble_gain": 0.02083333333333337
+    },
+    {
+      "subject": 10,
+      "fold": 10,
+      "ensemble_acc": 0.5958333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.45416666666666666,
+        "freq_domain_cnn": 0.22916666666666666,
+        "spatial_temporal_cnn": 0.6
+      },
+      "best_single_acc": 0.6,
+      "ensemble_gain": -0.004166666666666652
+    },
+    {
+      "subject": 11,
+      "fold": 11,
+      "ensemble_acc": 0.21666666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.19583333333333333,
+        "freq_domain_cnn": 0.0625,
+        "spatial_temporal_cnn": 0.2375
+      },
+      "best_single_acc": 0.2375,
+      "ensemble_gain": -0.020833333333333315
+    },
+    {
+      "subject": 12,
+      "fold": 12,
+      "ensemble_acc": 0.5208333333333334,
+      "per_extractor": {
+        "temporal_cnn": 0.3541666666666667,
+        "freq_domain_cnn": 0.2791666666666667,
+        "spatial_temporal_cnn": 0.5125
+      },
+      "best_single_acc": 0.5125,
+      "ensemble_gain": 0.008333333333333415
+    },
+    {
+      "subject": 13,
+      "fold": 13,
+      "ensemble_acc": 0.6375,
+      "per_extractor": {
+        "temporal_cnn": 0.5875,
+        "freq_domain_cnn": 0.12083333333333333,
+        "spatial_temporal_cnn": 0.6375
+      },
+      "best_single_acc": 0.6375,
+      "ensemble_gain": 0.0
+    },
+    {
+      "subject": 14,
+      "fold": 14,
+      "ensemble_acc": 0.875,
+      "per_extractor": {
+        "temporal_cnn": 0.8,
+        "freq_domain_cnn": 0.31666666666666665,
+        "spatial_temporal_cnn": 0.8875
+      },
+      "best_single_acc": 0.8875,
+      "ensemble_gain": -0.012499999999999956
+    },
+    {
+      "subject": 15,
+      "fold": 15,
+      "ensemble_acc": 0.5708333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.4666666666666667,
+        "freq_domain_cnn": 0.2708333333333333,
+        "spatial_temporal_cnn": 0.5791666666666667
+      },
+      "best_single_acc": 0.5791666666666667,
+      "ensemble_gain": -0.008333333333333415
+    },
+    {
+      "subject": 16,
+      "fold": 16,
+      "ensemble_acc": 0.4041666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.3125,
+        "freq_domain_cnn": 0.1625,
+        "spatial_temporal_cnn": 0.4125
+      },
+      "best_single_acc": 0.4125,
+      "ensemble_gain": -0.008333333333333304
+    },
+    {
+      "subject": 17,
+      "fold": 17,
+      "ensemble_acc": 0.325,
+      "per_extractor": {
+        "temporal_cnn": 0.25833333333333336,
+        "freq_domain_cnn": 0.1375,
+        "spatial_temporal_cnn": 0.3625
+      },
+      "best_single_acc": 0.3625,
+      "ensemble_gain": -0.03749999999999998
+    },
+    {
+      "subject": 18,
+      "fold": 18,
+      "ensemble_acc": 0.7166666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.6375,
+        "freq_domain_cnn": 0.3375,
+        "spatial_temporal_cnn": 0.6791666666666667
+      },
+      "best_single_acc": 0.6791666666666667,
+      "ensemble_gain": 0.03749999999999998
+    },
+    {
+      "subject": 19,
+      "fold": 19,
+      "ensemble_acc": 0.2833333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.22083333333333333,
+        "freq_domain_cnn": 0.12083333333333333,
+        "spatial_temporal_cnn": 0.30416666666666664
+      },
+      "best_single_acc": 0.30416666666666664,
+      "ensemble_gain": -0.020833333333333315
+    },
+    {
+      "subject": 20,
+      "fold": 20,
+      "ensemble_acc": 0.5375,
+      "per_extractor": {
+        "temporal_cnn": 0.425,
+        "freq_domain_cnn": 0.2791666666666667,
+        "spatial_temporal_cnn": 0.5083333333333333
+      },
+      "best_single_acc": 0.5083333333333333,
+      "ensemble_gain": 0.029166666666666674
+    },
+    {
+      "subject": 21,
+      "fold": 21,
+      "ensemble_acc": 0.8,
+      "per_extractor": {
+        "temporal_cnn": 0.6666666666666666,
+        "freq_domain_cnn": 0.4041666666666667,
+        "spatial_temporal_cnn": 0.7666666666666667
+      },
+      "best_single_acc": 0.7666666666666667,
+      "ensemble_gain": 0.033333333333333326
+    },
+    {
+      "subject": 22,
+      "fold": 22,
+      "ensemble_acc": 0.7333333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.55,
+        "freq_domain_cnn": 0.5583333333333333,
+        "spatial_temporal_cnn": 0.7125
+      },
+      "best_single_acc": 0.7125,
+      "ensemble_gain": 0.02083333333333326
+    },
+    {
+      "subject": 23,
+      "fold": 23,
+      "ensemble_acc": 0.32916666666666666,
+      "per_extractor": {
+        "temporal_cnn": 0.24166666666666667,
+        "freq_domain_cnn": 0.2791666666666667,
+        "spatial_temporal_cnn": 0.325
+      },
+      "best_single_acc": 0.325,
+      "ensemble_gain": 0.004166666666666652
+    },
+    {
+      "subject": 24,
+      "fold": 24,
+      "ensemble_acc": 0.8625,
+      "per_extractor": {
+        "temporal_cnn": 0.7625,
+        "freq_domain_cnn": 0.4875,
+        "spatial_temporal_cnn": 0.8666666666666667
+      },
+      "best_single_acc": 0.8666666666666667,
+      "ensemble_gain": -0.004166666666666652
+    },
+    {
+      "subject": 25,
+      "fold": 25,
+      "ensemble_acc": 0.7083333333333334,
+      "per_extractor": {
+        "temporal_cnn": 0.5958333333333333,
+        "freq_domain_cnn": 0.275,
+        "spatial_temporal_cnn": 0.6958333333333333
+      },
+      "best_single_acc": 0.6958333333333333,
+      "ensemble_gain": 0.012500000000000067
+    },
+    {
+      "subject": 26,
+      "fold": 26,
+      "ensemble_acc": 0.8666666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.8166666666666667,
+        "freq_domain_cnn": 0.35833333333333334,
+        "spatial_temporal_cnn": 0.9083333333333333
+      },
+      "best_single_acc": 0.9083333333333333,
+      "ensemble_gain": -0.04166666666666663
+    },
+    {
+      "subject": 27,
+      "fold": 27,
+      "ensemble_acc": 0.9291666666666667,
+      "per_extractor": {
+        "temporal_cnn": 0.8833333333333333,
+        "freq_domain_cnn": 0.5375,
+        "spatial_temporal_cnn": 0.9083333333333333
+      },
+      "best_single_acc": 0.9083333333333333,
+      "ensemble_gain": 0.02083333333333337
+    },
+    {
+      "subject": 28,
+      "fold": 28,
+      "ensemble_acc": 0.6666666666666666,
+      "per_extractor": {
+        "temporal_cnn": 0.5291666666666667,
+        "freq_domain_cnn": 0.2833333333333333,
+        "spatial_temporal_cnn": 0.6833333333333333
+      },
+      "best_single_acc": 0.6833333333333333,
+      "ensemble_gain": -0.01666666666666672
+    },
+    {
+      "subject": 29,
+      "fold": 29,
+      "ensemble_acc": 0.14583333333333334,
+      "per_extractor": {
+        "temporal_cnn": 0.15416666666666667,
+        "freq_domain_cnn": 0.08333333333333333,
+        "spatial_temporal_cnn": 0.17916666666666667
+      },
+      "best_single_acc": 0.17916666666666667,
+      "ensemble_gain": -0.033333333333333326
+    },
+    {
+      "subject": 30,
+      "fold": 30,
+      "ensemble_acc": 0.49583333333333335,
+      "per_extractor": {
+        "temporal_cnn": 0.4375,
+        "freq_domain_cnn": 0.22916666666666666,
+        "spatial_temporal_cnn": 0.525
+      },
+      "best_single_acc": 0.525,
+      "ensemble_gain": -0.029166666666666674
+    },
+    {
+      "subject": 31,
+      "fold": 31,
+      "ensemble_acc": 0.9,
+      "per_extractor": {
+        "temporal_cnn": 0.825,
+        "freq_domain_cnn": 0.45416666666666666,
+        "spatial_temporal_cnn": 0.8875
+      },
+      "best_single_acc": 0.8875,
+      "ensemble_gain": 0.012500000000000067
+    },
+    {
+      "subject": 32,
+      "fold": 32,
+      "ensemble_acc": 0.9625,
+      "per_extractor": {
+        "temporal_cnn": 0.9041666666666667,
+        "freq_domain_cnn": 0.5833333333333334,
+        "spatial_temporal_cnn": 0.975
+      },
+      "best_single_acc": 0.975,
+      "ensemble_gain": -0.012499999999999956
+    },
+    {
+      "subject": 33,
+      "fold": 33,
+      "ensemble_acc": 0.2875,
+      "per_extractor": {
+        "temporal_cnn": 0.25416666666666665,
+        "freq_domain_cnn": 0.1875,
+        "spatial_temporal_cnn": 0.2791666666666667
+      },
+      "best_single_acc": 0.2791666666666667,
+      "ensemble_gain": 0.008333333333333304
+    },
+    {
+      "subject": 34,
+      "fold": 34,
+      "ensemble_acc": 0.85,
+      "per_extractor": {
+        "temporal_cnn": 0.775,
+        "freq_domain_cnn": 0.30416666666666664,
+        "spatial_temporal_cnn": 0.8458333333333333
+      },
+      "best_single_acc": 0.8458333333333333,
+      "ensemble_gain": 0.004166666666666652
+    },
+    {
+      "subject": 35,
+      "fold": 35,
+      "ensemble_acc": 0.7333333333333333,
+      "per_extractor": {
+        "temporal_cnn": 0.5791666666666667,
+        "freq_domain_cnn": 0.3333333333333333,
+        "spatial_temporal_cnn": 0.7166666666666667
+      },
+      "best_single_acc": 0.7166666666666667,
+      "ensemble_gain": 0.016666666666666607
+    }
+  ]
+}

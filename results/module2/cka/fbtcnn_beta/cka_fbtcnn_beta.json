@@ -1,0 +1,28 @@
+{
+  "config": {
+    "backbone": "fbtcnn",
+    "dataset": "beta",
+    "seed": 2026,
+    "split_seed": 2026,
+    "epochs": 100
+  },
+  "teacher_acc": 0.5278125000000001,
+  "students": {
+    "3C": {
+      "acc_baseline": 0.3762500000000001,
+      "acc_cckd": 0.4015625,
+      "delta_acc_pp": 2.5312499999999902,
+      "cka_baseline": 0.16089852154254913,
+      "cka_cckd": 0.19882507622241974,
+      "delta_cka": 0.037926554679870605
+    },
+    "1C": {
+      "acc_baseline": 0.35031249999999997,
+      "acc_cckd": 0.35875,
+      "delta_acc_pp": 0.8437500000000042,
+      "cka_baseline": 0.12659861147403717,
+      "cka_cckd": 0.1464073210954666,
+      "delta_cka": 0.019808709621429443
+    }
+  }
+}

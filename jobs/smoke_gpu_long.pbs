@@ -1,0 +1,18 @@
+#!/bin/bash
+#PBS -N smoke_gpu_long
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=2:mem=8gb:gpu_slots=1
+#PBS -l walltime=06:00:00
+#PBS -j oe
+
+set -uo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/smoke_gpu_long_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs"
+{
+  echo "START: $(date) | NODE: $(hostname) | whoami: $(whoami)"
+  "$PY" "$PROJ/scripts_smoke_gpu_test.py"
+  echo "END: $(date)"
+} > "$LOG" 2>&1

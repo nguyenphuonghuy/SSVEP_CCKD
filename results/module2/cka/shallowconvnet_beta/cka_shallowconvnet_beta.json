@@ -1,0 +1,28 @@
+{
+  "config": {
+    "backbone": "shallowconvnet",
+    "dataset": "beta",
+    "seed": 2026,
+    "split_seed": 2026,
+    "epochs": 100
+  },
+  "teacher_acc": 0.3184375,
+  "students": {
+    "3C": {
+      "acc_baseline": 0.23249999999999998,
+      "acc_cckd": 0.22375000000000003,
+      "delta_acc_pp": -0.8749999999999952,
+      "cka_baseline": 0.39197850227355957,
+      "cka_cckd": 0.39344534277915955,
+      "delta_cka": 0.0014668405055999756
+    },
+    "1C": {
+      "acc_baseline": 0.2296875,
+      "acc_cckd": 0.234375,
+      "delta_acc_pp": 0.4687500000000011,
+      "cka_baseline": 0.3669281005859375,
+      "cka_cckd": 0.3692515790462494,
+      "delta_cka": 0.0023234784603118896
+    }
+  }
+}

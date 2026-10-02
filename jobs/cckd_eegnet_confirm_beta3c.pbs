@@ -1,0 +1,52 @@
+#!/bin/bash
+#PBS -N cckd_eegnet_confirm_beta
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=10:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+LOG=$PROJ/logs/cckd_eegnet_confirm_beta_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Goal: same confirmatory replication (8 seeds, 3C only) as the"
+  echo "Benchmark run, now on BETA -- to test whether the hybrid/logit"
+  echo "positive finding for EEGNet-3C generalizes across datasets."
+  echo "Original 3-seed BETA-3C trend (not significant, underpowered):"
+  echo "  logit  tau=8        : +0.29pp, p=0.5065"
+  echo "  hybrid lambda_sp=5   : +0.31pp, p=0.6791"
+  echo "  (best BETA-3C candidate at 3 seeds was actually logit tau=2: +0.97pp, p=0.1670)"
+  echo "Testing the SAME 2 candidates that worked on Benchmark, for a fair"
+  echo "same-methodology cross-dataset check (not re-picking best-of-BETA,"
+  echo "which would reintroduce selection bias)."
+
+  echo "=== CONFIRM: mode=hybrid tau=4 lambda_sp=5 (8 seeds) ==="
+  OUT_DIR="$PROJ/results/module2/eegnet_confirm_beta3c/hybrid_lsp5_8seed"
+  mkdir -p "$OUT_DIR"
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone eegnet --window_s 1.0 \
+    --students 3C \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes hybrid \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 5 \
+    --output_dir "$OUT_DIR" --device cuda
+
+  echo "=== CONFIRM: mode=logit tau=8 (8 seeds) ==="
+  OUT_DIR="$PROJ/results/module2/eegnet_confirm_beta3c/logit_tau8_8seed"
+  mkdir -p "$OUT_DIR"
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone eegnet --window_s 1.0 \
+    --students 3C \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes logit \
+    --epochs 100 --tau 8.0 --lambda_kd 1.0 --lambda_sp 100 \
+    --output_dir "$OUT_DIR" --device cuda
+
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

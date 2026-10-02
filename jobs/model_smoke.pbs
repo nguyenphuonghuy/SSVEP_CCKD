@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -N cckd_model_smoke
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=2:mem=4gb
+#PBS -l walltime=00:10:00
+#PBS -j oe
+
+set -euo pipefail
+
+PROJ=/gpfs0/users/gv_nphuy/projects/cckd_ssvep
+PY=/gpfs0/users/gv_nphuy/envs/cckd_ssvep/bin/python
+LOG=$PROJ/logs/model_smoke_${PBS_JOBID}.log
+
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+
+{
+    echo "START   : $(date)"
+    echo "NODE    : $(hostname)"
+    echo "JOB_ID  : $PBS_JOBID"
+    echo "PROJECT : $PROJ"
+    echo "PYTHON  : $PY"
+    "$PY" --version
+
+    echo
+    echo "=== MODEL SMOKE TEST ==="
+    "$PY" tests/smoke_test.py
+
+    echo
+    echo "END     : $(date)"
+} > "$LOG" 2>&1

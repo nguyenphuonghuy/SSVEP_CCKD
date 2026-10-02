@@ -1,0 +1,107 @@
+#!/bin/bash
+#PBS -N cckd_benchmark_full
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=03:00:00
+#PBS -j oe
+
+set -euo pipefail
+
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+
+CONFIG=$PROJ/configs/benchmark.yaml
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+CACHE_DIR=$PROJ/cache/filterbank/benchmark
+OUT_DIR=$PROJ/results/module1/benchmark_full_v2
+LOG=$PROJ/logs/benchmark_full_${PBS_JOBID}.log
+
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+export PYTHONUNBUFFERED=1
+
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+
+{
+    echo "START       : $(date)"
+    echo "NODE        : $(hostname)"
+    echo "JOB_ID      : $PBS_JOBID"
+    echo "PROJECT     : $PROJ"
+    echo "PYTHON      : $PY"
+    echo "CONFIG      : $CONFIG"
+    echo "DATA_ROOT   : $DATA_ROOT"
+    echo "CACHE_DIR   : $CACHE_DIR"
+    echo "OUTPUT_DIR  : $OUT_DIR"
+    echo "CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-<unset>}"
+
+    test -x "$PY"
+    test -f "$CONFIG"
+    test -d "$DATA_ROOT"
+
+    MAT_COUNT=$(find "$DATA_ROOT" -maxdepth 1 -type f -name '*.mat' | wc -l)
+    echo "MAT files   : $MAT_COUNT"
+
+    if [ "$MAT_COUNT" -ne 35 ]; then
+        echo "ERROR: Expected 35 MAT files"
+        exit 1
+    fi
+
+    if [ -d "$OUT_DIR" ] &&
+       find "$OUT_DIR" -mindepth 1 -print -quit | grep -q .
+    then
+        echo "ERROR: Output directory already contains files: $OUT_DIR"
+        exit 1
+    fi
+
+    mkdir -p "$OUT_DIR" "$CACHE_DIR"
+
+    echo
+    echo "=== ENVIRONMENT CHECK ==="
+    "$PY" --version
+
+    "$PY" - <<'PYCODE'
+import torch
+print("torch      :", torch.__version__)
+print("CUDA build :", torch.version.cuda)
+print("CUDA ready :", torch.cuda.is_available())
+if not torch.cuda.is_available():
+    raise RuntimeError("CUDA is not available")
+print("GPU        :", torch.cuda.get_device_name(0))
+PYCODE
+
+    echo
+    echo "=== DATASET CHECK ==="
+    "$PY" "$PROJ/scripts/inspect_dataset.py" \
+        --config "$CONFIG" \
+        --data_root "$DATA_ROOT" \
+        --subject 1
+
+    echo
+    echo "=== FULL TRAINING ==="
+    "$PY" "$PROJ/training/train_teacher.py" \
+        --config "$CONFIG" \
+        --data_root "$DATA_ROOT" \
+        --device cuda \
+        --workers 2 \
+        --output_dir "$OUT_DIR" \
+        --cache_dir "$CACHE_DIR"
+
+    echo
+    echo "=== OUTPUT CHECK ==="
+
+    test -f "$OUT_DIR/teacher_results.json"
+
+    CHECKPOINT_COUNT=$(find "$OUT_DIR" -maxdepth 1 \
+        -type f -name 'fbtcnn_teacher_fold*.pt' | wc -l)
+
+    echo "Checkpoints : $CHECKPOINT_COUNT"
+
+    if [ "$CHECKPOINT_COUNT" -ne 35 ]; then
+        echo "ERROR: Expected 35 checkpoints"
+        exit 1
+    fi
+
+    echo
+    echo "END         : $(date)"
+    echo "STATUS      : SUCCESS"
+} > "$LOG" 2>&1

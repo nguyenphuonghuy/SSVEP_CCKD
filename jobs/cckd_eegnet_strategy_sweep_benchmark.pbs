@@ -1,0 +1,49 @@
+#!/bin/bash
+#PBS -N cckd_eegnet_strat_bm
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=10:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+LOG=$PROJ/logs/cckd_eegnet_strat_bm_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Goal: try alternative KD strategies for EEGNet (not just varying"
+  echo "lambda_sp for relational-only) -- logit-only KD across temperatures,"
+  echo "and hybrid (logit+relational) at low lambda_sp (near where the"
+  echo "relational sweep was closest to neutral)."
+
+  # --- logit-only KD, across temperatures (mirrors Table 3 ablation for FB-tCNN) ---
+  for TAU in 2 4 8; do
+    echo "=== mode=logit tau=$TAU ==="
+    OUT_DIR="$PROJ/results/module2/eegnet_strategy_sweep_benchmark/logit_tau${TAU}"
+    mkdir -p "$OUT_DIR"
+    "$PY" training/train_cckd.py \
+      --dataset benchmark --data_root "$DATA_ROOT" \
+      --backbone eegnet --window_s 1.0 \
+      --seeds 2026 2027 2028 --modes logit \
+      --epochs 100 --tau "$TAU" --lambda_kd 1.0 --lambda_sp 100 \
+      --output_dir "$OUT_DIR" --device cuda
+  done
+
+  # --- hybrid (logit + relational), at low lambda_sp (1, 5, 20) ---
+  for LSP in 1 5 20; do
+    echo "=== mode=hybrid tau=4 lambda_sp=$LSP ==="
+    OUT_DIR="$PROJ/results/module2/eegnet_strategy_sweep_benchmark/hybrid_lsp${LSP}"
+    mkdir -p "$OUT_DIR"
+    "$PY" training/train_cckd.py \
+      --dataset benchmark --data_root "$DATA_ROOT" \
+      --backbone eegnet --window_s 1.0 \
+      --seeds 2026 2027 2028 --modes hybrid \
+      --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp "$LSP" \
+      --output_dir "$OUT_DIR" --device cuda
+  done
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

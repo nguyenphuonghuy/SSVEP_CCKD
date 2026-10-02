@@ -1,0 +1,36 @@
+#!/bin/bash
+#PBS -N probe_ai02_dir
+#PBS -q sharedgpu2
+#PBS -l select=1:ncpus=1:mem=1gb
+#PBS -l walltime=00:05:00
+#PBS -j oe
+#PBS -d /gpfs0/users/gv_nphuy/projects/cckd_ssvep
+
+set -euo pipefail
+
+PROJ=/gpfs0/users/gv_nphuy/projects/cckd_ssvep
+LOG=$PROJ/logs/probe_ai02_workdir_${PBS_JOBID}.log
+
+mkdir -p "$PROJ/logs"
+
+{
+    echo "START    : $(date)"
+    echo "NODE     : $(hostname)"
+    echo "JOB_ID   : $PBS_JOBID"
+    echo "PWD      : $(pwd)"
+    echo "HOME     : $HOME"
+
+    echo
+    echo "=== HOME CHECK ==="
+    ls -ld /home/gv_nphuy 2>&1 || true
+    cd /home/gv_nphuy 2>&1 && echo "HOME ACCESS PASSED" || echo "HOME ACCESS FAILED"
+
+    echo
+    echo "=== GPFS CHECK ==="
+    cd "$PROJ"
+    pwd
+    echo "GPFS ACCESS PASSED"
+
+    echo
+    echo "END      : $(date)"
+} > "$LOG" 2>&1

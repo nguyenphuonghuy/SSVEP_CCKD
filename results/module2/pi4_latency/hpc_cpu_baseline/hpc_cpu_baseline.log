@@ -1,0 +1,36 @@
+=== run 1/3 ===
+=== num_threads=1 ===
+  [1thr] teacher_9C (C=9, params=90536): filterbank=0.658ms model=1.437ms TOTAL=2.095ms
+  [1thr] student_3C (C=3, params=90440): filterbank=0.536ms model=1.455ms TOTAL=1.991ms
+  [1thr] student_1C (C=1, params=90408): filterbank=0.490ms model=1.437ms TOTAL=1.927ms
+=== num_threads=4 ===
+  [4thr] teacher_9C (C=9, params=90536): filterbank=0.641ms model=1.663ms TOTAL=2.304ms
+  [4thr] student_3C (C=3, params=90440): filterbank=0.530ms model=1.644ms TOTAL=2.174ms
+  [4thr] student_1C (C=1, params=90408): filterbank=0.488ms model=1.597ms TOTAL=2.085ms
+Peak RSS memory: 391.63 MB
+
+Saved: run_1.json
+=== run 2/3 ===
+=== num_threads=1 ===
+  [1thr] teacher_9C (C=9, params=90536): filterbank=0.689ms model=1.470ms TOTAL=2.159ms
+  [1thr] student_3C (C=3, params=90440): filterbank=0.556ms model=1.456ms TOTAL=2.012ms
+  [1thr] student_1C (C=1, params=90408): filterbank=0.510ms model=1.453ms TOTAL=1.963ms
+=== num_threads=4 ===
+  [4thr] teacher_9C (C=9, params=90536): filterbank=0.678ms model=1.903ms TOTAL=2.581ms
+  [4thr] student_3C (C=3, params=90440): filterbank=0.538ms model=1.875ms TOTAL=2.413ms
+  [4thr] student_1C (C=1, params=90408): filterbank=0.507ms model=1.838ms TOTAL=2.346ms
+Peak RSS memory: 391.82 MB
+
+Saved: run_2.json
+=== run 3/3 ===
+=== num_threads=1 ===
+  [1thr] teacher_9C (C=9, params=90536): filterbank=0.684ms model=1.462ms TOTAL=2.147ms
+  [1thr] student_3C (C=3, params=90440): filterbank=0.560ms model=1.454ms TOTAL=2.014ms
+  [1thr] student_1C (C=1, params=90408): filterbank=0.512ms model=1.458ms TOTAL=1.970ms
+=== num_threads=4 ===
+  [4thr] teacher_9C (C=9, params=90536): filterbank=0.674ms model=1.338ms TOTAL=2.012ms
+  [4thr] student_3C (C=3, params=90440): filterbank=0.553ms model=1.333ms TOTAL=1.886ms
+  [4thr] student_1C (C=1, params=90408): filterbank=0.512ms model=1.316ms TOTAL=1.828ms
+Peak RSS memory: 390.86 MB
+
+Saved: run_3.json

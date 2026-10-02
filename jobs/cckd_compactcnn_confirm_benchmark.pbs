@@ -1,0 +1,30 @@
+#!/bin/bash
+#PBS -N cckd_ccnn_confirm_bm
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=08:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+OUT_DIR=$PROJ/results/module2/compactcnn_confirm_benchmark_8seed
+LOG=$PROJ/logs/cckd_ccnn_confirm_bm_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Goal: 8-seed confirmatory replication for Compact-CNN on Benchmark."
+  echo "3-seed: 3C=-0.78pp(p=0.074, borderline), 1C=-0.12pp(p=0.80, ns)."
+  echo "Checking whether the borderline 3C result becomes significant with"
+  echo "more power (would strengthen the depthwise-group negative-lean story)."
+  "$PY" training/train_cckd.py \
+    --dataset benchmark --data_root "$DATA_ROOT" \
+    --backbone compactcnn --window_s 1.0 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes relational \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

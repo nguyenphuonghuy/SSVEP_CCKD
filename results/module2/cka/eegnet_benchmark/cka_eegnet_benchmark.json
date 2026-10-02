@@ -1,0 +1,28 @@
+{
+  "config": {
+    "backbone": "eegnet",
+    "dataset": "benchmark",
+    "seed": 2026,
+    "split_seed": 2026,
+    "epochs": 100
+  },
+  "teacher_acc": 0.4720833333333333,
+  "students": {
+    "3C": {
+      "acc_baseline": 0.3645833333333333,
+      "acc_cckd": 0.3720833333333333,
+      "delta_acc_pp": 0.7500000000000007,
+      "cka_baseline": 0.5620762705802917,
+      "cka_cckd": 0.6552215814590454,
+      "delta_cka": 0.09314531087875366
+    },
+    "1C": {
+      "acc_baseline": 0.2866666666666667,
+      "acc_cckd": 0.2845833333333333,
+      "delta_acc_pp": -0.20833333333333814,
+      "cka_baseline": 0.2957175374031067,
+      "cka_cckd": 0.35387226939201355,
+      "delta_cka": 0.05815473198890686
+    }
+  }
+}

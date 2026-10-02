@@ -1,0 +1,98 @@
+2026-08-20 12:37:38,536 | INFO | ========================================================================
+2026-08-20 12:37:38,536 | INFO | CCKD-SSVEP — FB-tCNN TEACHER TRAINING
+2026-08-20 12:37:38,536 | INFO | ========================================================================
+2026-08-20 12:37:38,536 | INFO | config       : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/benchmark.yaml
+2026-08-20 12:37:38,536 | INFO | data_root    : /gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+2026-08-20 12:37:38,537 | INFO | output_dir   : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_fix_check
+2026-08-20 12:37:38,537 | INFO | cache_dir    : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/cache/filterbank/benchmark
+2026-08-20 12:37:38,537 | INFO | device       : cpu
+2026-08-20 12:37:38,537 | INFO | seed         : 2026
+2026-08-20 12:37:38,537 | INFO | max_epochs   : 60
+2026-08-20 12:37:38,537 | INFO | 
+2026-08-20 12:37:38,537 | INFO | Loading dataset...
+2026-08-20 12:39:45,888 | INFO | Raw selected shape : (8400, 9, 250)
+2026-08-20 12:39:45,889 | INFO | Preparing/loading filter-bank cache...
+2026-08-20 12:39:53,072 | INFO | Dataset ready       : raw_selected=(8400, 9, 250) | filterbank=(8400, 4, 9, 250) | labels=40 | subjects=35
+2026-08-20 12:39:53,072 | INFO | Evaluation folds    : 1
+2026-08-20 12:39:53,729 | INFO | 
+2026-08-20 12:39:53,730 | INFO | ========================================================================
+2026-08-20 12:39:53,730 | INFO | FOLD 1 / 1 | TEST SUBJECT S01
+2026-08-20 12:39:53,730 | INFO | ========================================================================
+2026-08-20 12:39:53,730 | INFO | train subjects : 29 | samples: 6960 | batches: 109
+2026-08-20 12:39:53,730 | INFO | val subjects   : 5 | samples: 1200 | batches: 19
+2026-08-20 12:39:53,730 | INFO | test subjects  : 1 | samples: 240 | batches: 4
+2026-08-20 12:39:53,730 | INFO | batch_size     : 64 | workers: 0 | max_epochs: 60
+2026-08-20 12:40:47,749 | INFO | [Fold 01/01 | S01] Epoch 001/060 | train loss=3.6839 acc=0.0739 | val loss=3.0944 acc=0.2708 | best=0.2708@1 | lr=1.00e-03 | epoch=00:00:07 | elapsed=00:00:55 | ETA<=00:06:26 | wait=0/20 | NEW BEST
+2026-08-20 12:40:53,876 | INFO | [Fold 01/01 | S01] Epoch 002/060 | train loss=2.9773 acc=0.2241 | val loss=2.7095 acc=0.4150 | best=0.4150@2 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:01 | ETA<=00:06:07 | wait=0/20 | NEW BEST
+2026-08-20 12:41:00,007 | INFO | [Fold 01/01 | S01] Epoch 003/060 | train loss=2.6150 acc=0.3381 | val loss=2.4369 acc=0.4683 | best=0.4683@3 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:07 | ETA<=00:05:57 | wait=0/20 | NEW BEST
+2026-08-20 12:41:06,284 | INFO | [Fold 01/01 | S01] Epoch 004/060 | train loss=2.3348 acc=0.4062 | val loss=2.2230 acc=0.5175 | best=0.5175@4 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:13 | ETA<=00:05:51 | wait=0/20 | NEW BEST
+2026-08-20 12:41:12,442 | INFO | [Fold 01/01 | S01] Epoch 005/060 | train loss=2.1263 acc=0.4486 | val loss=2.0462 acc=0.5458 | best=0.5458@5 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:19 | ETA<=00:05:44 | wait=0/20 | NEW BEST
+2026-08-20 12:41:18,665 | INFO | [Fold 01/01 | S01] Epoch 006/060 | train loss=1.9725 acc=0.4909 | val loss=2.0209 acc=0.5483 | best=0.5483@6 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:26 | ETA<=00:05:37 | wait=0/20 | NEW BEST
+2026-08-20 12:41:24,889 | INFO | [Fold 01/01 | S01] Epoch 007/060 | train loss=1.8304 acc=0.5167 | val loss=1.9343 acc=0.5550 | best=0.5550@7 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:32 | ETA<=00:05:31 | wait=0/20 | NEW BEST
+2026-08-20 12:41:31,023 | INFO | [Fold 01/01 | S01] Epoch 008/060 | train loss=1.7821 acc=0.5253 | val loss=1.8514 acc=0.5525 | best=0.5550@7 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:38 | ETA<=00:05:24 | wait=1/20
+2026-08-20 12:41:37,214 | INFO | [Fold 01/01 | S01] Epoch 009/060 | train loss=1.6917 acc=0.5514 | val loss=1.8719 acc=0.5458 | best=0.5550@7 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:44 | ETA<=00:05:17 | wait=2/20
+2026-08-20 12:41:43,380 | INFO | [Fold 01/01 | S01] Epoch 010/060 | train loss=1.6263 acc=0.5667 | val loss=1.8845 acc=0.5450 | best=0.5550@7 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:50 | ETA<=00:05:11 | wait=3/20
+2026-08-20 12:41:49,598 | INFO | [Fold 01/01 | S01] Epoch 011/060 | train loss=1.5750 acc=0.5714 | val loss=1.8538 acc=0.5550 | best=0.5550@7 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:01:57 | ETA<=00:05:05 | wait=4/20
+2026-08-20 12:41:55,686 | INFO | [Fold 01/01 | S01] Epoch 012/060 | train loss=1.5611 acc=0.5733 | val loss=1.8121 acc=0.5642 | best=0.5642@12 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:03 | ETA<=00:04:58 | wait=0/20 | NEW BEST
+2026-08-20 12:42:01,829 | INFO | [Fold 01/01 | S01] Epoch 013/060 | train loss=1.4896 acc=0.5886 | val loss=1.8766 acc=0.5500 | best=0.5642@12 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:09 | ETA<=00:04:51 | wait=1/20
+2026-08-20 12:42:08,000 | INFO | [Fold 01/01 | S01] Epoch 014/060 | train loss=1.4807 acc=0.5953 | val loss=1.8574 acc=0.5608 | best=0.5642@12 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:15 | ETA<=00:04:45 | wait=2/20
+2026-08-20 12:42:14,132 | INFO | [Fold 01/01 | S01] Epoch 015/060 | train loss=1.4512 acc=0.6030 | val loss=1.8114 acc=0.5692 | best=0.5692@15 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:21 | ETA<=00:04:39 | wait=0/20 | NEW BEST
+2026-08-20 12:42:20,283 | INFO | [Fold 01/01 | S01] Epoch 016/060 | train loss=1.4571 acc=0.5978 | val loss=1.8529 acc=0.5467 | best=0.5692@15 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:27 | ETA<=00:04:32 | wait=1/20
+2026-08-20 12:42:26,382 | INFO | [Fold 01/01 | S01] Epoch 017/060 | train loss=1.4071 acc=0.6106 | val loss=1.7846 acc=0.5733 | best=0.5733@17 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:33 | ETA<=00:04:26 | wait=0/20 | NEW BEST
+2026-08-20 12:42:32,399 | INFO | [Fold 01/01 | S01] Epoch 018/060 | train loss=1.3665 acc=0.6184 | val loss=1.8150 acc=0.5567 | best=0.5733@17 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:39 | ETA<=00:04:19 | wait=1/20
+2026-08-20 12:42:38,437 | INFO | [Fold 01/01 | S01] Epoch 019/060 | train loss=1.3687 acc=0.6181 | val loss=1.8058 acc=0.5708 | best=0.5733@17 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:45 | ETA<=00:04:13 | wait=2/20
+2026-08-20 12:42:44,418 | INFO | [Fold 01/01 | S01] Epoch 020/060 | train loss=1.3514 acc=0.6237 | val loss=1.8505 acc=0.5633 | best=0.5733@17 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:51 | ETA<=00:04:06 | wait=3/20
+2026-08-20 12:42:50,396 | INFO | [Fold 01/01 | S01] Epoch 021/060 | train loss=1.3334 acc=0.6244 | val loss=1.7943 acc=0.5800 | best=0.5800@21 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:02:57 | ETA<=00:04:00 | wait=0/20 | NEW BEST
+2026-08-20 12:42:56,297 | INFO | [Fold 01/01 | S01] Epoch 022/060 | train loss=1.3334 acc=0.6234 | val loss=1.8264 acc=0.5625 | best=0.5800@21 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:03 | ETA<=00:03:53 | wait=1/20
+2026-08-20 12:43:02,234 | INFO | [Fold 01/01 | S01] Epoch 023/060 | train loss=1.3004 acc=0.6316 | val loss=1.8602 acc=0.5575 | best=0.5800@21 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:09 | ETA<=00:03:47 | wait=2/20
+2026-08-20 12:43:08,351 | INFO | [Fold 01/01 | S01] Epoch 024/060 | train loss=1.2852 acc=0.6385 | val loss=1.7605 acc=0.5758 | best=0.5800@21 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:15 | ETA<=00:03:41 | wait=3/20
+2026-08-20 12:43:14,331 | INFO | [Fold 01/01 | S01] Epoch 025/060 | train loss=1.2864 acc=0.6371 | val loss=1.7764 acc=0.5783 | best=0.5800@21 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:21 | ETA<=00:03:34 | wait=4/20
+2026-08-20 12:43:20,435 | INFO | [Fold 01/01 | S01] Epoch 026/060 | train loss=1.2737 acc=0.6359 | val loss=1.7542 acc=0.5858 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:27 | ETA<=00:03:28 | wait=0/20 | NEW BEST
+2026-08-20 12:43:26,567 | INFO | [Fold 01/01 | S01] Epoch 027/060 | train loss=1.2642 acc=0.6398 | val loss=1.7748 acc=0.5800 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:33 | ETA<=00:03:22 | wait=1/20
+2026-08-20 12:43:32,727 | INFO | [Fold 01/01 | S01] Epoch 028/060 | train loss=1.2686 acc=0.6399 | val loss=1.7954 acc=0.5792 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:40 | ETA<=00:03:16 | wait=2/20
+2026-08-20 12:43:38,964 | INFO | [Fold 01/01 | S01] Epoch 029/060 | train loss=1.2338 acc=0.6438 | val loss=1.8492 acc=0.5675 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:46 | ETA<=00:03:10 | wait=3/20
+2026-08-20 12:43:45,169 | INFO | [Fold 01/01 | S01] Epoch 030/060 | train loss=1.2109 acc=0.6560 | val loss=1.7723 acc=0.5783 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:52 | ETA<=00:03:04 | wait=4/20
+2026-08-20 12:43:51,432 | INFO | [Fold 01/01 | S01] Epoch 031/060 | train loss=1.2229 acc=0.6560 | val loss=1.8017 acc=0.5817 | best=0.5858@26 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:03:58 | ETA<=00:02:58 | wait=5/20
+2026-08-20 12:43:57,592 | INFO | [Fold 01/01 | S01] Epoch 032/060 | train loss=1.2130 acc=0.6556 | val loss=1.7876 acc=0.5925 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:05 | ETA<=00:02:52 | wait=0/20 | NEW BEST
+2026-08-20 12:44:03,777 | INFO | [Fold 01/01 | S01] Epoch 033/060 | train loss=1.1986 acc=0.6517 | val loss=1.7687 acc=0.5875 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:11 | ETA<=00:02:46 | wait=1/20
+2026-08-20 12:44:09,990 | INFO | [Fold 01/01 | S01] Epoch 034/060 | train loss=1.1801 acc=0.6649 | val loss=1.7601 acc=0.5917 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:17 | ETA<=00:02:40 | wait=2/20
+2026-08-20 12:44:16,143 | INFO | [Fold 01/01 | S01] Epoch 035/060 | train loss=1.1784 acc=0.6582 | val loss=1.7649 acc=0.5842 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:23 | ETA<=00:02:34 | wait=3/20
+2026-08-20 12:44:22,355 | INFO | [Fold 01/01 | S01] Epoch 036/060 | train loss=1.1675 acc=0.6585 | val loss=1.8373 acc=0.5742 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:29 | ETA<=00:02:27 | wait=4/20
+2026-08-20 12:44:28,459 | INFO | [Fold 01/01 | S01] Epoch 037/060 | train loss=1.1525 acc=0.6664 | val loss=1.7987 acc=0.5725 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:35 | ETA<=00:02:21 | wait=5/20
+2026-08-20 12:44:34,676 | INFO | [Fold 01/01 | S01] Epoch 038/060 | train loss=1.1555 acc=0.6651 | val loss=1.8308 acc=0.5783 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:42 | ETA<=00:02:15 | wait=6/20
+2026-08-20 12:44:40,827 | INFO | [Fold 01/01 | S01] Epoch 039/060 | train loss=1.1592 acc=0.6657 | val loss=1.8291 acc=0.5733 | best=0.5925@32 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:48 | ETA<=00:02:09 | wait=7/20
+2026-08-20 12:44:46,980 | INFO | [Fold 01/01 | S01] Epoch 040/060 | train loss=1.1393 acc=0.6724 | val loss=1.7488 acc=0.5933 | best=0.5933@40 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:04:54 | ETA<=00:02:03 | wait=0/20 | NEW BEST
+2026-08-20 12:44:53,221 | INFO | [Fold 01/01 | S01] Epoch 041/060 | train loss=1.1560 acc=0.6638 | val loss=1.7427 acc=0.5967 | best=0.5967@41 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:00 | ETA<=00:01:57 | wait=0/20 | NEW BEST
+2026-08-20 12:44:59,353 | INFO | [Fold 01/01 | S01] Epoch 042/060 | train loss=1.1351 acc=0.6647 | val loss=1.7296 acc=0.5925 | best=0.5967@41 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:06 | ETA<=00:01:51 | wait=1/20
+2026-08-20 12:45:05,547 | INFO | [Fold 01/01 | S01] Epoch 043/060 | train loss=1.1296 acc=0.6724 | val loss=1.7654 acc=0.5967 | best=0.5967@41 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:12 | ETA<=00:01:44 | wait=2/20
+2026-08-20 12:45:11,739 | INFO | [Fold 01/01 | S01] Epoch 044/060 | train loss=1.1144 acc=0.6740 | val loss=1.7767 acc=0.5883 | best=0.5967@41 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:19 | ETA<=00:01:38 | wait=3/20
+2026-08-20 12:45:17,927 | INFO | [Fold 01/01 | S01] Epoch 045/060 | train loss=1.1320 acc=0.6701 | val loss=1.7829 acc=0.5992 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:25 | ETA<=00:01:32 | wait=0/20 | NEW BEST
+2026-08-20 12:45:24,196 | INFO | [Fold 01/01 | S01] Epoch 046/060 | train loss=1.1036 acc=0.6806 | val loss=1.7867 acc=0.5900 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:31 | ETA<=00:01:26 | wait=1/20
+2026-08-20 12:45:30,399 | INFO | [Fold 01/01 | S01] Epoch 047/060 | train loss=1.0779 acc=0.6866 | val loss=1.8046 acc=0.5892 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:37 | ETA<=00:01:20 | wait=2/20
+2026-08-20 12:45:36,603 | INFO | [Fold 01/01 | S01] Epoch 048/060 | train loss=1.0879 acc=0.6875 | val loss=1.8581 acc=0.5775 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:44 | ETA<=00:01:14 | wait=3/20
+2026-08-20 12:45:42,795 | INFO | [Fold 01/01 | S01] Epoch 049/060 | train loss=1.1006 acc=0.6764 | val loss=1.7997 acc=0.5908 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:50 | ETA<=00:01:08 | wait=4/20
+2026-08-20 12:45:48,972 | INFO | [Fold 01/01 | S01] Epoch 050/060 | train loss=1.0871 acc=0.6823 | val loss=1.7740 acc=0.5908 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:05:56 | ETA<=00:01:02 | wait=5/20
+2026-08-20 12:45:55,211 | INFO | [Fold 01/01 | S01] Epoch 051/060 | train loss=1.0827 acc=0.6868 | val loss=1.7541 acc=0.5933 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:02 | ETA<=00:00:55 | wait=6/20
+2026-08-20 12:46:01,356 | INFO | [Fold 01/01 | S01] Epoch 052/060 | train loss=1.0597 acc=0.6851 | val loss=1.8313 acc=0.5842 | best=0.5992@45 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:08 | ETA<=00:00:49 | wait=7/20
+2026-08-20 12:46:07,580 | INFO | [Fold 01/01 | S01] Epoch 053/060 | train loss=1.0756 acc=0.6855 | val loss=1.7091 acc=0.6008 | best=0.6008@53 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:15 | ETA<=00:00:43 | wait=0/20 | NEW BEST
+2026-08-20 12:46:13,776 | INFO | [Fold 01/01 | S01] Epoch 054/060 | train loss=1.0599 acc=0.6908 | val loss=1.7505 acc=0.6083 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:21 | ETA<=00:00:37 | wait=0/20 | NEW BEST
+2026-08-20 12:46:20,016 | INFO | [Fold 01/01 | S01] Epoch 055/060 | train loss=1.0762 acc=0.6807 | val loss=1.8143 acc=0.5900 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:27 | ETA<=00:00:31 | wait=1/20
+2026-08-20 12:46:26,285 | INFO | [Fold 01/01 | S01] Epoch 056/060 | train loss=1.0615 acc=0.6862 | val loss=1.7666 acc=0.5992 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:33 | ETA<=00:00:25 | wait=2/20
+2026-08-20 12:46:32,496 | INFO | [Fold 01/01 | S01] Epoch 057/060 | train loss=1.0415 acc=0.6943 | val loss=1.7997 acc=0.6000 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:39 | ETA<=00:00:18 | wait=3/20
+2026-08-20 12:46:38,858 | INFO | [Fold 01/01 | S01] Epoch 058/060 | train loss=1.0611 acc=0.6869 | val loss=1.7618 acc=0.6017 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:46 | ETA<=00:00:12 | wait=4/20
+2026-08-20 12:46:45,099 | INFO | [Fold 01/01 | S01] Epoch 059/060 | train loss=1.0416 acc=0.6993 | val loss=1.7613 acc=0.5925 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:52 | ETA<=00:00:06 | wait=5/20
+2026-08-20 12:46:51,368 | INFO | [Fold 01/01 | S01] Epoch 060/060 | train loss=1.0246 acc=0.7003 | val loss=1.7625 acc=0.5908 | best=0.6083@54 | lr=1.00e-03 | epoch=00:00:06 | elapsed=00:06:58 | ETA<=00:00:00 | wait=6/20
+2026-08-20 12:46:51,370 | INFO | [Fold 01/01 | S01] Evaluating restored best checkpoint from epoch 54...
+2026-08-20 12:46:52,326 | INFO | [Fold 01/01 | S01] DONE | test loss=0.9190 acc=0.7333 | best epoch=54 | fold time=00:06:59 | overall elapsed=00:09:14 | remaining folds=0 | ETA~00:00:00 | checkpoint=/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_fix_check/fbtcnn_teacher_fold01.pt
+2026-08-20 12:46:52,329 | INFO | 
+2026-08-20 12:46:52,329 | INFO | ========================================================================
+2026-08-20 12:46:52,329 | INFO | TRAINING COMPLETED
+2026-08-20 12:46:52,329 | INFO | ========================================================================
+2026-08-20 12:46:52,329 | INFO | dataset       : benchmark
+2026-08-20 12:46:52,329 | INFO | folds         : 1
+2026-08-20 12:46:52,329 | INFO | mean test acc : 0.7333
+2026-08-20 12:46:52,329 | INFO | std test acc  : 0.0000
+2026-08-20 12:46:52,329 | INFO | min test acc  : 0.7333
+2026-08-20 12:46:52,330 | INFO | max test acc  : 0.7333
+2026-08-20 12:46:52,330 | INFO | total time    : 00:09:14
+2026-08-20 12:46:52,330 | INFO | results       : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_fix_check/teacher_results.json

@@ -1,0 +1,33 @@
+# caches (regenerable from raw data)
+cache/
+*.npy
+
+# PBS job stdout/stderr spilled into repo root
+*.o[0-9]*
+
+# run logs (verbose, not core project content)
+logs/
+
+# in-flight resume state (transient)
+**/checkpoint.json
+**/checkpoint.json.tmp
+
+# python / env
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# latex build artifacts
+paper/latex/*.aux
+paper/latex/*.bbl
+paper/latex/*.blg
+paper/latex/*.log
+paper/latex/*.out
+paper/latex/*.toc
+paper/latex/*.synctex.gz
+
+# secrets / local-only deploy config - never commit
+deploy/pi4_latency/.credentials.local
+deploy/**/*credentials*
+deploy/**/*.local
+.claude/settings.local.json

@@ -1,0 +1,71 @@
+{
+  "ablation_A_extractor_subset": {
+    "all_4": {
+      "extractors": [
+        "temporal_cnn",
+        "freq_domain_cnn",
+        "shallow_conv_net",
+        "spatial_temporal_cnn"
+      ],
+      "mean_acc": 0.6158928571428571,
+      "std_acc": 0.22237477845258607,
+      "n_folds": 70
+    },
+    "drop_ext1": {
+      "extractors": [
+        "freq_domain_cnn",
+        "shallow_conv_net",
+        "spatial_temporal_cnn"
+      ],
+      "mean_acc": 0.6041964285714284,
+      "std_acc": 0.22110901841164055,
+      "n_folds": 70
+    },
+    "drop_ext2": {
+      "extractors": [
+        "temporal_cnn",
+        "shallow_conv_net",
+        "spatial_temporal_cnn"
+      ],
+      "mean_acc": 0.5288392857142857,
+      "std_acc": 0.22614858830500567,
+      "n_folds": 70
+    },
+    "drop_ext3": {
+      "extractors": [
+        "temporal_cnn",
+        "freq_domain_cnn",
+        "spatial_temporal_cnn"
+      ],
+      "mean_acc": 0.6338392857142857,
+      "std_acc": 0.21935501246232542,
+      "n_folds": 70
+    },
+    "drop_ext4": {
+      "extractors": [
+        "temporal_cnn",
+        "freq_domain_cnn",
+        "shallow_conv_net"
+      ],
+      "mean_acc": 0.5942857142857142,
+      "std_acc": 0.21748035332331206,
+      "n_folds": 70
+    },
+    "best_single_ext1": {
+      "extractors": [
+        "temporal_cnn"
+      ],
+      "mean_acc": 0.5178571428571429,
+      "std_acc": 0.22276490479005537,
+      "n_folds": 70
+    },
+    "best_single_ext2": {
+      "extractors": [
+        "freq_domain_cnn"
+      ],
+      "mean_acc": 0.5059821428571429,
+      "std_acc": 0.20785478413610137,
+      "n_folds": 70
+    }
+  }
+}

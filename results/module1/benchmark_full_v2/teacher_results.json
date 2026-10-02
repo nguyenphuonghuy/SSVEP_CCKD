@@ -1,0 +1,464 @@
+{
+  "project": "CCKD-SSVEP",
+  "version": "0.1.0",
+  "module": "FB-tCNN teacher baseline",
+  "dataset": "benchmark",
+  "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark",
+  "mean_test_acc": 0.37238095238095237,
+  "std_test_acc": 0.19915019286891963,
+  "min_test_acc": 0.0375,
+  "max_test_acc": 0.8125,
+  "n_folds": 35,
+  "params": 90824,
+  "feature_dim": 32,
+  "folds": [
+    {
+      "fold": 1,
+      "test_subject": 1,
+      "best_epoch": 26,
+      "best_val_acc": 0.3491666666666667,
+      "test_acc": 0.5375,
+      "test_loss": 1.8317883014678955,
+      "time_sec": 143.21075582504272,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold01.pt"
+    },
+    {
+      "fold": 2,
+      "test_subject": 2,
+      "best_epoch": 23,
+      "best_val_acc": 0.24416666666666667,
+      "test_acc": 0.5083333333333333,
+      "test_loss": 1.7755471388498942,
+      "time_sec": 39.20042586326599,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold02.pt"
+    },
+    {
+      "fold": 3,
+      "test_subject": 3,
+      "best_epoch": 20,
+      "best_val_acc": 0.25083333333333335,
+      "test_acc": 0.8,
+      "test_loss": 1.0960472504297891,
+      "time_sec": 37.50445008277893,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold03.pt"
+    },
+    {
+      "fold": 4,
+      "test_subject": 4,
+      "best_epoch": 19,
+      "best_val_acc": 0.3525,
+      "test_acc": 0.30833333333333335,
+      "test_loss": 2.715436093012492,
+      "time_sec": 40.656962156295776,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold04.pt"
+    },
+    {
+      "fold": 5,
+      "test_subject": 5,
+      "best_epoch": 26,
+      "best_val_acc": 0.44333333333333336,
+      "test_acc": 0.30833333333333335,
+      "test_loss": 2.620286734898885,
+      "time_sec": 42.93323540687561,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold05.pt"
+    },
+    {
+      "fold": 6,
+      "test_subject": 6,
+      "best_epoch": 25,
+      "best_val_acc": 0.30833333333333335,
+      "test_acc": 0.5208333333333334,
+      "test_loss": 1.9829805294672649,
+      "time_sec": 40.79885268211365,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold06.pt"
+    },
+    {
+      "fold": 7,
+      "test_subject": 7,
+      "best_epoch": 19,
+      "best_val_acc": 0.2808333333333333,
+      "test_acc": 0.4125,
+      "test_loss": 2.264316924413045,
+      "time_sec": 33.913371562957764,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold07.pt"
+    },
+    {
+      "fold": 8,
+      "test_subject": 8,
+      "best_epoch": 47,
+      "best_val_acc": 0.1825,
+      "test_acc": 0.32083333333333336,
+      "test_loss": 2.495268972714742,
+      "time_sec": 59.10404825210571,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold08.pt"
+    },
+    {
+      "fold": 9,
+      "test_subject": 9,
+      "best_epoch": 31,
+      "best_val_acc": 0.4008333333333333,
+      "test_acc": 0.36666666666666664,
+      "test_loss": 2.3210840463638305,
+      "time_sec": 46.18502640724182,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold09.pt"
+    },
+    {
+      "fold": 10,
+      "test_subject": 10,
+      "best_epoch": 22,
+      "best_val_acc": 0.1925,
+      "test_acc": 0.575,
+      "test_loss": 1.7920063972473144,
+      "time_sec": 41.4907591342926,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold10.pt"
+    },
+    {
+      "fold": 11,
+      "test_subject": 11,
+      "best_epoch": 32,
+      "best_val_acc": 0.18333333333333332,
+      "test_acc": 0.075,
+      "test_loss": 3.910462729136149,
+      "time_sec": 48.28995084762573,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold11.pt"
+    },
+    {
+      "fold": 12,
+      "test_subject": 12,
+      "best_epoch": 14,
+      "best_val_acc": 0.3958333333333333,
+      "test_acc": 0.1625,
+      "test_loss": 3.1434198379516602,
+      "time_sec": 30.609857082366943,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold12.pt"
+    },
+    {
+      "fold": 13,
+      "test_subject": 13,
+      "best_epoch": 17,
+      "best_val_acc": 0.395,
+      "test_acc": 0.11666666666666667,
+      "test_loss": 3.4789682706197103,
+      "time_sec": 36.40820288658142,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold13.pt"
+    },
+    {
+      "fold": 14,
+      "test_subject": 14,
+      "best_epoch": 25,
+      "best_val_acc": 0.3908333333333333,
+      "test_acc": 0.0375,
+      "test_loss": 4.448583253224691,
+      "time_sec": 40.46373629570007,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold14.pt"
+    },
+    {
+      "fold": 15,
+      "test_subject": 15,
+      "best_epoch": 31,
+      "best_val_acc": 0.40166666666666667,
+      "test_acc": 0.3333333333333333,
+      "test_loss": 2.3845399618148804,
+      "time_sec": 44.86227202415466,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold15.pt"
+    },
+    {
+      "fold": 16,
+      "test_subject": 16,
+      "best_epoch": 41,
+      "best_val_acc": 0.35583333333333333,
+      "test_acc": 0.2708333333333333,
+      "test_loss": 2.5710360129674275,
+      "time_sec": 52.834208250045776,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold16.pt"
+    },
+    {
+      "fold": 17,
+      "test_subject": 17,
+      "best_epoch": 19,
+      "best_val_acc": 0.37666666666666665,
+      "test_acc": 0.2916666666666667,
+      "test_loss": 2.4823146502176923,
+      "time_sec": 39.860990047454834,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold17.pt"
+    },
+    {
+      "fold": 18,
+      "test_subject": 18,
+      "best_epoch": 19,
+      "best_val_acc": 0.37583333333333335,
+      "test_acc": 0.7166666666666667,
+      "test_loss": 1.4061302979787191,
+      "time_sec": 40.273706912994385,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold18.pt"
+    },
+    {
+      "fold": 19,
+      "test_subject": 19,
+      "best_epoch": 35,
+      "best_val_acc": 0.2866666666666667,
+      "test_acc": 0.17916666666666667,
+      "test_loss": 3.3056477387746175,
+      "time_sec": 50.28350877761841,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold19.pt"
+    },
+    {
+      "fold": 20,
+      "test_subject": 20,
+      "best_epoch": 12,
+      "best_val_acc": 0.25833333333333336,
+      "test_acc": 0.4583333333333333,
+      "test_loss": 2.1936171531677244,
+      "time_sec": 29.771775007247925,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold20.pt"
+    },
+    {
+      "fold": 21,
+      "test_subject": 21,
+      "best_epoch": 29,
+      "best_val_acc": 0.375,
+      "test_acc": 0.35833333333333334,
+      "test_loss": 2.267055877049764,
+      "time_sec": 45.37242579460144,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold21.pt"
+    },
+    {
+      "fold": 22,
+      "test_subject": 22,
+      "best_epoch": 20,
+      "best_val_acc": 0.3358333333333333,
+      "test_acc": 0.6833333333333333,
+      "test_loss": 1.5727376540501912,
+      "time_sec": 36.277101278305054,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold22.pt"
+    },
+    {
+      "fold": 23,
+      "test_subject": 23,
+      "best_epoch": 24,
+      "best_val_acc": 0.42083333333333334,
+      "test_acc": 0.1875,
+      "test_loss": 3.3378517468770346,
+      "time_sec": 41.591245889663696,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold23.pt"
+    },
+    {
+      "fold": 24,
+      "test_subject": 24,
+      "best_epoch": 73,
+      "best_val_acc": 0.30583333333333335,
+      "test_acc": 0.625,
+      "test_loss": 1.349500878651937,
+      "time_sec": 88.76503944396973,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold24.pt"
+    },
+    {
+      "fold": 25,
+      "test_subject": 25,
+      "best_epoch": 62,
+      "best_val_acc": 0.5,
+      "test_acc": 0.16666666666666666,
+      "test_loss": 3.2622366587320966,
+      "time_sec": 79.0016360282898,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold25.pt"
+    },
+    {
+      "fold": 26,
+      "test_subject": 26,
+      "best_epoch": 34,
+      "best_val_acc": 0.405,
+      "test_acc": 0.29583333333333334,
+      "test_loss": 2.6165767669677735,
+      "time_sec": 51.302709341049194,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold26.pt"
+    },
+    {
+      "fold": 27,
+      "test_subject": 27,
+      "best_epoch": 29,
+      "best_val_acc": 0.4625,
+      "test_acc": 0.24583333333333332,
+      "test_loss": 2.7059516747792562,
+      "time_sec": 46.08355903625488,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold27.pt"
+    },
+    {
+      "fold": 28,
+      "test_subject": 28,
+      "best_epoch": 16,
+      "best_val_acc": 0.21333333333333335,
+      "test_acc": 0.6041666666666666,
+      "test_loss": 1.4867898543675742,
+      "time_sec": 32.63995957374573,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold28.pt"
+    },
+    {
+      "fold": 29,
+      "test_subject": 29,
+      "best_epoch": 37,
+      "best_val_acc": 0.43083333333333335,
+      "test_acc": 0.19166666666666668,
+      "test_loss": 3.1099690278371175,
+      "time_sec": 56.182886838912964,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold29.pt"
+    },
+    {
+      "fold": 30,
+      "test_subject": 30,
+      "best_epoch": 17,
+      "best_val_acc": 0.4166666666666667,
+      "test_acc": 0.275,
+      "test_loss": 2.426153310139974,
+      "time_sec": 36.076274156570435,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold30.pt"
+    },
+    {
+      "fold": 31,
+      "test_subject": 31,
+      "best_epoch": 21,
+      "best_val_acc": 0.49166666666666664,
+      "test_acc": 0.4666666666666667,
+      "test_loss": 1.9218433300654094,
+      "time_sec": 39.346306562423706,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold31.pt"
+    },
+    {
+      "fold": 32,
+      "test_subject": 32,
+      "best_epoch": 23,
+      "best_val_acc": 0.30833333333333335,
+      "test_acc": 0.8125,
+      "test_loss": 0.9276413917541504,
+      "time_sec": 41.984917640686035,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold32.pt"
+    },
+    {
+      "fold": 33,
+      "test_subject": 33,
+      "best_epoch": 40,
+      "best_val_acc": 0.44083333333333335,
+      "test_acc": 0.225,
+      "test_loss": 3.0042190074920656,
+      "time_sec": 57.91600251197815,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold33.pt"
+    },
+    {
+      "fold": 34,
+      "test_subject": 34,
+      "best_epoch": 19,
+      "best_val_acc": 0.4866666666666667,
+      "test_acc": 0.32916666666666666,
+      "test_loss": 2.5416350523630777,
+      "time_sec": 38.4107141494751,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold34.pt"
+    },
+    {
+      "fold": 35,
+      "test_subject": 35,
+      "best_epoch": 34,
+      "best_val_acc": 0.4691666666666667,
+      "test_acc": 0.26666666666666666,
+      "test_loss": 2.673638598124186,
+      "time_sec": 48.6245174407959,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2/fbtcnn_teacher_fold35.pt"
+    }
+  ],
+  "config": {
+    "project": {
+      "name": "CCKD-SSVEP",
+      "version": "0.1.0"
+    },
+    "dataset": {
+      "name": "benchmark",
+      "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark",
+      "n_subjects": 35,
+      "n_classes": 40,
+      "n_channels_raw": 64,
+      "sfreq": 250.0,
+      "mat_key": "data",
+      "t_start": 0.14,
+      "window_seconds": 1.0,
+      "teacher_channel_names": [
+        "Pz",
+        "PO5",
+        "PO3",
+        "POz",
+        "PO4",
+        "PO6",
+        "O1",
+        "Oz",
+        "O2"
+      ],
+      "teacher_channel_indices": [
+        47,
+        53,
+        54,
+        55,
+        56,
+        57,
+        60,
+        61,
+        62
+      ]
+    },
+    "filterbank": {
+      "bands_hz": [
+        [
+          6.0,
+          90.0
+        ],
+        [
+          14.0,
+          90.0
+        ],
+        [
+          22.0,
+          90.0
+        ],
+        [
+          30.0,
+          90.0
+        ]
+      ],
+      "order": 4,
+      "ripple_db": 1.0,
+      "normalize_per_trial_channel": true
+    },
+    "model": {
+      "name": "FB-tCNN",
+      "branch_filters": 16,
+      "fusion_filters": 32,
+      "temporal_stride": 5,
+      "local_kernel": 5,
+      "dropout": 0.4
+    },
+    "training": {
+      "epochs": 150,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "val_fraction_subjects": 0.15,
+      "early_stopping_patience": 20,
+      "reduce_lr_patience": 7,
+      "min_lr": 1e-06,
+      "min_delta": 0.0001,
+      "amp": true
+    },
+    "evaluation": {
+      "protocol": "loso_subject_validation",
+      "n_folds": null,
+      "save_history": false
+    },
+    "runtime": {
+      "device": "cuda",
+      "workers": 2,
+      "seed": 2026,
+      "log_every": 10
+    },
+    "output": {
+      "output_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_full_v2",
+      "cache_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/cache/filterbank/benchmark"
+    },
+    "_config_path": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/benchmark.yaml"
+  }
+}

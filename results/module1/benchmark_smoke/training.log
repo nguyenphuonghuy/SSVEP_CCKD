@@ -1,0 +1,7 @@
+2026-07-19 22:43:03,271 | INFO | config=/gpfs0/users/gv_nphuy/projects/cckd_ssvep/configs/benchmark.yaml
+2026-07-19 22:43:03,271 | INFO | data_root=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+2026-07-19 22:43:03,271 | INFO | device=cuda
+2026-07-19 22:43:54,584 | INFO | loaded raw_selected=(8400, 9, 250) filterbank=(8400, 4, 9, 250) labels=40 subjects=35
+2026-07-19 22:44:30,822 | INFO | fold=1 testS=1 ep=1 train=0.0362 val=0.0942 best=0.0942
+2026-07-19 22:44:34,524 | INFO | DONE fold=1 test=0.3750
+2026-07-19 22:44:34,526 | INFO | SUMMARY 0.3750 +/- 0.0000 | saved=/gpfs0/users/gv_nphuy/projects/cckd_ssvep/results/module1/benchmark_smoke

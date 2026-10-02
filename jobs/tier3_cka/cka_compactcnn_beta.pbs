@@ -1,0 +1,26 @@
+#!/bin/bash
+#PBS -N cka_ccnn_be
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=02:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module2/cka/compactcnn_beta
+LOG=$PROJ/logs/cka_ccnn_beta_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Tier 3: CKA diagnostic for compactcnn on beta (seed=2026, split=2026)."
+  "$PY" training/cka_analysis.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone compactcnn --students 3C 1C \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

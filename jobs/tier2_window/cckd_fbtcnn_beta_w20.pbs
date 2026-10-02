@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N cckd_t2_w20_be
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=10:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module2/tier2_window/beta_w20_8seed
+LOG=$PROJ/logs/cckd_t2_w20_beta_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Tier 2: window-length sweep for FB-tCNN, window_s=2.0s on beta,"
+  echo "split_seed=2026 (canonical), 8 model-init seeds, relational mode."
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone fbtcnn --n_bands 3 --window_s 2.0 \
+    --split_seed 2026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes relational \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

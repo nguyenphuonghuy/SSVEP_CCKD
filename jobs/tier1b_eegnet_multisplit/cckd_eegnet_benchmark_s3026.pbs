@@ -1,0 +1,31 @@
+#!/bin/bash
+#PBS -N cckd_t1b_eeg_bm_s3026
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=08:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+OUT_DIR=$PROJ/results/module2/tier1b_eegnet_multisplit/benchmark_s3026_8seed
+LOG=$PROJ/logs/cckd_t1b_eeg_bm_s3026_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Multi-split closure for EEGNet (relational, lambda_sp=100) on Benchmark,"
+  echo "split_seed=3026, 8 model-init seeds. Closes the last backbone still"
+  echo "lacking multi-split confirmation (EEGNet's negative finding was previously"
+  echo "confirmed via lambda_sp sweep only, on a single split)."
+  "$PY" training/train_cckd.py \
+    --dataset benchmark --data_root "$DATA_ROOT" \
+    --backbone eegnet --window_s 1.0 \
+    --split_seed 3026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes relational \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

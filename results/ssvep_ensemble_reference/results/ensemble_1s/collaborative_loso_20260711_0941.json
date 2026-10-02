@@ -1,0 +1,337 @@
+{
+  "method": "collaborative_distillation",
+  "collab_mean_acc": 0.6234523809523811,
+  "collab_std_acc": 0.21707855929830905,
+  "collab_min_acc": 0.14583333333333334,
+  "collab_max_acc": 0.9625,
+  "baseline_mean_acc": 0.604761904761905,
+  "mean_gain_vs_baseline": 0.018690476190476184,
+  "n_folds_positive_gain": 25,
+  "naive_ensemble_mean": 0.7524,
+  "gain_vs_naive": -0.12894761904761887,
+  "config": {
+    "epochs": 50,
+    "batch_size": 32,
+    "lr": 0.0003,
+    "weight_decay": 0.0001,
+    "alpha": 0.5,
+    "temperature": 4.0
+  },
+  "folds": [
+    {
+      "subject": 1,
+      "fold": 1,
+      "baseline_acc": 0.6375,
+      "best_acc": 0.6375,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 97.72921347618103
+    },
+    {
+      "subject": 2,
+      "fold": 2,
+      "baseline_acc": 0.3375,
+      "best_acc": 0.37916666666666665,
+      "best_epoch": 40,
+      "gain_vs_baseline": 0.04166666666666663,
+      "time_sec": 96.03813743591309
+    },
+    {
+      "subject": 3,
+      "fold": 3,
+      "baseline_acc": 0.7916666666666666,
+      "best_acc": 0.8083333333333333,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.01666666666666672,
+      "time_sec": 87.91746115684509
+    },
+    {
+      "subject": 4,
+      "fold": 4,
+      "baseline_acc": 0.6958333333333333,
+      "best_acc": 0.75,
+      "best_epoch": 16,
+      "gain_vs_baseline": 0.054166666666666696,
+      "time_sec": 90.42686128616333
+    },
+    {
+      "subject": 5,
+      "fold": 5,
+      "baseline_acc": 0.39166666666666666,
+      "best_acc": 0.425,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.033333333333333326,
+      "time_sec": 90.49200820922852
+    },
+    {
+      "subject": 6,
+      "fold": 6,
+      "baseline_acc": 0.525,
+      "best_acc": 0.5291666666666667,
+      "best_epoch": 11,
+      "gain_vs_baseline": 0.004166666666666652,
+      "time_sec": 90.3377091884613
+    },
+    {
+      "subject": 7,
+      "fold": 7,
+      "baseline_acc": 0.5291666666666667,
+      "best_acc": 0.5625,
+      "best_epoch": 8,
+      "gain_vs_baseline": 0.033333333333333326,
+      "time_sec": 90.57657837867737
+    },
+    {
+      "subject": 8,
+      "fold": 8,
+      "baseline_acc": 0.6,
+      "best_acc": 0.625,
+      "best_epoch": 4,
+      "gain_vs_baseline": 0.025000000000000022,
+      "time_sec": 95.12362337112427
+    },
+    {
+      "subject": 9,
+      "fold": 9,
+      "baseline_acc": 0.7041666666666667,
+      "best_acc": 0.7333333333333333,
+      "best_epoch": 20,
+      "gain_vs_baseline": 0.029166666666666563,
+      "time_sec": 85.46941685676575
+    },
+    {
+      "subject": 10,
+      "fold": 10,
+      "baseline_acc": 0.5958333333333333,
+      "best_acc": 0.6125,
+      "best_epoch": 31,
+      "gain_vs_baseline": 0.01666666666666672,
+      "time_sec": 88.87239241600037
+    },
+    {
+      "subject": 11,
+      "fold": 11,
+      "baseline_acc": 0.21666666666666667,
+      "best_acc": 0.21666666666666667,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 87.16203832626343
+    },
+    {
+      "subject": 12,
+      "fold": 12,
+      "baseline_acc": 0.5208333333333334,
+      "best_acc": 0.5458333333333333,
+      "best_epoch": 1,
+      "gain_vs_baseline": 0.02499999999999991,
+      "time_sec": 89.3641140460968
+    },
+    {
+      "subject": 13,
+      "fold": 13,
+      "baseline_acc": 0.6375,
+      "best_acc": 0.6375,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 90.40469074249268
+    },
+    {
+      "subject": 14,
+      "fold": 14,
+      "baseline_acc": 0.875,
+      "best_acc": 0.8875,
+      "best_epoch": 14,
+      "gain_vs_baseline": 0.012499999999999956,
+      "time_sec": 96.78468251228333
+    },
+    {
+      "subject": 15,
+      "fold": 15,
+      "baseline_acc": 0.5708333333333333,
+      "best_acc": 0.6041666666666666,
+      "best_epoch": 16,
+      "gain_vs_baseline": 0.033333333333333326,
+      "time_sec": 91.9711537361145
+    },
+    {
+      "subject": 16,
+      "fold": 16,
+      "baseline_acc": 0.4041666666666667,
+      "best_acc": 0.4125,
+      "best_epoch": 4,
+      "gain_vs_baseline": 0.008333333333333304,
+      "time_sec": 91.61589121818542
+    },
+    {
+      "subject": 17,
+      "fold": 17,
+      "baseline_acc": 0.325,
+      "best_acc": 0.325,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 91.45177412033081
+    },
+    {
+      "subject": 18,
+      "fold": 18,
+      "baseline_acc": 0.7166666666666667,
+      "best_acc": 0.7333333333333333,
+      "best_epoch": 32,
+      "gain_vs_baseline": 0.016666666666666607,
+      "time_sec": 88.94504761695862
+    },
+    {
+      "subject": 19,
+      "fold": 19,
+      "baseline_acc": 0.2833333333333333,
+      "best_acc": 0.30416666666666664,
+      "best_epoch": 10,
+      "gain_vs_baseline": 0.020833333333333315,
+      "time_sec": 95.9971010684967
+    },
+    {
+      "subject": 20,
+      "fold": 20,
+      "baseline_acc": 0.5375,
+      "best_acc": 0.5708333333333333,
+      "best_epoch": 20,
+      "gain_vs_baseline": 0.033333333333333326,
+      "time_sec": 98.52430462837219
+    },
+    {
+      "subject": 21,
+      "fold": 21,
+      "baseline_acc": 0.8,
+      "best_acc": 0.8208333333333333,
+      "best_epoch": 1,
+      "gain_vs_baseline": 0.02083333333333326,
+      "time_sec": 98.2800657749176
+    },
+    {
+      "subject": 22,
+      "fold": 22,
+      "baseline_acc": 0.7333333333333333,
+      "best_acc": 0.7708333333333334,
+      "best_epoch": 23,
+      "gain_vs_baseline": 0.03750000000000009,
+      "time_sec": 97.93314552307129
+    },
+    {
+      "subject": 23,
+      "fold": 23,
+      "baseline_acc": 0.32916666666666666,
+      "best_acc": 0.3541666666666667,
+      "best_epoch": 1,
+      "gain_vs_baseline": 0.025000000000000022,
+      "time_sec": 97.78815531730652
+    },
+    {
+      "subject": 24,
+      "fold": 24,
+      "baseline_acc": 0.8625,
+      "best_acc": 0.8625,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 92.62067794799805
+    },
+    {
+      "subject": 25,
+      "fold": 25,
+      "baseline_acc": 0.7083333333333334,
+      "best_acc": 0.775,
+      "best_epoch": 13,
+      "gain_vs_baseline": 0.06666666666666665,
+      "time_sec": 90.69923734664917
+    },
+    {
+      "subject": 26,
+      "fold": 26,
+      "baseline_acc": 0.8666666666666667,
+      "best_acc": 0.8916666666666667,
+      "best_epoch": 11,
+      "gain_vs_baseline": 0.025000000000000022,
+      "time_sec": 89.526522397995
+    },
+    {
+      "subject": 27,
+      "fold": 27,
+      "baseline_acc": 0.9291666666666667,
+      "best_acc": 0.9291666666666667,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 89.78441667556763
+    },
+    {
+      "subject": 28,
+      "fold": 28,
+      "baseline_acc": 0.6666666666666666,
+      "best_acc": 0.675,
+      "best_epoch": 23,
+      "gain_vs_baseline": 0.008333333333333415,
+      "time_sec": 88.6995542049408
+    },
+    {
+      "subject": 29,
+      "fold": 29,
+      "baseline_acc": 0.14583333333333334,
+      "best_acc": 0.14583333333333334,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 87.7482681274414
+    },
+    {
+      "subject": 30,
+      "fold": 30,
+      "baseline_acc": 0.49583333333333335,
+      "best_acc": 0.5208333333333334,
+      "best_epoch": 2,
+      "gain_vs_baseline": 0.025000000000000022,
+      "time_sec": 88.39195561408997
+    },
+    {
+      "subject": 31,
+      "fold": 31,
+      "baseline_acc": 0.9,
+      "best_acc": 0.9,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 89.9526629447937
+    },
+    {
+      "subject": 32,
+      "fold": 32,
+      "baseline_acc": 0.9625,
+      "best_acc": 0.9625,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 90.38180875778198
+    },
+    {
+      "subject": 33,
+      "fold": 33,
+      "baseline_acc": 0.2875,
+      "best_acc": 0.30416666666666664,
+      "best_epoch": 12,
+      "gain_vs_baseline": 0.016666666666666663,
+      "time_sec": 89.07372426986694
+    },
+    {
+      "subject": 34,
+      "fold": 34,
+      "baseline_acc": 0.85,
+      "best_acc": 0.85,
+      "best_epoch": 0,
+      "gain_vs_baseline": 0.0,
+      "time_sec": 93.6032485961914
+    },
+    {
+      "subject": 35,
+      "fold": 35,
+      "baseline_acc": 0.7333333333333333,
+      "best_acc": 0.7583333333333333,
+      "best_epoch": 13,
+      "gain_vs_baseline": 0.025000000000000022,
+      "time_sec": 98.0249924659729
+    }
+  ]
+}

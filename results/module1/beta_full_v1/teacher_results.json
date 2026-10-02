@@ -1,0 +1,814 @@
+{
+  "project": "CCKD-SSVEP",
+  "version": "0.1.0",
+  "module": "FB-tCNN teacher baseline",
+  "dataset": "beta",
+  "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta",
+  "mean_test_acc": 0.3578571428571429,
+  "std_test_acc": 0.1710154993572459,
+  "min_test_acc": 0.05,
+  "max_test_acc": 0.69375,
+  "n_folds": 70,
+  "params": 90824,
+  "feature_dim": 32,
+  "folds": [
+    {
+      "fold": 1,
+      "test_subject": 1,
+      "best_epoch": 56,
+      "best_val_acc": 0.475,
+      "test_acc": 0.5875,
+      "test_loss": 1.7524445056915283,
+      "time_sec": 329.1877257823944,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold01.pt"
+    },
+    {
+      "fold": 2,
+      "test_subject": 2,
+      "best_epoch": 23,
+      "best_val_acc": 0.3025,
+      "test_acc": 0.58125,
+      "test_loss": 1.8199666023254395,
+      "time_sec": 57.591373443603516,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold02.pt"
+    },
+    {
+      "fold": 3,
+      "test_subject": 3,
+      "best_epoch": 47,
+      "best_val_acc": 0.423125,
+      "test_acc": 0.69375,
+      "test_loss": 1.5063207387924193,
+      "time_sec": 84.67333197593689,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold03.pt"
+    },
+    {
+      "fold": 4,
+      "test_subject": 4,
+      "best_epoch": 49,
+      "best_val_acc": 0.33,
+      "test_acc": 0.48125,
+      "test_loss": 1.9600168704986571,
+      "time_sec": 81.00634670257568,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold04.pt"
+    },
+    {
+      "fold": 5,
+      "test_subject": 5,
+      "best_epoch": 27,
+      "best_val_acc": 0.395625,
+      "test_acc": 0.2625,
+      "test_loss": 2.995420980453491,
+      "time_sec": 55.39634370803833,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold05.pt"
+    },
+    {
+      "fold": 6,
+      "test_subject": 6,
+      "best_epoch": 112,
+      "best_val_acc": 0.425625,
+      "test_acc": 0.23125,
+      "test_loss": 2.778114652633667,
+      "time_sec": 170.82200407981873,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold06.pt"
+    },
+    {
+      "fold": 7,
+      "test_subject": 7,
+      "best_epoch": 68,
+      "best_val_acc": 0.455625,
+      "test_acc": 0.18125,
+      "test_loss": 3.285540246963501,
+      "time_sec": 107.07672786712646,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold07.pt"
+    },
+    {
+      "fold": 8,
+      "test_subject": 8,
+      "best_epoch": 44,
+      "best_val_acc": 0.366875,
+      "test_acc": 0.40625,
+      "test_loss": 2.2591559886932373,
+      "time_sec": 80.89328050613403,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold08.pt"
+    },
+    {
+      "fold": 9,
+      "test_subject": 9,
+      "best_epoch": 37,
+      "best_val_acc": 0.438125,
+      "test_acc": 0.55625,
+      "test_loss": 1.6265207290649415,
+      "time_sec": 69.16983604431152,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold09.pt"
+    },
+    {
+      "fold": 10,
+      "test_subject": 10,
+      "best_epoch": 39,
+      "best_val_acc": 0.328125,
+      "test_acc": 0.425,
+      "test_loss": 2.285155725479126,
+      "time_sec": 70.93711876869202,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold10.pt"
+    },
+    {
+      "fold": 11,
+      "test_subject": 11,
+      "best_epoch": 18,
+      "best_val_acc": 0.2825,
+      "test_acc": 0.20625,
+      "test_loss": 3.1578191757202148,
+      "time_sec": 45.716787576675415,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold11.pt"
+    },
+    {
+      "fold": 12,
+      "test_subject": 12,
+      "best_epoch": 44,
+      "best_val_acc": 0.4025,
+      "test_acc": 0.54375,
+      "test_loss": 1.9087130069732665,
+      "time_sec": 73.2981915473938,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold12.pt"
+    },
+    {
+      "fold": 13,
+      "test_subject": 13,
+      "best_epoch": 73,
+      "best_val_acc": 0.390625,
+      "test_acc": 0.55,
+      "test_loss": 1.6948104858398438,
+      "time_sec": 113.57366561889648,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold13.pt"
+    },
+    {
+      "fold": 14,
+      "test_subject": 14,
+      "best_epoch": 53,
+      "best_val_acc": 0.419375,
+      "test_acc": 0.21875,
+      "test_loss": 3.2969804286956785,
+      "time_sec": 91.2027747631073,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold14.pt"
+    },
+    {
+      "fold": 15,
+      "test_subject": 15,
+      "best_epoch": 31,
+      "best_val_acc": 0.39125,
+      "test_acc": 0.2375,
+      "test_loss": 2.9602832317352297,
+      "time_sec": 61.76317620277405,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold15.pt"
+    },
+    {
+      "fold": 16,
+      "test_subject": 16,
+      "best_epoch": 83,
+      "best_val_acc": 0.349375,
+      "test_acc": 0.31875,
+      "test_loss": 2.5754788398742674,
+      "time_sec": 121.26177978515625,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold16.pt"
+    },
+    {
+      "fold": 17,
+      "test_subject": 17,
+      "best_epoch": 22,
+      "best_val_acc": 0.369375,
+      "test_acc": 0.18125,
+      "test_loss": 3.2309396266937256,
+      "time_sec": 52.18117380142212,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold17.pt"
+    },
+    {
+      "fold": 18,
+      "test_subject": 18,
+      "best_epoch": 78,
+      "best_val_acc": 0.35375,
+      "test_acc": 0.6875,
+      "test_loss": 1.3372987031936645,
+      "time_sec": 120.30502843856812,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold18.pt"
+    },
+    {
+      "fold": 19,
+      "test_subject": 19,
+      "best_epoch": 86,
+      "best_val_acc": 0.425625,
+      "test_acc": 0.56875,
+      "test_loss": 1.8302173376083375,
+      "time_sec": 126.61952376365662,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold19.pt"
+    },
+    {
+      "fold": 20,
+      "test_subject": 20,
+      "best_epoch": 34,
+      "best_val_acc": 0.4025,
+      "test_acc": 0.19375,
+      "test_loss": 3.4272082328796385,
+      "time_sec": 64.88157391548157,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold20.pt"
+    },
+    {
+      "fold": 21,
+      "test_subject": 21,
+      "best_epoch": 53,
+      "best_val_acc": 0.4275,
+      "test_acc": 0.225,
+      "test_loss": 2.780441951751709,
+      "time_sec": 86.6960072517395,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold21.pt"
+    },
+    {
+      "fold": 22,
+      "test_subject": 22,
+      "best_epoch": 47,
+      "best_val_acc": 0.4275,
+      "test_acc": 0.425,
+      "test_loss": 2.223314046859741,
+      "time_sec": 79.41234135627747,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold22.pt"
+    },
+    {
+      "fold": 23,
+      "test_subject": 23,
+      "best_epoch": 30,
+      "best_val_acc": 0.320625,
+      "test_acc": 0.33125,
+      "test_loss": 2.375491809844971,
+      "time_sec": 59.62798714637756,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold23.pt"
+    },
+    {
+      "fold": 24,
+      "test_subject": 24,
+      "best_epoch": 32,
+      "best_val_acc": 0.36875,
+      "test_acc": 0.19375,
+      "test_loss": 3.1946082592010496,
+      "time_sec": 64.9015862941742,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold24.pt"
+    },
+    {
+      "fold": 25,
+      "test_subject": 25,
+      "best_epoch": 38,
+      "best_val_acc": 0.36,
+      "test_acc": 0.0875,
+      "test_loss": 4.133358669281006,
+      "time_sec": 67.85794854164124,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold25.pt"
+    },
+    {
+      "fold": 26,
+      "test_subject": 26,
+      "best_epoch": 67,
+      "best_val_acc": 0.363125,
+      "test_acc": 0.275,
+      "test_loss": 2.7096853256225586,
+      "time_sec": 101.52154326438904,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold26.pt"
+    },
+    {
+      "fold": 27,
+      "test_subject": 27,
+      "best_epoch": 40,
+      "best_val_acc": 0.33125,
+      "test_acc": 0.4375,
+      "test_loss": 2.1140890598297117,
+      "time_sec": 73.31755805015564,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold27.pt"
+    },
+    {
+      "fold": 28,
+      "test_subject": 28,
+      "best_epoch": 39,
+      "best_val_acc": 0.40375,
+      "test_acc": 0.55,
+      "test_loss": 1.8600897789001465,
+      "time_sec": 71.21554017066956,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold28.pt"
+    },
+    {
+      "fold": 29,
+      "test_subject": 29,
+      "best_epoch": 34,
+      "best_val_acc": 0.354375,
+      "test_acc": 0.3625,
+      "test_loss": 2.4759652614593506,
+      "time_sec": 62.4700562953949,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold29.pt"
+    },
+    {
+      "fold": 30,
+      "test_subject": 30,
+      "best_epoch": 23,
+      "best_val_acc": 0.406875,
+      "test_acc": 0.36875,
+      "test_loss": 2.306551122665405,
+      "time_sec": 49.62527585029602,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold30.pt"
+    },
+    {
+      "fold": 31,
+      "test_subject": 31,
+      "best_epoch": 58,
+      "best_val_acc": 0.356875,
+      "test_acc": 0.19375,
+      "test_loss": 2.938451910018921,
+      "time_sec": 91.96673345565796,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold31.pt"
+    },
+    {
+      "fold": 32,
+      "test_subject": 32,
+      "best_epoch": 61,
+      "best_val_acc": 0.3675,
+      "test_acc": 0.05,
+      "test_loss": 4.052174186706543,
+      "time_sec": 96.98630094528198,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold32.pt"
+    },
+    {
+      "fold": 33,
+      "test_subject": 33,
+      "best_epoch": 105,
+      "best_val_acc": 0.380625,
+      "test_acc": 0.3375,
+      "test_loss": 2.574974250793457,
+      "time_sec": 154.8401734828949,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold33.pt"
+    },
+    {
+      "fold": 34,
+      "test_subject": 34,
+      "best_epoch": 57,
+      "best_val_acc": 0.31125,
+      "test_acc": 0.65625,
+      "test_loss": 1.5005784511566163,
+      "time_sec": 97.17738890647888,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold34.pt"
+    },
+    {
+      "fold": 35,
+      "test_subject": 35,
+      "best_epoch": 65,
+      "best_val_acc": 0.351875,
+      "test_acc": 0.475,
+      "test_loss": 2.0720020055770876,
+      "time_sec": 109.33901596069336,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold35.pt"
+    },
+    {
+      "fold": 36,
+      "test_subject": 36,
+      "best_epoch": 75,
+      "best_val_acc": 0.35,
+      "test_acc": 0.59375,
+      "test_loss": 1.567344355583191,
+      "time_sec": 118.76944470405579,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold36.pt"
+    },
+    {
+      "fold": 37,
+      "test_subject": 37,
+      "best_epoch": 32,
+      "best_val_acc": 0.32375,
+      "test_acc": 0.6375,
+      "test_loss": 1.6452200889587403,
+      "time_sec": 64.81741714477539,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold37.pt"
+    },
+    {
+      "fold": 38,
+      "test_subject": 38,
+      "best_epoch": 68,
+      "best_val_acc": 0.449375,
+      "test_acc": 0.23125,
+      "test_loss": 3.3878721237182616,
+      "time_sec": 112.41570138931274,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold38.pt"
+    },
+    {
+      "fold": 39,
+      "test_subject": 39,
+      "best_epoch": 34,
+      "best_val_acc": 0.3675,
+      "test_acc": 0.38125,
+      "test_loss": 2.3356744766235353,
+      "time_sec": 67.477219581604,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold39.pt"
+    },
+    {
+      "fold": 40,
+      "test_subject": 40,
+      "best_epoch": 51,
+      "best_val_acc": 0.4225,
+      "test_acc": 0.36875,
+      "test_loss": 2.4519069671630858,
+      "time_sec": 89.60713911056519,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold40.pt"
+    },
+    {
+      "fold": 41,
+      "test_subject": 41,
+      "best_epoch": 73,
+      "best_val_acc": 0.45875,
+      "test_acc": 0.30625,
+      "test_loss": 2.797737789154053,
+      "time_sec": 118.17446899414062,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold41.pt"
+    },
+    {
+      "fold": 42,
+      "test_subject": 42,
+      "best_epoch": 14,
+      "best_val_acc": 0.31,
+      "test_acc": 0.19375,
+      "test_loss": 3.343495988845825,
+      "time_sec": 43.033915996551514,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold42.pt"
+    },
+    {
+      "fold": 43,
+      "test_subject": 43,
+      "best_epoch": 87,
+      "best_val_acc": 0.386875,
+      "test_acc": 0.4125,
+      "test_loss": 2.296531343460083,
+      "time_sec": 130.08133029937744,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold43.pt"
+    },
+    {
+      "fold": 44,
+      "test_subject": 44,
+      "best_epoch": 40,
+      "best_val_acc": 0.41375,
+      "test_acc": 0.19375,
+      "test_loss": 3.311717319488525,
+      "time_sec": 74.81793022155762,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold44.pt"
+    },
+    {
+      "fold": 45,
+      "test_subject": 45,
+      "best_epoch": 39,
+      "best_val_acc": 0.414375,
+      "test_acc": 0.275,
+      "test_loss": 2.751242971420288,
+      "time_sec": 74.81935000419617,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold45.pt"
+    },
+    {
+      "fold": 46,
+      "test_subject": 46,
+      "best_epoch": 39,
+      "best_val_acc": 0.339375,
+      "test_acc": 0.38125,
+      "test_loss": 2.5250785827636717,
+      "time_sec": 72.08220362663269,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold46.pt"
+    },
+    {
+      "fold": 47,
+      "test_subject": 47,
+      "best_epoch": 62,
+      "best_val_acc": 0.345625,
+      "test_acc": 0.29375,
+      "test_loss": 2.9820510387420653,
+      "time_sec": 101.11140704154968,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold47.pt"
+    },
+    {
+      "fold": 48,
+      "test_subject": 48,
+      "best_epoch": 36,
+      "best_val_acc": 0.38375,
+      "test_acc": 0.10625,
+      "test_loss": 3.581804943084717,
+      "time_sec": 68.80277752876282,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold48.pt"
+    },
+    {
+      "fold": 49,
+      "test_subject": 49,
+      "best_epoch": 41,
+      "best_val_acc": 0.305,
+      "test_acc": 0.2,
+      "test_loss": 2.9765437126159666,
+      "time_sec": 72.99262619018555,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold49.pt"
+    },
+    {
+      "fold": 50,
+      "test_subject": 50,
+      "best_epoch": 37,
+      "best_val_acc": 0.354375,
+      "test_acc": 0.3625,
+      "test_loss": 2.553014612197876,
+      "time_sec": 68.2714331150055,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold50.pt"
+    },
+    {
+      "fold": 51,
+      "test_subject": 51,
+      "best_epoch": 39,
+      "best_val_acc": 0.343125,
+      "test_acc": 0.30625,
+      "test_loss": 2.5845022678375242,
+      "time_sec": 75.79385781288147,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold51.pt"
+    },
+    {
+      "fold": 52,
+      "test_subject": 52,
+      "best_epoch": 111,
+      "best_val_acc": 0.304375,
+      "test_acc": 0.46875,
+      "test_loss": 2.1456701517105103,
+      "time_sec": 165.3923361301422,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold52.pt"
+    },
+    {
+      "fold": 53,
+      "test_subject": 53,
+      "best_epoch": 128,
+      "best_val_acc": 0.335625,
+      "test_acc": 0.64375,
+      "test_loss": 1.6922539710998534,
+      "time_sec": 182.52797651290894,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold53.pt"
+    },
+    {
+      "fold": 54,
+      "test_subject": 54,
+      "best_epoch": 35,
+      "best_val_acc": 0.306875,
+      "test_acc": 0.38125,
+      "test_loss": 2.444626474380493,
+      "time_sec": 69.80507755279541,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold54.pt"
+    },
+    {
+      "fold": 55,
+      "test_subject": 55,
+      "best_epoch": 98,
+      "best_val_acc": 0.500625,
+      "test_acc": 0.30625,
+      "test_loss": 2.711517572402954,
+      "time_sec": 148.0246183872223,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold55.pt"
+    },
+    {
+      "fold": 56,
+      "test_subject": 56,
+      "best_epoch": 58,
+      "best_val_acc": 0.298125,
+      "test_acc": 0.29375,
+      "test_loss": 2.8313933849334716,
+      "time_sec": 94.78647112846375,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold56.pt"
+    },
+    {
+      "fold": 57,
+      "test_subject": 57,
+      "best_epoch": 27,
+      "best_val_acc": 0.21,
+      "test_acc": 0.475,
+      "test_loss": 1.9321913719177246,
+      "time_sec": 58.262141942977905,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold57.pt"
+    },
+    {
+      "fold": 58,
+      "test_subject": 58,
+      "best_epoch": 73,
+      "best_val_acc": 0.356875,
+      "test_acc": 0.15,
+      "test_loss": 3.2683870792388916,
+      "time_sec": 112.31157684326172,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold58.pt"
+    },
+    {
+      "fold": 59,
+      "test_subject": 59,
+      "best_epoch": 51,
+      "best_val_acc": 0.400625,
+      "test_acc": 0.13125,
+      "test_loss": 3.4685315608978273,
+      "time_sec": 92.22782397270203,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold59.pt"
+    },
+    {
+      "fold": 60,
+      "test_subject": 60,
+      "best_epoch": 68,
+      "best_val_acc": 0.44875,
+      "test_acc": 0.2,
+      "test_loss": 3.005237674713135,
+      "time_sec": 94.88437128067017,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold60.pt"
+    },
+    {
+      "fold": 61,
+      "test_subject": 61,
+      "best_epoch": 49,
+      "best_val_acc": 0.369375,
+      "test_acc": 0.15625,
+      "test_loss": 3.268621587753296,
+      "time_sec": 70.57735705375671,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold61.pt"
+    },
+    {
+      "fold": 62,
+      "test_subject": 62,
+      "best_epoch": 52,
+      "best_val_acc": 0.391875,
+      "test_acc": 0.625,
+      "test_loss": 1.5775306224822998,
+      "time_sec": 71.6360719203949,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold62.pt"
+    },
+    {
+      "fold": 63,
+      "test_subject": 63,
+      "best_epoch": 70,
+      "best_val_acc": 0.305,
+      "test_acc": 0.575,
+      "test_loss": 1.711201286315918,
+      "time_sec": 90.98769617080688,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold63.pt"
+    },
+    {
+      "fold": 64,
+      "test_subject": 64,
+      "best_epoch": 45,
+      "best_val_acc": 0.266875,
+      "test_acc": 0.4625,
+      "test_loss": 2.055349588394165,
+      "time_sec": 68.49555516242981,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold64.pt"
+    },
+    {
+      "fold": 65,
+      "test_subject": 65,
+      "best_epoch": 71,
+      "best_val_acc": 0.39625,
+      "test_acc": 0.15,
+      "test_loss": 3.460837888717651,
+      "time_sec": 88.13040113449097,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold65.pt"
+    },
+    {
+      "fold": 66,
+      "test_subject": 66,
+      "best_epoch": 48,
+      "best_val_acc": 0.3375,
+      "test_acc": 0.59375,
+      "test_loss": 1.7186613082885742,
+      "time_sec": 65.83075594902039,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold66.pt"
+    },
+    {
+      "fold": 67,
+      "test_subject": 67,
+      "best_epoch": 23,
+      "best_val_acc": 0.374375,
+      "test_acc": 0.43125,
+      "test_loss": 2.3893307209014893,
+      "time_sec": 43.833590269088745,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold67.pt"
+    },
+    {
+      "fold": 68,
+      "test_subject": 68,
+      "best_epoch": 41,
+      "best_val_acc": 0.42625,
+      "test_acc": 0.1125,
+      "test_loss": 3.53108696937561,
+      "time_sec": 58.319193840026855,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold68.pt"
+    },
+    {
+      "fold": 69,
+      "test_subject": 69,
+      "best_epoch": 21,
+      "best_val_acc": 0.321875,
+      "test_acc": 0.08125,
+      "test_loss": 3.7039165019989015,
+      "time_sec": 40.87134408950806,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold69.pt"
+    },
+    {
+      "fold": 70,
+      "test_subject": 70,
+      "best_epoch": 50,
+      "best_val_acc": 0.341875,
+      "test_acc": 0.4875,
+      "test_loss": 2.0802674770355223,
+      "time_sec": 92.46817302703857,
+      "checkpoint": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1/fbtcnn_teacher_fold70.pt"
+    }
+  ],
+  "config": {
+    "project": {
+      "name": "CCKD-SSVEP",
+      "version": "0.1.0"
+    },
+    "dataset": {
+      "name": "beta",
+      "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta",
+      "n_subjects": 70,
+      "n_classes": 40,
+      "n_channels_raw": 64,
+      "sfreq": 250.0,
+      "mat_key": "data",
+      "t_start": 0.14,
+      "window_seconds": 1.0,
+      "teacher_channel_names": [
+        "Pz",
+        "PO5",
+        "PO3",
+        "POz",
+        "PO4",
+        "PO6",
+        "O1",
+        "Oz",
+        "O2"
+      ],
+      "teacher_channel_indices": [
+        47,
+        53,
+        54,
+        55,
+        56,
+        57,
+        60,
+        61,
+        62
+      ]
+    },
+    "filterbank": {
+      "bands_hz": [
+        [
+          6.0,
+          90.0
+        ],
+        [
+          14.0,
+          90.0
+        ],
+        [
+          22.0,
+          90.0
+        ],
+        [
+          30.0,
+          90.0
+        ]
+      ],
+      "order": 4,
+      "ripple_db": 1.0,
+      "normalize_per_trial_channel": true
+    },
+    "model": {
+      "name": "FB-tCNN",
+      "branch_filters": 16,
+      "fusion_filters": 32,
+      "temporal_stride": 5,
+      "local_kernel": 5,
+      "dropout": 0.4
+    },
+    "training": {
+      "epochs": 150,
+      "batch_size": 64,
+      "learning_rate": 0.001,
+      "weight_decay": 0.0001,
+      "val_fraction_subjects": 0.15,
+      "early_stopping_patience": 20,
+      "reduce_lr_patience": 7,
+      "min_lr": 1e-06,
+      "min_delta": 0.0001,
+      "amp": true
+    },
+    "evaluation": {
+      "protocol": "loso_subject_validation",
+      "n_folds": null,
+      "save_history": false
+    },
+    "runtime": {
+      "device": "cuda",
+      "workers": 2,
+      "seed": 2026,
+      "log_every": 10
+    },
+    "output": {
+      "output_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/beta_full_v1",
+      "cache_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/cache/filterbank/beta"
+    },
+    "_config_path": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/beta.yaml"
+  }
+}

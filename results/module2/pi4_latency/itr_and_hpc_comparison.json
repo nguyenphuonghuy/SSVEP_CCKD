@@ -1,0 +1,86 @@
+{
+  "speedup_pi4_vs_hpc_cpu": {
+    "1_threads": {
+      "teacher_9C": {
+        "pi4_ms": 17.241523797857944,
+        "hpc_epyc9124_ms": 2.1333813708042726,
+        "pi4_slower_factor": 8.081782298191714
+      },
+      "student_3C": {
+        "pi4_ms": 16.815941565717562,
+        "hpc_epyc9124_ms": 2.005824946487943,
+        "pi4_slower_factor": 8.383553906416948
+      },
+      "student_1C": {
+        "pi4_ms": 16.52940156714359,
+        "hpc_epyc9124_ms": 1.9532830774551257,
+        "pi4_slower_factor": 8.462368695007205
+      }
+    },
+    "4_threads": {
+      "teacher_9C": {
+        "pi4_ms": 14.041108227146749,
+        "hpc_epyc9124_ms": 2.2990332669966542,
+        "pi4_slower_factor": 6.107396717007655
+      },
+      "student_3C": {
+        "pi4_ms": 13.44159400784942,
+        "hpc_epyc9124_ms": 2.15790575001544,
+        "pi4_slower_factor": 6.22899957875975
+      },
+      "student_1C": {
+        "pi4_ms": 13.149425147856684,
+        "hpc_epyc9124_ms": 2.086295632955929,
+        "pi4_slower_factor": 6.302762149401698
+      }
+    }
+  },
+  "itr_ideal_vs_practical": {
+    "Benchmark": {
+      "teacher_9C": {
+        "acc": 0.656,
+        "pi4_1thread_latency_ms": 17.241523797857944,
+        "itr_ideal_bits_per_min": 103.00618550334589,
+        "itr_practical_bits_per_min": 101.83565097023016,
+        "itr_drop_pct": 1.136373051187014
+      },
+      "student_3C": {
+        "acc": 0.5122,
+        "pi4_1thread_latency_ms": 16.815941565717562,
+        "itr_ideal_bits_per_min": 69.76553586441241,
+        "itr_practical_bits_per_min": 68.99209121483553,
+        "itr_drop_pct": 1.1086342848137198
+      },
+      "student_1C": {
+        "acc": 0.4529,
+        "pi4_1thread_latency_ms": 16.52940156714359,
+        "itr_ideal_bits_per_min": 57.46780078335931,
+        "itr_practical_bits_per_min": 56.84143089211477,
+        "itr_drop_pct": 1.0899492980526784
+      }
+    },
+    "BETA": {
+      "teacher_9C": {
+        "acc": 0.5359,
+        "pi4_1thread_latency_ms": 17.241523797857944,
+        "itr_ideal_bits_per_min": 74.90779385841246,
+        "itr_practical_bits_per_min": 74.05656187576675,
+        "itr_drop_pct": 1.136373051187006
+      },
+      "student_3C": {
+        "acc": 0.395,
+        "pi4_1thread_latency_ms": 16.815941565717562,
+        "itr_ideal_bits_per_min": 46.25236867128253,
+        "itr_practical_bits_per_min": 45.73959905465425,
+        "itr_drop_pct": 1.1086342848137307
+      },
+      "student_1C": {
+        "acc": 0.3543,
+        "pi4_1thread_latency_ms": 16.52940156714359,
+        "itr_ideal_bits_per_min": 38.85176319122966,
+        "itr_practical_bits_per_min": 38.428298671045766,
+        "itr_drop_pct": 1.0899492980526657
+      }
+    }
+  }
+}

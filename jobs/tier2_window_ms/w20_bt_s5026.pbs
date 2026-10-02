@@ -1,0 +1,76 @@
+#!/bin/bash
+#PBS -N w20_bt_s5026
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=12:00:00
+#PBS -j oe
+
+set -uo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module2/tier2_window_ms/beta_w20_s5026_8seed
+LOG=$PROJ/logs/w20_beta_s5026_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+
+get_ticks() {
+  local stat="/proc/$1/stat"
+  [ -r "$stat" ] || { echo -1; return; }
+  awk -F') ' '{print $2}' "$stat" | awk '{print $12+$13}'
+}
+
+WALLTIME_S=43200
+SAFETY_MARGIN_S=1200
+DEADLINE=$(( $(date +%s) + WALLTIME_S - SAFETY_MARGIN_S ))
+HANG_LIMIT_S=1200
+CHECK_EVERY=60
+success=0
+attempt=0
+while [ "$(date +%s)" -lt "$DEADLINE" ]; do
+  attempt=$((attempt+1))
+  echo "START attempt $attempt: $(date) | NODE: $(hostname) | budget left: $((DEADLINE-$(date +%s)))s" >> "$LOG"
+  echo "Tier 2 multi-split (auto-retry, time-budgeted): window_s=2.0s on beta, split_seed=5026, 8 seeds, relational." >> "$LOG"
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone fbtcnn --n_bands 3 --window_s 2.0 \
+    --split_seed 5026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes relational \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda >> "$LOG" 2>&1 &
+  PID=$!
+  hang_secs=0
+  last_ticks=-1
+  while kill -0 "$PID" 2>/dev/null; do
+    sleep $CHECK_EVERY
+    ticks=$(get_ticks "$PID")
+    if [ "$ticks" = "$last_ticks" ]; then
+      hang_secs=$((hang_secs+CHECK_EVERY))
+    else
+      hang_secs=0
+    fi
+    last_ticks=$ticks
+    if [ "$(date +%s)" -ge "$DEADLINE" ]; then
+      echo "Deadline reached while attempt $attempt still running -- letting PBS walltime handle final cleanup" >> "$LOG"
+      break 2
+    fi
+    if [ "$hang_secs" -ge "$HANG_LIMIT_S" ]; then
+      echo "HANG DETECTED (attempt $attempt): no CPU progress for ${hang_secs}s (ticks=$ticks) -- killing, will retry" >> "$LOG"
+      kill -9 "$PID" 2>/dev/null
+      sleep 10
+      break
+    fi
+  done
+  wait "$PID" 2>/dev/null
+  if ls "$OUT_DIR"/cckd_*.json >/dev/null 2>&1; then
+    echo "END: $(date) | STATUS: SUCCESS (attempt $attempt)" >> "$LOG"
+    success=1
+    break
+  fi
+  echo "attempt $attempt produced no final result, retrying if budget remains..." >> "$LOG"
+  sleep 20
+done
+if [ "$success" -ne 1 ]; then
+  echo "END: $(date) | STATUS: FAILED after $attempt attempt(s) (persistent hang/error, or walltime budget exhausted)" >> "$LOG"
+fi

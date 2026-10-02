@@ -1,0 +1,71 @@
+#!/bin/bash
+#PBS -N cckd_bench_smoke
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=01:00:00
+#PBS -j oe
+
+set -euo pipefail
+
+PROJ=/gpfs0/users/gv_nphuy/projects/cckd_ssvep
+PY=/gpfs0/users/gv_nphuy/envs/cckd_ssvep/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+OUT_DIR=results/module1/benchmark_smoke
+CACHE_DIR=cache/filterbank/benchmark
+LOG=$PROJ/logs/benchmark_smoke_${PBS_JOBID}.log
+
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+
+{
+    echo "START       : $(date)"
+    echo "NODE        : $(hostname)"
+    echo "JOB_ID      : $PBS_JOBID"
+    echo "PROJECT     : $PROJ"
+    echo "PYTHON      : $PY"
+    echo "DATA_ROOT   : $DATA_ROOT"
+    echo "OUTPUT_DIR  : $OUT_DIR"
+    echo "CACHE_DIR   : $CACHE_DIR"
+    echo "CUDA_VISIBLE_DEVICES: ${CUDA_VISIBLE_DEVICES:-<unset>}"
+
+    "$PY" --version
+
+    echo
+    echo "=== TORCH / CUDA CHECK ==="
+    "$PY" - <<'PYCODE'
+import torch
+print("torch       :", torch.__version__)
+print("cuda build  :", torch.version.cuda)
+print("available   :", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("device      :", torch.cuda.get_device_name(0))
+PYCODE
+
+    echo
+    echo "=== DATASET INSPECTION ==="
+    "$PY" scripts/inspect_dataset.py \
+        --config configs/benchmark.yaml \
+        --data_root "$DATA_ROOT" \
+        --subject 1
+
+    echo
+    echo "=== BENCHMARK PIPELINE SMOKE ==="
+    "$PY" training/train_teacher.py \
+        --config configs/benchmark.yaml \
+        --data_root "$DATA_ROOT" \
+        --n_folds 1 \
+        --epochs 5 \
+        --workers 2 \
+        --device cuda \
+        --output_dir "$OUT_DIR" \
+        --cache_dir "$CACHE_DIR"
+
+    echo
+    echo "=== OUTPUT FILES ==="
+    find "$OUT_DIR" -maxdepth 1 -type f -printf '%f\n' | sort
+
+    echo
+    echo "END         : $(date)"
+} > "$LOG" 2>&1

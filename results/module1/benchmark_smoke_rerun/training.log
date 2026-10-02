@@ -1,0 +1,43 @@
+2026-08-15 20:56:22,034 | INFO | ========================================================================
+2026-08-15 20:56:22,034 | INFO | CCKD-SSVEP — FB-tCNN TEACHER TRAINING
+2026-08-15 20:56:22,034 | INFO | ========================================================================
+2026-08-15 20:56:22,034 | INFO | config       : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/benchmark.yaml
+2026-08-15 20:56:22,035 | INFO | data_root    : /gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
+2026-08-15 20:56:22,035 | INFO | output_dir   : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_smoke_rerun
+2026-08-15 20:56:22,035 | INFO | cache_dir    : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/cache/filterbank/benchmark
+2026-08-15 20:56:22,035 | INFO | device       : cpu
+2026-08-15 20:56:22,035 | INFO | seed         : 2026
+2026-08-15 20:56:22,035 | INFO | max_epochs   : 5
+2026-08-15 20:56:22,035 | INFO | 
+2026-08-15 20:56:22,036 | INFO | Loading dataset...
+2026-08-15 20:56:55,074 | INFO | Raw selected shape : (8400, 9, 250)
+2026-08-15 20:56:55,074 | INFO | Preparing/loading filter-bank cache...
+2026-08-15 20:56:55,102 | INFO | Dataset ready       : raw_selected=(8400, 9, 250) | filterbank=(8400, 4, 9, 250) | labels=40 | subjects=35
+2026-08-15 20:56:55,102 | INFO | Evaluation folds    : 1
+2026-08-15 20:56:55,251 | INFO | 
+2026-08-15 20:56:55,251 | INFO | ========================================================================
+2026-08-15 20:56:55,251 | INFO | FOLD 1 / 1 | TEST SUBJECT S01
+2026-08-15 20:56:55,252 | INFO | ========================================================================
+2026-08-15 20:56:55,252 | INFO | train subjects : 29 | samples: 6960 | batches: 109
+2026-08-15 20:56:55,252 | INFO | val subjects   : 5 | samples: 1200 | batches: 19
+2026-08-15 20:56:55,252 | INFO | test subjects  : 1 | samples: 240 | batches: 4
+2026-08-15 20:56:55,252 | INFO | batch_size     : 64 | workers: 0 | max_epochs: 5
+2026-08-15 20:57:27,344 | INFO | [Fold 01/01 | S01] Epoch 001/005 | train loss=3.8911 acc=0.0431 | val loss=3.5423 acc=0.0792 | best=0.0792@1 | lr=1.00e-03 | epoch=00:00:08 | elapsed=00:00:32 | ETA<=00:00:32 | wait=0/20 | NEW BEST
+2026-08-15 20:57:35,340 | INFO | [Fold 01/01 | S01] Epoch 002/005 | train loss=3.4590 acc=0.0957 | val loss=3.3434 acc=0.1533 | best=0.1533@2 | lr=1.00e-03 | epoch=00:00:08 | elapsed=00:00:40 | ETA<=00:00:24 | wait=0/20 | NEW BEST
+2026-08-15 20:57:43,125 | INFO | [Fold 01/01 | S01] Epoch 003/005 | train loss=3.2401 acc=0.1511 | val loss=3.2237 acc=0.2067 | best=0.2067@3 | lr=1.00e-03 | epoch=00:00:08 | elapsed=00:00:48 | ETA<=00:00:16 | wait=0/20 | NEW BEST
+2026-08-15 20:57:51,078 | INFO | [Fold 01/01 | S01] Epoch 004/005 | train loss=3.0645 acc=0.2014 | val loss=3.1029 acc=0.2358 | best=0.2358@4 | lr=1.00e-03 | epoch=00:00:08 | elapsed=00:00:56 | ETA<=00:00:08 | wait=0/20 | NEW BEST
+2026-08-15 20:57:58,855 | INFO | [Fold 01/01 | S01] Epoch 005/005 | train loss=2.9539 acc=0.2197 | val loss=2.9987 acc=0.2650 | best=0.2650@5 | lr=1.00e-03 | epoch=00:00:08 | elapsed=00:01:04 | ETA<=00:00:00 | wait=0/20 | NEW BEST
+2026-08-15 20:57:58,856 | INFO | [Fold 01/01 | S01] Evaluating restored best checkpoint from epoch 5...
+2026-08-15 20:57:59,102 | INFO | [Fold 01/01 | S01] DONE | test loss=2.6401 acc=0.3917 | best epoch=5 | fold time=00:01:04 | overall elapsed=00:01:37 | remaining folds=0 | ETA~00:00:00 | checkpoint=/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_smoke_rerun/fbtcnn_teacher_fold01.pt
+2026-08-15 20:57:59,104 | INFO | 
+2026-08-15 20:57:59,104 | INFO | ========================================================================
+2026-08-15 20:57:59,104 | INFO | TRAINING COMPLETED
+2026-08-15 20:57:59,104 | INFO | ========================================================================
+2026-08-15 20:57:59,105 | INFO | dataset       : benchmark
+2026-08-15 20:57:59,105 | INFO | folds         : 1
+2026-08-15 20:57:59,105 | INFO | mean test acc : 0.3917
+2026-08-15 20:57:59,105 | INFO | std test acc  : 0.0000
+2026-08-15 20:57:59,105 | INFO | min test acc  : 0.3917
+2026-08-15 20:57:59,105 | INFO | max test acc  : 0.3917
+2026-08-15 20:57:59,105 | INFO | total time    : 00:01:37
+2026-08-15 20:57:59,106 | INFO | results       : /gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module1/benchmark_smoke_rerun/teacher_results.json

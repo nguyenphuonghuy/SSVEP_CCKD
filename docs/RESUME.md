@@ -1,9 +1,20 @@
 # Resuming this project on a different HPC account
 
+**Update (2026-10-02): the CUDA-init hang described below is fixed.** Adding
+`export CUDA_MPS_PIPE_DIRECTORY=/dev/null` to the job script resolves it —
+confirmed end-to-end on `gv_bvnam`/`ai01` (`scripts_smoke_gpu_test.py`
+completed in 8.2s instead of hanging indefinitely; see §6). The 9 pending
+jobs below already have this fix baked in and can simply be run on
+`gv_bvnam` directly — **moving to a different account is no longer
+necessary** for this specific issue. This guide is kept for reference (e.g.
+if the hang recurs, or if running on a second account is wanted for other
+reasons such as parallel GPU-slot throughput).
+
 This guide is for picking up `cckd_ssvep` from a fresh clone on an account
-other than `gv_bvnam` — typically because `gv_bvnam`'s PBS jobs are stuck in
-a CUDA-init hang on node `ai01` (see "Known issue" below) and the fastest way
-forward is to submit the remaining jobs from an unaffected account.
+other than `gv_bvnam` — the original motivation was that `gv_bvnam`'s PBS
+jobs were stuck in a CUDA-init hang on node `ai01` (see "Known issue" below)
+and the fastest way forward seemed to be submitting the remaining jobs from
+an unaffected account.
 
 ## 1. What's already done — do NOT rerun these
 
@@ -148,23 +159,37 @@ same node ran normally throughout. The leading hypothesis is a stale
 GPU/MPS client left behind by `gv_bvnam`'s own repeatedly-killed processes
 during debugging, specific to that account.
 
-**Unverified mitigation, not a confirmed fix.** If the cluster's `gpu_slots`
-resource is backed by NVIDIA MPS (likely, given 10-14 slots per node sharing
-what is almost certainly 1-2 physical GPUs), a stuck/stale MPS client for an
-account can make every subsequent `cudaSetDevice`/`cuda.is_available()` call
-from that account hang while it waits on the MPS control daemon. Setting
+**Confirmed fix.** If the cluster's `gpu_slots` resource is backed by NVIDIA
+MPS (likely, given 10-14 slots per node sharing what is almost certainly 1-2
+physical GPUs), a stuck/stale MPS client for an account can make every
+subsequent `cudaSetDevice`/`cuda.is_available()` call from that account hang
+while it waits on the MPS control daemon. Setting
 `CUDA_MPS_PIPE_DIRECTORY=/dev/null` makes the CUDA runtime skip the MPS
-client path entirely and talk to the GPU directly, which would sidestep a
-hung MPS client if that is in fact the cause. **This has not been tested
-against the actual hang** (unlike `FI_PROVIDER=tcp`, which *was* tested and
-did not help — see the git history around this file for that negative
-result); it has only been added as a cheap, harmless precaution to the 9
-pending job scripts (`export CUDA_MPS_PIPE_DIRECTORY=/dev/null` right after
-`PYTHONUNBUFFERED`). If a job still hangs with this set, that rules the MPS
-hypothesis out too and the issue is still open for the HPC admin.
+client path entirely and talk to the GPU directly, sidestepping a hung MPS
+client. **Verified end-to-end on `gv_bvnam`/`ai01` on 2026-10-02**:
+`scripts_smoke_gpu_test.py`, which had hung indefinitely in every prior
+attempt (including a 24h/66-attempt run with the watchdog, and a prior,
+disproven hypothesis — `FI_PROVIDER=tcp` — which was also tested and did
+*not* help), completed cleanly in 8.2s with this variable set:
 
-There is also a minimal diagnostic script in the repo to confirm/deny the
-hang in ~30 seconds before committing to a full 10h job:
+```
+[0.00s] starting, importing torch...
+[4.24s] torch imported, checking cuda.is_available()...
+[4.27s] cuda.is_available()=True
+[4.27s] device name: NVIDIA H100 NVL
+[5.21s] allocated tensor on cuda
+[8.20s] matmul done, sum=164198.91
+[8.20s] DONE OK
+```
+
+All 9 pending job scripts already set this variable (right after
+`PYTHONUNBUFFERED`) and were resubmitted successfully with it. If a hang
+ever recurs despite this being set, that would mean a different cause than
+the one diagnosed here, and is worth re-reporting to the HPC admin with a
+fresh diagnostic run.
+
+There is also a minimal diagnostic script in the repo to confirm GPU health
+in ~10 seconds before committing to a full 10h job:
 
 ```bash
 cat > /tmp/gpu_check.pbs <<EOF

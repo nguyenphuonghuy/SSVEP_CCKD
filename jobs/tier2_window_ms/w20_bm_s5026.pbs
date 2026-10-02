@@ -12,6 +12,7 @@ DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark
 OUT_DIR=$PROJ/results/module2/tier2_window_ms/benchmark_w20_s5026_8seed
 LOG=$PROJ/logs/w20_benchmark_s5026_${PBS_JOBID}.log
 export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null  # unverified mitigation for the gv_bvnam CUDA-init hang (see docs/RESUME.md §6) -- harmless if unrelated
 mkdir -p "$PROJ/logs" "$OUT_DIR"
 cd "$PROJ"
 

@@ -148,22 +148,40 @@ same node ran normally throughout. The leading hypothesis is a stale
 GPU/MPS client left behind by `gv_bvnam`'s own repeatedly-killed processes
 during debugging, specific to that account.
 
-**This should not affect a different account**, but if it does, there is a
-minimal diagnostic script already in the repo to confirm/deny it quickly
-before committing to a full 10h job:
+**Unverified mitigation, not a confirmed fix.** If the cluster's `gpu_slots`
+resource is backed by NVIDIA MPS (likely, given 10-14 slots per node sharing
+what is almost certainly 1-2 physical GPUs), a stuck/stale MPS client for an
+account can make every subsequent `cudaSetDevice`/`cuda.is_available()` call
+from that account hang while it waits on the MPS control daemon. Setting
+`CUDA_MPS_PIPE_DIRECTORY=/dev/null` makes the CUDA runtime skip the MPS
+client path entirely and talk to the GPU directly, which would sidestep a
+hung MPS client if that is in fact the cause. **This has not been tested
+against the actual hang** (unlike `FI_PROVIDER=tcp`, which *was* tested and
+did not help — see the git history around this file for that negative
+result); it has only been added as a cheap, harmless precaution to the 9
+pending job scripts (`export CUDA_MPS_PIPE_DIRECTORY=/dev/null` right after
+`PYTHONUNBUFFERED`). If a job still hangs with this set, that rules the MPS
+hypothesis out too and the issue is still open for the HPC admin.
+
+There is also a minimal diagnostic script in the repo to confirm/deny the
+hang in ~30 seconds before committing to a full 10h job:
 
 ```bash
-cat > /tmp/gpu_check.pbs <<'EOF'
+cat > /tmp/gpu_check.pbs <<EOF
 #!/bin/bash
 #PBS -N gpu_check
 #PBS -q sharedgpu
 #PBS -l select=1:ncpus=2:mem=8gb:gpu_slots=1
 #PBS -l walltime=00:10:00
 #PBS -j oe
-"$PY" scripts_smoke_gpu_test.py
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+${NEW_PY} ${NEW_PROJ}/scripts_smoke_gpu_test.py
 EOF
 qsub /tmp/gpu_check.pbs
 ```
+
+(Uses `NEW_PY` / `NEW_PROJ` from §4 — run this in the same shell session
+after exporting them there, or replace with the literal paths.)
 
 (`scripts_smoke_gpu_test.py` at the repo root just imports torch, checks
 `cuda.is_available()`, and does one matmul on the GPU — if it doesn't print

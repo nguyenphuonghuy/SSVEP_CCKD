@@ -12,7 +12,7 @@ access point, only the loss formula differs):
       40-class output distribution.
   (2) relational_kd_loss -- similarity-preserving KD (Tung & Mori, ICCV
       2019). Matches the *structure* of pairwise sample similarity (Gram
-      matrix, Frobenius-normalized) instead of forcing absolute feature
+      matrix, row-wise L2-normalized) instead of forcing absolute feature
       equality -- appropriate when teacher/student observe different input
       spaces. This is the mechanism CCKD (the proposed method) uses.
   (3) fitnets_loss -- feature imitation (Romero et al., 2015). Forces

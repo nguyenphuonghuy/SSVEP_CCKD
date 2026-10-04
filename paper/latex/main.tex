@@ -65,7 +65,7 @@ Những đóng góp chính của bài báo được tóm tắt như sau:
 
 \begin{itemize}
     \item Đề xuất Cross-Channel Relational Knowledge Distillation (CCKD), một khung chưng cất tri thức cho bài toán truyền tri thức giữa mô hình teacher và mô hình student sử dụng các cấu hình điện cực EEG khác nhau.
-    \item Chứng minh bằng thực nghiệm trên hai bộ dữ liệu SSVEP công khai (Benchmark, BETA) rằng CCKD cải thiện độ chính xác của các mô hình student sử dụng ít điện cực với backbone FB-tCNN mà không làm tăng chi phí suy luận: cải thiện đạt ý nghĩa thống kê trên BETA ở cả hai cấu hình điện cực trên split subject gốc; trên Benchmark, cả hai cấu hình chưa đạt ý nghĩa thống kê trên riêng split gốc, nhưng kiểm tra đa-split (5 split subject độc lập, 8 seeds/split) xác nhận chiều cải thiện dương này nhất quán và có ý nghĩa thống kê qua các split ở cả bốn cấu hình -- cho thấy đánh giá trên một split subject đơn lẻ có thể đánh giá thấp hiệu quả thực sự của phương pháp. Bổ sung khảo sát độ dài cửa sổ tín hiệu ($0.5$--$2.0$ giây) cho thấy lợi ích của CCKD nhất quán từ $1.0$ giây trở lên (đặc biệt ở cấu hình 3 điện cực) và đường cong ITR đạt điểm cân bằng tốc độ/độ chính xác trong khoảng $1.0$--$2.0$ giây, phù hợp thực hành phổ biến trong lĩnh vực SSVEP.
+    \item Chứng minh bằng thực nghiệm trên hai bộ dữ liệu SSVEP công khai (Benchmark, BETA) rằng CCKD cải thiện độ chính xác của các mô hình student sử dụng ít điện cực với backbone FB-tCNN mà không làm tăng chi phí suy luận: cải thiện đạt ý nghĩa thống kê trên BETA ở cả hai cấu hình điện cực trên split subject gốc; trên Benchmark, cả hai cấu hình chưa đạt ý nghĩa thống kê trên riêng split gốc, nhưng kiểm tra đa-split (5 split subject độc lập, 8 seeds/split) xác nhận chiều cải thiện dương này nhất quán và có ý nghĩa thống kê qua các split ở cả bốn cấu hình -- cho thấy đánh giá trên một split subject đơn lẻ có thể đánh giá thấp hiệu quả thực sự của phương pháp. Bổ sung khảo sát độ dài cửa sổ tín hiệu ($0.5$--$2.0$ giây) cho thấy $\Delta$ dương ở mọi cửa sổ từ $1.0$ giây trở lên, đạt ý nghĩa sau hiệu chỉnh Holm chủ yếu ở cấu hình 3 điện cực (không có kết quả 1 điện cực nào đạt ý nghĩa sau hiệu chỉnh), và đường cong ITR đạt điểm cân bằng tốc độ/độ chính xác trong khoảng $1.0$--$2.0$ giây, phù hợp thực hành phổ biến trong lĩnh vực SSVEP.
     \item Chỉ ra thông qua các thí nghiệm ablation, xác nhận qua đa-split, rằng CCKD (relational KD, không nhiệt độ) là phương pháp \textbf{duy nhất cho $\Delta$Acc trung bình dương và bền ở cả bốn cấu hình điện cực}, so với ba cơ chế KD cổ điển khác được cài đặt lại trên cùng backbone/split/seed để so sánh công bằng: response-based (Logit KD) phụ thuộc mạnh và trái chiều vào nhiệt độ $\tau$ giữa hai cấu hình (dương bền ở 3 điện cực với $\tau=2$, âm bền ở 1 điện cực với $\tau=8$, đòi hỏi dò riêng cho từng cấu hình để có lợi); FitNets và Attention Transfer ngang CCKD ở 3 điện cực nhưng không đạt $\Delta$Acc dương có ý nghĩa ở 1 điện cực dù đã quét lại siêu tham số riêng cho từng cấu hình (loại trừ giả thuyết underfit). CCKD vượt có ý nghĩa thống kê (sau hiệu chỉnh Holm) so với FitNets ở cấu hình 1 điện cực và so với Attention Transfer ở Benchmark-1C và BETA-3C.
     \item Kiểm chứng bằng thực nghiệm thực tế trên phần cứng biên chi phí thấp (Raspberry Pi 4) rằng pipeline suy luận của các mô hình ít điện cực (tiền xử lý filter-bank + forward pass) khả thi vận hành thời gian thực, củng cố tính ứng dụng của hướng tiếp cận giảm điện cực ngoài phòng thí nghiệm.
     \item Đánh giá nghiêm ngặt khả năng tổng quát của CCKD relational sang bốn backbone công khai khác (EEGNet, DeepConvNet, ShallowConvNet, Compact-CNN), mỗi backbone đều được xác nhận qua 5 split subject độc lập (không chỉ nhiều seed trên một split) để loại trừ nhiễu thống kê và sai lệch do cách chia dữ liệu -- quy trình này phát hiện lại và sửa một kết luận sai của chính nghiên cứu (EEGNet, tưởng thất bại toàn diện khi chỉ đánh giá một split, thực chất có hiệu ứng dương vững chắc trên một cấu hình và âm vững chắc trên bộ dữ liệu còn lại); sự phụ thuộc backbone của CCKD relational là có thật nhưng \textbf{không quy giản được về một đặc điểm kiến trúc đơn giản}, một giới hạn quan trọng cần lưu ý trước khi áp dụng CCKD cho backbone khác ngoài FB-tCNN. Một phân tích bổ sung dựa trên Centered Kernel Alignment (CKA) giữa đặc trưng teacher--student cho thấy mức CCKD tăng cường tương đồng biểu diễn tương quan có ý nghĩa thống kê với mức cải thiện độ chính xác (Spearman $\rho=0.627$, $p=0.0031$, $n=20$), cung cấp một tín hiệu định lượng, liên tục -- dù chưa đầy đủ -- để hiểu khi nào phương pháp hiệu quả.
@@ -149,17 +149,17 @@ G_{T}^{l}, G_{S}^{l} \in \mathbb{R}^{N \times N}.
 
 Mỗi phần tử của ma trận biểu diễn mức độ tương đồng giữa một cặp mẫu trong mini-batch. Do đó, ma trận Gram mô tả cấu trúc quan hệ của toàn bộ mini-batch thay vì đặc trưng của từng mẫu riêng lẻ.
 
-Để loại bỏ ảnh hưởng của độ lớn đặc trưng và bảo đảm khả năng so sánh giữa teacher và student, mỗi ma trận Gram được chuẩn hóa theo chuẩn Frobenius
+Để loại bỏ ảnh hưởng của độ lớn đặc trưng và bảo đảm khả năng so sánh giữa teacher và student, mỗi hàng của ma trận Gram được chuẩn hóa L2 độc lập
 \begin{equation}
-\hat{G}_{T}^{l} = \frac{G_{T}^{l}}{\lVert G_{T}^{l} \rVert_F}, \qquad
-\hat{G}_{S}^{l} = \frac{G_{S}^{l}}{\lVert G_{S}^{l} \rVert_F},
+\hat{G}_{T}^{l}[i,:] = \frac{G_{T}^{l}[i,:]}{\lVert G_{T}^{l}[i,:] \rVert_2}, \qquad
+\hat{G}_{S}^{l}[i,:] = \frac{G_{S}^{l}[i,:]}{\lVert G_{S}^{l}[i,:] \rVert_2}, \qquad i = 1, \dots, N,
 \label{eq:norm}
 \end{equation}
-trong đó $\lVert \cdot \rVert_F$ là chuẩn Frobenius. Sau bước chuẩn hóa, quá trình chưng cất chỉ phụ thuộc vào cấu trúc quan hệ giữa các mẫu thay vì giá trị tuyệt đối của các đặc trưng.
+trong đó $\lVert \cdot \rVert_2$ là chuẩn Euclid và $G^{l}[i,:]$ là hàng thứ $i$ của ma trận Gram — vector biểu diễn độ tương đồng giữa mẫu $i$ và toàn bộ mini-batch. Sau bước chuẩn hóa, mỗi hàng của $\hat{G}^{l}$ có chuẩn Euclid bằng 1, nên quá trình chưng cất chỉ phụ thuộc vào cấu trúc tương đồng tương đối giữa các mẫu thay vì giá trị tuyệt đối của đặc trưng.
 
-Relational loss tại tầng thứ $l$ được tính bằng khoảng cách Frobenius giữa hai ma trận quan hệ đã chuẩn hóa
+Relational loss tại tầng thứ $l$ được tính bằng bình phương khoảng cách Frobenius giữa hai ma trận quan hệ đã chuẩn hóa, chia theo kích thước mini-batch để ổn định thang giá trị khi $N$ thay đổi
 \begin{equation}
-\mathcal{L}_{\text{CCKD}}^{l} = \left\lVert \hat{G}_{T}^{l} - \hat{G}_{S}^{l} \right\rVert_F^2.
+\mathcal{L}_{\text{CCKD}}^{l} = \frac{1}{N^2} \left\lVert \hat{G}_{T}^{l} - \hat{G}_{S}^{l} \right\rVert_F^2.
 \label{eq:relloss}
 \end{equation}
 
@@ -170,12 +170,12 @@ Loss này khuyến khích student duy trì cấu trúc quan hệ giữa các m�
 
 Mô hình teacher được huấn luyện trước bằng tín hiệu EEG từ chín điện cực. Sau đó, toàn bộ tham số của teacher được giữ cố định trong quá trình chưng cất. Mô hình student được khởi tạo độc lập và được cập nhật bằng hàm mất mát phân loại kết hợp với hàm mất mát quan hệ đa mức.
 
-Với hai tầng đặc trưng được lựa chọn, hàm mất mát CCKD tổng thể được xác định bởi
+Với $L=2$ tầng đặc trưng được lựa chọn, hàm mất mát CCKD tổng thể được xác định bằng trung bình relational loss qua các tầng
 \begin{equation}
-\mathcal{L}_{\text{CCKD}} = \sum_{l=1}^{2} \alpha_l \mathcal{L}_{\text{CCKD}}^{(l)},
+\mathcal{L}_{\text{CCKD}} = \frac{1}{L}\sum_{l=1}^{L} \mathcal{L}_{\text{CCKD}}^{(l)}, \qquad L = 2,
 \label{eq:total_cckd}
 \end{equation}
-trong đó $\mathcal{L}_{\text{CCKD}}^{(l)}$ là relational loss tại tầng thứ $l$, còn $\alpha_l$ là trọng số của tầng tương ứng. Hàm mục tiêu dùng để tối ưu student được xác định như sau:
+trong đó $\mathcal{L}_{\text{CCKD}}^{(l)}$ là relational loss tại tầng thứ $l$; điều này tương đương đặt trọng số bằng nhau $\alpha_l = 1/L$ cho mọi tầng. Hàm mục tiêu dùng để tối ưu student được xác định như sau:
 \begin{equation}
 \mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \mathcal{L}_{\text{CCKD}},
 \label{eq:total_loss}
@@ -184,7 +184,7 @@ trong đó $\mathcal{L}_{\text{CE}}$ là hàm mất mát cross-entropy của stu
 
 Các phương pháp đối chứng dùng trong thí nghiệm ablation (Mục~\ref{sec:results}) được xây dựng từ cùng khung tổng quát $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{kd} \mathcal{L}_{\text{logit}}(\tau) + \lambda_{sp} \mathcal{L}_{\text{CCKD}}$, trong đó $\mathcal{L}_{\text{logit}}(\tau) = \tau^2 \cdot \mathrm{KL}\!\left(\sigma(\mathbf{z}_T/\tau) \,\|\, \sigma(\mathbf{z}_S/\tau)\right)$ là response-based KD (Hinton et al.) giữa logit teacher $\mathbf{z}_T$ và student $\mathbf{z}_S$ ở nhiệt độ $\tau$: \textbf{Response-based KD} ứng với $\lambda_{sp}=0$; \textbf{Response + Relational KD (hybrid)} ứng với cả $\lambda_{kd}, \lambda_{sp} > 0$; \textbf{Proposed CCKD} (Eq.~\ref{eq:total_loss}) ứng với $\lambda_{kd}=0$.
 
-Thuật toán~\ref{alg:cckd} trình bày quy trình huấn luyện của CCKD. Với mỗi mini-batch, teacher và student thực hiện lan truyền thuận để thu được các đặc trưng tại hai tầng biểu diễn và đầu ra phân loại tương ứng. Đầu ra của student được sử dụng để tính hàm mất mát cross-entropy, trong khi các đặc trưng tại từng tầng được sử dụng để xây dựng các ma trận Gram, chuẩn hóa theo chuẩn Frobenius và tính relational loss. Các relational loss theo từng tầng được tổng hợp thành $\mathcal{L}_{\text{CCKD}}$, sau đó kết hợp với $\mathcal{L}_{\text{CE}}$ để tạo thành hàm mục tiêu tổng thể. Quá trình lan truyền ngược chỉ cập nhật các tham số của student, trong khi teacher được giữ cố định trong toàn bộ quá trình chưng cất.
+Thuật toán~\ref{alg:cckd} trình bày quy trình huấn luyện của CCKD. Với mỗi mini-batch, teacher và student thực hiện lan truyền thuận để thu được các đặc trưng tại hai tầng biểu diễn và đầu ra phân loại tương ứng. Đầu ra của student được sử dụng để tính hàm mất mát cross-entropy, trong khi các đặc trưng tại từng tầng được sử dụng để xây dựng các ma trận Gram, chuẩn hóa L2 theo từng hàng và tính relational loss. Các relational loss theo từng tầng được lấy trung bình thành $\mathcal{L}_{\text{CCKD}}$, sau đó kết hợp với $\mathcal{L}_{\text{CE}}$ để tạo thành hàm mục tiêu tổng thể. Quá trình lan truyền ngược chỉ cập nhật các tham số của student, trong khi teacher được giữ cố định trong toàn bộ quá trình chưng cất.
 
 Sau khi huấn luyện hoàn tất, teacher được loại bỏ và chỉ mô hình student được sử dụng trong giai đoạn suy luận.
 
@@ -203,10 +203,10 @@ Freeze all parameters of the teacher network\;
         \For{$l = 1$ \KwTo $2$}{
             Compute teacher Gram matrix $G_T^{(l)} \leftarrow F_T^{(l)} \left(F_T^{(l)}\right)^T$\;
             Compute student Gram matrix $G_S^{(l)} \leftarrow F_S^{(l)} \left(F_S^{(l)}\right)^T$\;
-            Normalize the Gram matrices: $\hat{G}_T^{(l)} \leftarrow G_T^{(l)} / \lVert G_T^{(l)} \rVert_F$, $\quad \hat{G}_S^{(l)} \leftarrow G_S^{(l)} / \lVert G_S^{(l)} \rVert_F$\;
-            Compute the relational loss $\mathcal{L}_{\text{CCKD}}^{(l)} \leftarrow \left\lVert \hat{G}_T^{(l)} - \hat{G}_S^{(l)} \right\rVert_F^2$\;
+            Row-normalize the Gram matrices ($i = 1,\dots,N$): $\hat{G}_T^{(l)}[i,:] \leftarrow G_T^{(l)}[i,:] / \lVert G_T^{(l)}[i,:] \rVert_2$, $\quad \hat{G}_S^{(l)}[i,:] \leftarrow G_S^{(l)}[i,:] / \lVert G_S^{(l)}[i,:] \rVert_2$\;
+            Compute the relational loss $\mathcal{L}_{\text{CCKD}}^{(l)} \leftarrow \frac{1}{N^2}\left\lVert \hat{G}_T^{(l)} - \hat{G}_S^{(l)} \right\rVert_F^2$\;
         }
-        Aggregate multi-level relational loss: $\mathcal{L}_{\text{CCKD}} \leftarrow \sum_{l=1}^{2} \alpha_l \mathcal{L}_{\text{CCKD}}^{(l)}$\;
+        Aggregate multi-level relational loss: $\mathcal{L}_{\text{CCKD}} \leftarrow \frac{1}{L}\sum_{l=1}^{L} \mathcal{L}_{\text{CCKD}}^{(l)}$\;
         Compute the total objective: $\mathcal{L} \leftarrow \mathcal{L}_{\text{CE}} + \lambda_{sp} \mathcal{L}_{\text{CCKD}}$\;
         Update only the parameters of $\mathcal{S}$ by back-propagation\;
     }
@@ -468,11 +468,44 @@ Window (s) & Dataset & Cấu hình & Baseline (\%) & CCKD (\%) & $\Delta$ (pp) &
 \end{center}
 \end{table}
 
-Bảng~\ref{tab:window} cho thấy hai xu hướng rõ ràng. \textbf{Thứ nhất}, ở cửa sổ rất ngắn (0.5 giây), CCKD không mang lại lợi ích ở bất kỳ cấu hình nào ($p>0.1$ toàn bộ, một điểm ước lượng thậm chí âm nhẹ) -- tín hiệu 0.5 giây có lẽ quá ngắn và nhiều nhiễu để quan hệ giữa các mẫu (nền tảng của relational distillation) được ước lượng đáng tin cậy. \textbf{Thứ hai}, từ 1.0 giây trở lên, cấu hình \textbf{3 điện cực} cho cải thiện dương và đạt $p<0.05$ ở cả ba độ dài cửa sổ đã thử (1.5s, 2.0s, và cả 1.0s khi xét qua đa-split ở Bảng~\ref{tab:multisplit}), trong khi cấu hình \textbf{1 điện cực} chỉ đạt ý nghĩa rõ ràng ở 1.0 giây -- có thể vì ở cửa sổ dài hơn, baseline 1C đã đạt độ chính xác khá cao (situational ceiling effect, ví dụ Benchmark-1C baseline đạt $70.05\%$ ở 2.0 giây), thu hẹp khoảng trống thông tin mà quan hệ giữa các mẫu từ teacher có thể bổ sung.
+\begin{table}[h]
+\caption{Đa-split (5 split subject độc lập, 8 seeds/split, FB-tCNN, relational, $\lambda_{sp}=100$) theo độ dài cửa sổ. $\Delta$Acc (pp) là chênh lệch CCKD $-$ baseline theo từng split; $\bar\Delta \pm$ SD là trung bình/độ lệch chuẩn qua 5 split; $p_t$ là kiểm định $t$ một mẫu trên 5 giá trị $\Delta$ ($H_0$: $\bar\Delta=0$); $p_{\text{Holm}}$ hiệu chỉnh Holm--Bonferroni trên họ 16 phép thử. In đậm nếu $p_{\text{Holm}}<0.05$. Cột 1.0 giây lấy từ Bảng~\ref{tab:multisplit}.}
+\label{tab:window_ms}
+\begin{center}
+\footnotesize
+\begin{tabular}{llcccccccc}
+\toprule
+Window (s) & Cấu hình & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ & $p_{\text{Holm}}$ \\
+\midrule
+\multirow{4}{*}{0.5} & Benchmark-3C & $-0.15$ & $-0.19$ & +1.14 & +0.07 & +0.98 & +0.37 $\pm$ 0.64 & 0.2665 & 0.7994 \\
+ & Benchmark-1C & +0.46 & $-0.50$ & +0.64 & $-0.10$ & $-0.30$ & +0.04 $\pm$ 0.49 & 0.8723 & 0.8723 \\
+ & BETA-3C & +0.21 & +1.02 & +0.49 & +0.45 & +1.21 & +0.68 $\pm$ 0.42 & 0.0229 & 0.1832 \\
+ & BETA-1C & $-0.04$ & +0.48 & +0.43 & +0.30 & +0.08 & +0.25 $\pm$ 0.23 & 0.0679 & 0.4073 \\
+\midrule
+\multirow{4}{*}{1.0} & Benchmark-3C & +0.45 & +1.14 & +0.85 & +1.02 & +1.54 & +1.00 $\pm$ 0.40 & 0.0050 & 0.0599 \\
+ & Benchmark-1C & +0.59 & +0.51 & +0.98 & +1.17 & +0.32 & +0.71 $\pm$ 0.35 & 0.0103 & 0.1137 \\
+ & BETA-3C & +1.05 & +1.29 & +1.12 & +0.97 & +1.50 & +1.19 $\pm$ 0.21 & 0.0002 & \textbf{0.0034} \\
+ & BETA-1C & +1.06 & +1.16 & +0.63 & $-0.06$ & +0.82 & +0.72 $\pm$ 0.48 & 0.0293 & 0.2048 \\
+\midrule
+\multirow{4}{*}{1.5} & Benchmark-3C & +0.82 & +0.79 & +2.37 & +0.69 & +1.23 & +1.18 $\pm$ 0.70 & 0.0195 & 0.1751 \\
+ & Benchmark-1C & +0.74 & +0.07 & +1.28 & +0.41 & +0.14 & +0.53 $\pm$ 0.50 & 0.0763 & 0.4073 \\
+ & BETA-3C & +0.47 & +1.49 & +1.43 & +1.38 & +1.81 & +1.32 $\pm$ 0.50 & 0.0043 & 0.0554 \\
+ & BETA-1C & +0.09 & +1.00 & +0.17 & $-0.12$ & +1.13 & +0.45 $\pm$ 0.57 & 0.1499 & 0.5996 \\
+\midrule
+\multirow{4}{*}{2.0} & Benchmark-3C & +0.54 & +0.89 & +0.78 & +0.53 & +0.87 & +0.72 $\pm$ 0.18 & 0.0008 & \textbf{0.0109} \\
+ & Benchmark-1C & +0.04 & +0.71 & +0.42 & +0.01 & $-0.18$ & +0.20 $\pm$ 0.36 & 0.2834 & 0.7994 \\
+ & BETA-3C & +1.11 & +0.99 & +1.37 & +0.95 & +1.06 & +1.10 $\pm$ 0.17 & 0.0001 & \textbf{0.0019} \\
+ & BETA-1C & +0.46 & +0.84 & +0.59 & +0.11 & +0.62 & +0.52 $\pm$ 0.27 & 0.0122 & 0.1223 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+Bảng~\ref{tab:window} (split gốc) và Bảng~\ref{tab:window_ms} (5 split độc lập) cho thấy các xu hướng sau. \textbf{Thứ nhất}, ở cửa sổ 0.5 giây, Benchmark không có hiệu ứng ($p_t\ge 0.27$, trung bình gần 0), nhưng BETA-3C có $\Delta$ dương ở cả 5/5 split ($+0.68$pp, $p_t=0.023$); hiệu ứng này không còn ý nghĩa sau hiệu chỉnh Holm trên họ 16 phép thử ($p_{\text{Holm}}=0.18$), nên chỉ nên coi là gợi ý yếu. Điều này sửa lại nhận định trên split gốc, nơi mọi $p>0.1$ ở 0.5 giây: đánh giá trên một split đã bỏ sót một hiệu ứng nhỏ nhưng nhất quán. \textbf{Thứ hai}, từ 1.0 giây trở lên, cấu hình \textbf{3 điện cực} cho $\Delta$ dương ở cả 5/5 split và đạt $p_t<0.05$ ở mọi cửa sổ trong dải này cho cả hai bộ dữ liệu; sau Holm, các kết quả còn ý nghĩa là BETA-3C ở 1.0 giây ($p_{\text{Holm}}=0.003$) và 2.0 giây ($p_{\text{Holm}}=0.002$), cùng Benchmark-3C ở 2.0 giây ($p_{\text{Holm}}=0.011$). Cấu hình \textbf{1 điện cực} không có kết quả nào đạt ý nghĩa sau Holm: Benchmark-1C chỉ đạt $p_t<0.05$ ở 1.0 giây ($p_{\text{Holm}}=0.11$), còn BETA-1C đạt $p_t<0.05$ ở 1.0 và 2.0 giây nhưng $p_{\text{Holm}}\ge 0.20$. Giả thuyết ceiling effect (baseline 1C đạt độ chính xác cao hơn ở cửa sổ dài, làm thu hẹp khoảng trống thông tin) phù hợp với Benchmark-1C, nơi $\Delta$ trung bình ở 2.0 giây chỉ $+0.20$pp; nhưng nó không giải thích được BETA-1C, nơi $\Delta$ ở 2.0 giây dương ở 5/5 split ($+0.52$pp) dù baseline chỉ khoảng $56\%$. Vì vậy, nhận định trước đây rằng 1 điện cực chỉ có ý nghĩa ở 1.0 giây cần được nới ra thành: không có kết quả 1 điện cực nào vượt qua hiệu chỉnh Holm trên toàn bộ dải cửa sổ đã thử.
 
 Về ITR, giá trị tăng nhanh khi cửa sổ tăng từ 0.5 lên 1.0--1.5 giây rồi bắt đầu chững lại (Benchmark-3C: $30.72 \to 70.23 \to 73.11 \to 73.37$ bit/phút; BETA-3C: $25.15 \to 46.18 \to 51.47 \to 52.01$), gợi ý điểm cân bằng tốc độ/độ chính xác tối ưu nằm trong khoảng $1.0$--$2.0$ giây cho cả hai bộ dữ liệu -- phù hợp với thực hành phổ biến trong literature SSVEP. Do giới hạn độ dài trial của BETA, chúng tôi không thể xác nhận liệu ITR có tiếp tục tăng, chững hẳn, hay bắt đầu giảm ở cửa sổ trên 2.0 giây; đây là một giới hạn của bộ dữ liệu, không phải của phương pháp.
 
-\textbf{Lưu ý về độ tin cậy.} Các $p$-value ở Bảng~\ref{tab:window} (trừ dòng 1.0s, đã có xác nhận đa-split ở Bảng~\ref{tab:multisplit}) được tính trên \emph{một} split subject đơn lẻ (giống split gốc dùng ở Bảng~\ref{tab:overall}) và \emph{chưa} qua xác nhận đa-split. Theo đúng bài học đã rút ra nhiều lần trong nghiên cứu này, các điểm ước lượng ở 1.5s/2.0s (đặc biệt Benchmark-3C, $p$ giao động quanh ngưỡng $0.03$--$0.05$) có thể đang bị đánh giá thấp hoặc cao hơn thực tế; chúng tôi trình bày đường cong ITR như một mô tả xu hướng tổng thể (đã nhất quán và đơn điệu qua các điểm), không như các phép kiểm định độc lập đã xác nhận vững chắc như Bảng~\ref{tab:multisplit}. Xác nhận đa-split đầy đủ cho toàn dải cửa sổ này là một hướng mở rộng tự nhiên nếu cần độ tin cậy cao hơn cho từng điểm cụ thể.
+\textbf{Lưu ý về độ tin cậy.} Bảng~\ref{tab:window} dùng split gốc (2026) và chỉ là một điểm ước lượng cho mỗi cấu hình; các kết luận thống kê trong đoạn trên dựa trên Bảng~\ref{tab:window_ms}. Ngay cả trên 5 split, $\Delta$ dao động đáng kể theo split (ví dụ Benchmark-3C ở 1.5 giây từ $+0.69$ đến $+2.37$pp), nên giá trị $p$ ở từng cửa sổ vẫn phụ thuộc vào tập subject cụ thể và các kết quả ở mức $p\approx 0.01$--$0.05$ chưa qua hiệu chỉnh nên được đọc thận trọng. Đường cong ITR trong Bảng~\ref{tab:window} chỉ dựa trên split gốc và chỉ nên được xem là mô tả xu hướng.
 
 \subsection{Khả năng tổng quát trên các kiến trúc mạng khác nhau}
 \label{sec:generalization}

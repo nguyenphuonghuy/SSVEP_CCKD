@@ -1,0 +1,19 @@
+#!/bin/bash
+#PBS -N smoke_mpsfix
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=2:mem=8gb:gpu_slots=1
+#PBS -l walltime=00:10:00
+#PBS -j oe
+
+set -uo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/smoke_mpsfix_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs"
+{
+  echo "START: $(date) | NODE: $(hostname) | whoami: $(whoami) | CUDA_MPS_PIPE_DIRECTORY=$CUDA_MPS_PIPE_DIRECTORY"
+  "$PY" "$PROJ/scripts_smoke_gpu_test.py"
+  echo "END: $(date)"
+} > "$LOG" 2>&1

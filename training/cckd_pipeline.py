@@ -88,10 +88,10 @@ class PairedDS(Dataset):
 @torch.no_grad()
 def eval_per_subject(model, X, y, s, device):
     model.eval()
-    xb = torch.from_numpy(X).to(device)
+    xb = torch.from_numpy(X)
     pred = []
     for i in range(0, len(xb), 512):
-        pred.append(model(xb[i:i + 512]).argmax(1).cpu())
+        pred.append(model(xb[i:i + 512].to(device)).argmax(1).cpu())
     pred = torch.cat(pred).numpy()
     accs = {int(sub): float((pred[s == sub] == y[s == sub]).mean()) for sub in np.unique(s)}
     return accs

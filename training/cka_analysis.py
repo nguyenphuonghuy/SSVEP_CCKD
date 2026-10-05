@@ -61,10 +61,10 @@ def linear_cka(X: np.ndarray, Y: np.ndarray) -> float:
 def extract_features(model, X: np.ndarray, device, batch: int = 512) -> np.ndarray:
     """Final penultimate feature level (last element if list, else the tensor)."""
     model.eval()
-    xb = torch.from_numpy(X).to(device)
+    xb = torch.from_numpy(X)
     feats = []
     for i in range(0, len(xb), batch):
-        _, f = model(xb[i:i + batch], return_feat=True)
+        _, f = model(xb[i:i + batch].to(device), return_feat=True)
         if isinstance(f, (list, tuple)):
             f = f[-1]
         feats.append(f.flatten(1).cpu().numpy())

@@ -270,6 +270,9 @@ def main():
         float(deep_get(cfg, "dataset.sfreq")),
         bands,
         channels,
+        order=int(deep_get(cfg, "filterbank.order", 4)),
+        ripple_db=float(deep_get(cfg, "filterbank.ripple_db", 1.0)),
+        normalize=bool(deep_get(cfg, "filterbank.normalize_per_trial_channel", True)),
     )
 
     LOG.info(

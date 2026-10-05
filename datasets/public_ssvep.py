@@ -9,19 +9,33 @@ from typing import Iterable, Tuple
 import numpy as np
 
 
+def _h5_to_python(obj):
+    import h5py
+    if isinstance(obj, h5py.Dataset):
+        return np.array(obj)
+    return {k: _h5_to_python(v) for k, v in obj.items()}
+
+
 def _read_mat(path: Path) -> dict:
     try:
         from scipy.io import loadmat
         return loadmat(path)
     except NotImplementedError:
         import h5py
-        out = {}
         with h5py.File(path, "r") as f:
-            for k in f.keys():
-                obj = f[k]
-                if hasattr(obj, "shape"):
-                    out[k] = np.array(obj)
-        return out
+            return {k: _h5_to_python(f[k]) for k in f.keys()}
+
+
+def _collect_4d(obj: dict) -> list:
+    found = []
+    for k, v in obj.items():
+        if k.startswith("__"):
+            continue
+        if isinstance(v, dict):
+            found.extend(_collect_4d(v))
+        elif isinstance(v, np.ndarray) and v.ndim == 4:
+            found.append((k, np.asarray(v)))
+    return found
 
 
 def _find_subject_file(root: Path, subject_id: int) -> Path:
@@ -72,8 +86,11 @@ def _select_4d_array(mat: dict, preferred_key: str = "data") -> np.ndarray:
         found = _find_4d_in_struct(mat[preferred_key])
         if found is not None:
             return found
-    arrays = [(k, np.asarray(v)) for k, v in mat.items()
-              if not k.startswith("__") and isinstance(v, np.ndarray) and v.ndim == 4]
+    if preferred_key in mat and isinstance(mat[preferred_key], dict):
+        nested = _collect_4d(mat[preferred_key])
+        if nested:
+            return max(nested, key=lambda kv: kv[1].size)[1]
+    arrays = _collect_4d(mat)
     if not arrays:
         shapes = {k: getattr(v, "shape", None) for k, v in mat.items() if not k.startswith("__")}
         raise ValueError(f"No 4-D EEG tensor found. MAT variables: {shapes}")

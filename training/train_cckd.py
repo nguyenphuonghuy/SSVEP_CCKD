@@ -147,8 +147,8 @@ def main():
 
     def _load_ckpt():
         if not ckpt_path.exists():
-            return {"completed_seeds": [], "teacher_te": {}, "store": {k: {} for k in store_keys},
-                    "teacher_params": None}
+            return {"fingerprint": None, "completed_seeds": [], "teacher_te": {},
+                    "store": {k: {} for k in store_keys}, "val": {}, "teacher_params": None}
         with open(ckpt_path) as f:
             c = json.load(f)
         # JSON round-trips subject ids (dict keys) and seeds (dict keys) as strings.
@@ -156,6 +156,7 @@ def main():
                             for s, d in c["teacher_te"].items()}
         c["store"] = {k: {int(s): {int(sub): acc for sub, acc in d.items()} for s, d in v.items()}
                       for k, v in c["store"].items()}
+        c["val"] = {k: {int(s): v for s, v in d.items()} for k, d in c["val"].items()}
         return c
 
     def _save_ckpt(ckpt):
@@ -164,7 +165,19 @@ def main():
             json.dump(ckpt, f)
         tmp.replace(ckpt_path)  # atomic on the same filesystem
 
+    fingerprint = {
+        "dataset": a.dataset, "data_root": str(a.data_root), "config_path": cfg_path,
+        "teacher_channel_indices": [int(i) for i in ch_indices], "mat_key": mat_key,
+        "backbone": a.backbone, "n_bands": a.n_bands, "window_s": a.window_s,
+        "t_start": a.t_start, "split": list(split), "split_seed": a.split_seed,
+        "n_samples": int(n_samples), "students": list(a.students), "modes": list(a.modes),
+        "train": CONFIG,
+    }
     ckpt = _load_ckpt()
+    if ckpt["completed_seeds"] and ckpt["fingerprint"] != fingerprint:
+        raise SystemExit(f"{ckpt_path} was written by a different configuration; refusing to resume. "
+                         "Delete it or use a new --output_dir.")
+    ckpt["fingerprint"] = fingerprint
     if ckpt["completed_seeds"]:
         log(f"  Resuming from checkpoint: {len(ckpt['completed_seeds'])}/{len(a.seeds)} "
             f"seed(s) already done ({ckpt['completed_seeds']})\n")
@@ -189,12 +202,14 @@ def main():
             f"params={teacher_params}")
 
         seed_store = {}
+        seed_val = {"teacher_9C": float(tva)}
         for c in a.students:
             Xtr_c, ytr_c = inp[c]["tr"]; Xva_c, yva_c, sva_c = inp[c]["va"]
             base = build(c)
             base, bva = P.train_ce(base, Xtr_c, ytr_c, Xva_c, yva_c, sva_c, CONFIG, device)
             b_acc = P.eval_per_subject(base, *inp[c]["te"], device)
             seed_store[f"{c}_baseline"] = b_acc
+            seed_val[f"{c}_baseline"] = float(bva)
             log(f"  {c} baseline: test={np.mean(list(b_acc.values())):.4f}")
             for md in a.modes:
                 stud = build(c)
@@ -202,6 +217,7 @@ def main():
                                         Xva_c, yva_c, sva_c, CONFIG, device, mode=md)
                 k_acc = P.eval_per_subject(stud, *inp[c]["te"], device)
                 seed_store[f"{c}_{md}"] = k_acc
+                seed_val[f"{c}_{md}"] = float(kva)
                 log(f"  {c} {md}: test={np.mean(list(k_acc.values())):.4f}")
         log("")
 
@@ -212,6 +228,8 @@ def main():
         ckpt["teacher_params"] = teacher_params
         for k, v in seed_store.items():
             ckpt["store"][k][seed] = v
+        for k, v in seed_val.items():
+            ckpt["val"].setdefault(k, {})[seed] = v
         _save_ckpt(ckpt)
 
     teacher_te = [ckpt["teacher_te"][s] for s in a.seeds]
@@ -219,7 +237,7 @@ def main():
     for k in store_keys:
         store[k] = [ckpt["store"][k][s] for s in a.seeds]
 
-    log("=" * 72); log("  RESULTS (mean +/- std over seeds, fixed test set)"); log("=" * 72)
+    log("=" * 72); log("  RESULTS (test set; +/- = SD across subjects after seed averaging)"); log("=" * 72)
     results["runs"]["teacher_9C"] = P.summarize(teacher_te, a.window_s)
     results["runs"]["teacher_9C"]["params"] = teacher_params
     log(f"  teacher-9C: {results['runs']['teacher_9C']['mean_acc']*100:.2f}% "
@@ -227,7 +245,7 @@ def main():
     for c in a.students:
         base_sum = P.summarize(store[f"{c}_baseline"], a.window_s)
         results["runs"][f"{c}_baseline"] = base_sum
-        log(f"\n  {c} baseline: {base_sum['mean_acc']*100:.2f}% +/- {base_sum['std_acc']*100:.2f} "
+        log(f"\n  {c} baseline: {base_sum['mean_acc']*100:.2f}% +/- {base_sum['std_acc']*100:.2f} SD(subj) "
             f"(ITR={base_sum['itr']:.1f})")
         for md in a.modes:
             kd_sum = P.summarize(store[f"{c}_{md}"], a.window_s)
@@ -236,12 +254,15 @@ def main():
             st = P.paired_stats(store[f"{c}_baseline"], store[f"{c}_{md}"])
             results["runs"][f"{c}_{md}"]["paired_vs_baseline"] = st
             sig = "***" if st["wilcoxon_p"] < 0.05 else ""
-            log(f"  {c} {md}: {kd_sum['mean_acc']*100:.2f}% +/- {kd_sum['std_acc']*100:.2f} "
+            log(f"  {c} {md}: {kd_sum['mean_acc']*100:.2f}% +/- {kd_sum['std_acc']*100:.2f} SD(subj) "
                 f"(ITR={kd_sum['itr']:.1f}) | gain {gain:+.2f}pp")
             log(f"        paired: delta={st['mean_delta_pp']:+.2f}pp "
                 f"| improved {st['n_improved']}/{st['n_subjects']} subj "
                 f"| Wilcoxon p={st['wilcoxon_p']:.4f} {sig}")
 
+    results["val_best_per_seed"] = {k: [ckpt["val"][k][s] for s in a.seeds]
+                                    for k in ["teacher_9C"] + store_keys}
+    results["config"]["model_selection"] = "best validation accuracy per run; test set not used"
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
     out = out_dir / f"cckd_{a.backbone}_{a.dataset}_{a.window_s}s_{ts}.json"
     with open(out, "w") as f:

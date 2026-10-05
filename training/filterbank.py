@@ -51,13 +51,18 @@ def apply_filterbank(
 
 
 def cache_key(dataset: str, shape: Iterable[int], sfreq: float,
-              bands: Sequence[Band], channel_indices: Sequence[int]) -> str:
+              bands: Sequence[Band], channel_indices: Sequence[int],
+              order: int, ripple_db: float, normalize: bool, data_digest: str) -> str:
     payload = {
         "dataset": dataset,
         "shape": list(shape),
         "sfreq": sfreq,
         "bands": [list(b) for b in bands],
         "channels": list(channel_indices),
+        "order": order,
+        "ripple_db": ripple_db,
+        "normalize": normalize,
+        "data_digest": data_digest,
     }
     return hashlib.sha1(json.dumps(payload, sort_keys=True).encode()).hexdigest()[:12]
 
@@ -69,13 +74,19 @@ def load_or_create_cache(
     sfreq: float,
     bands: Sequence[Band],
     channel_indices: Sequence[int],
+    order: int = 4,
+    ripple_db: float = 1.0,
+    normalize: bool = True,
 ) -> np.ndarray:
     cache_dir = Path(cache_dir)
     cache_dir.mkdir(parents=True, exist_ok=True)
-    key = cache_key(dataset, X.shape, sfreq, bands, channel_indices)
+    data_digest = hashlib.sha1(memoryview(np.ascontiguousarray(X))).hexdigest()
+    key = cache_key(dataset, X.shape, sfreq, bands, channel_indices,
+                    order, ripple_db, normalize, data_digest)
     path = cache_dir / f"fbtcnn_{dataset}_{key}.npy"
     if path.exists():
         return np.load(path, mmap_mode="r")
-    X_fb = apply_filterbank(X, sfreq=sfreq, bands=bands)
+    X_fb = apply_filterbank(X, sfreq=sfreq, bands=bands, order=order,
+                            ripple_db=ripple_db, normalize=normalize)
     np.save(path, X_fb)
     return np.load(path, mmap_mode="r")

@@ -1,0 +1,20 @@
+#!/bin/bash
+#PBS -N t7_inprocess_beta
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=02:00:00
+#PBS -j oe
+
+set -uo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/t7_inprocess_beta_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  "$PY" scripts/determinism_inprocess.py --dataset beta
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

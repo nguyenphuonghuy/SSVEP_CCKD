@@ -1,0 +1,29 @@
+#!/bin/bash
+#PBS -N t8_sota_bt
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=12:00:00
+#PBS -j oe
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module2/tier8_sota_rerun/beta_8seed
+LOG=$PROJ/logs/t8_sota_bt_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Tier 8 tab:sota rerun (verified source): beta, FB-tCNN, window 1.0s, split_seed=2026, 8 seeds, modes logit+hybrid, tau=4.0, lambda_sp=100."
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone fbtcnn --n_bands 3 --window_s 1.0 \
+    --split_seed 2026 \
+    --seeds 2026 2027 2028 2029 2030 2031 2032 2033 --modes logit hybrid \
+    --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

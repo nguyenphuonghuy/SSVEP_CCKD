@@ -1,0 +1,34 @@
+#!/bin/bash
+#PBS -N t7_determinism_beta
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=03:00:00
+#PBS -j oe
+
+set -uo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+LOG=$PROJ/logs/t7_determinism_beta_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Tier 7 nondeterminism check: 5 independent repeats of the IDENTICAL config"
+  echo "(beta, split_seed=2026, seed=2026, lambda_sp=100, relational, FB-tCNN)."
+  for i in 1 2 3 4 5; do
+    OUT_DIR=$PROJ/results/module2/tier7_determinism_beta/rep$i
+    mkdir -p "$OUT_DIR"
+    echo "--- repeat $i ---"
+    "$PY" training/train_cckd.py \
+      --dataset beta --data_root "$DATA_ROOT" \
+      --backbone fbtcnn --n_bands 3 --window_s 1.0 \
+      --split_seed 2026 \
+      --seeds 2026 --modes relational \
+      --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+      --output_dir "$OUT_DIR" --device cuda
+  done
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

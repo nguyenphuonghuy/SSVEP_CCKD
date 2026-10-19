@@ -9,6 +9,17 @@ numbers produced here are directly comparable/reproducible.
              Exposes TWO feature levels for multi-level relational distillation:
              feat_mid (pre-fusion, ~736-d @ 250 samples) and feat (post-fusion, 32-d).
   - EEGNet : EEGNet-8,2 (depthwise spatial conv also collapses channels to height 1).
+
+Feature API (every backbone):
+  - forward(x, return_feat=True)  -> (logits, list)  LEGACY, unchanged: FB-tCNN returns
+    [feat_mid(736-d), feat(32-d)], every other backbone returns [feat(penultimate)].
+  - forward(x, return_feat="all") -> (logits, dict) with named levels:
+      "mid"  : output of the spatial (C,1) convolution block right after its BN +
+               nonlinearity, before pooling/dropout (the point where the electrode
+               dimension has just been collapsed); defined the same way for all backbones.
+      "last" : penultimate feature (the input of the classifier).
+    FB-tCNN additionally returns "mid736" (the legacy pre-conv4 fused map).
+Computation is identical in both modes, so logits do not depend on return_feat.
 """
 from __future__ import annotations
 
@@ -89,15 +100,16 @@ class FBTCNN(nn.Module):
         self.feat_dim = 32
         self.classifier = nn.Linear(32, n_classes)
 
-    def _branch(self, xb: torch.Tensor) -> torch.Tensor:
-        x = F.elu(self.bn1(self.conv1(xb)))
-        x = self.drop(x)
+    def _branch(self, xb: torch.Tensor):
+        """Returns (spatial-block output, branch output)."""
+        sp = F.elu(self.bn1(self.conv1(xb)))
+        x = self.drop(sp)
         x = F.elu(self.bn2(self.conv2(x)))
         x = self.drop(x)
         x = F.elu(self.bn3(self.conv3(x)))
-        return x
+        return sp, x
 
-    def forward(self, x: torch.Tensor, return_feat: bool = False):
+    def forward(self, x: torch.Tensor, return_feat=False):
         if x.dim() == 3:
             x = x.unsqueeze(1)
         if self.n_bands > 1:
@@ -105,13 +117,16 @@ class FBTCNN(nn.Module):
                 f"FBTCNN expects [B,{self.n_bands},C,T], got {tuple(x.shape)} "
                 f"(apply_filter_bank first)"
             )
-        feats = [self._branch(x[:, b:b + 1]) for b in range(x.shape[1])]
-        x = torch.stack(feats, 0).sum(0)
+        outs = [self._branch(x[:, b:b + 1]) for b in range(x.shape[1])]
+        x = torch.stack([o[1] for o in outs], 0).sum(0)
         feat_mid = x.flatten(1)
         x = self.drop(x)
         x = F.elu(self.bn4(self.conv4(x)))
         feat = x.flatten(1)
         logits = self.classifier(self.drop(feat))
+        if return_feat == "all":
+            sp = torch.cat([o[0].flatten(1) for o in outs], 1)  # per-band spatial maps
+            return logits, {"mid": sp, "mid736": feat_mid, "last": feat}
         return (logits, [feat_mid, feat]) if return_feat else logits
 
 
@@ -142,16 +157,25 @@ class EEGNet(nn.Module):
             self.feat_dim = d.shape[1]
         self.classifier = nn.Linear(self.feat_dim, n_classes)
 
-    def _features(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.block1(x)
-        x = self.block2(x)
-        return x.flatten(1)
+    # Index of the ELU that follows the depthwise spatial conv + BN in block1.
+    _SPATIAL_ACT_IDX = 4
 
-    def forward(self, x: torch.Tensor, return_feat: bool = False):
+    def _features(self, x: torch.Tensor, with_mid: bool = False):
+        sp = None
+        for i, layer in enumerate(self.block1):
+            x = layer(x)
+            if i == self._SPATIAL_ACT_IDX:
+                sp = x
+        x = self.block2(x)
+        return (sp.flatten(1), x.flatten(1)) if with_mid else x.flatten(1)
+
+    def forward(self, x: torch.Tensor, return_feat=False):
         if x.dim() == 3:
             x = x.unsqueeze(1)
-        feat = self._features(x)
+        sp, feat = self._features(x, with_mid=True)
         logits = self.classifier(feat)
+        if return_feat == "all":
+            return logits, {"mid": sp, "last": feat}
         return (logits, [feat]) if return_feat else logits
 
 
@@ -194,18 +218,20 @@ class DeepConvNet(nn.Module):
             self.feat_dim = d.shape[1]
         self.classifier = nn.Linear(self.feat_dim, n_classes)
 
-    def _features(self, x: torch.Tensor) -> torch.Tensor:
-        x = self.spat_conv1(self.temp_conv1(x))
-        x = self.drop1(self.pool1(F.elu(self.bn1(x))))
+    def _features(self, x: torch.Tensor, with_mid: bool = False):
+        sp = F.elu(self.bn1(self.spat_conv1(self.temp_conv1(x))))
+        x = self.drop1(self.pool1(sp))
         x = self.drop2(self.pool2(F.elu(self.bn2(self.conv2(x)))))
         x = self.drop3(self.pool3(F.elu(self.bn3(self.conv3(x)))))
-        return x.flatten(1)
+        return (sp.flatten(1), x.flatten(1)) if with_mid else x.flatten(1)
 
-    def forward(self, x: torch.Tensor, return_feat: bool = False):
+    def forward(self, x: torch.Tensor, return_feat=False):
         if x.dim() == 3:
             x = x.unsqueeze(1)
-        feat = self._features(x)
+        sp, feat = self._features(x, with_mid=True)
         logits = self.classifier(feat)
+        if return_feat == "all":
+            return logits, {"mid": sp, "last": feat}
         return (logits, [feat]) if return_feat else logits
 
 
@@ -263,19 +289,21 @@ class ShallowConvNet(nn.Module):
             self.feat_dim = d.shape[1]
         self.classifier = nn.Linear(self.feat_dim, n_classes)
 
-    def _features(self, x: torch.Tensor) -> torch.Tensor:
+    def _features(self, x: torch.Tensor, with_mid: bool = False):
         x = self.bn(self.spat_conv(self.temp_conv(x)))
-        x = x.pow(2)
-        x = self.pool(x)
+        sp = x.pow(2)  # square is this backbone's nonlinearity
+        x = self.pool(sp)
         x = torch.log(torch.clamp(x, min=1e-6))
         x = self.drop(x)
-        return x.flatten(1)
+        return (sp.flatten(1), x.flatten(1)) if with_mid else x.flatten(1)
 
-    def forward(self, x: torch.Tensor, return_feat: bool = False):
+    def forward(self, x: torch.Tensor, return_feat=False):
         if x.dim() == 3:
             x = x.unsqueeze(1)
-        feat = self._features(x)
+        sp, feat = self._features(x, with_mid=True)
         logits = self.classifier(feat)
+        if return_feat == "all":
+            return logits, {"mid": sp, "last": feat}
         return (logits, [feat]) if return_feat else logits
 
 

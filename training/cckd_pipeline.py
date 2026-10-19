@@ -28,7 +28,23 @@ CH_POS = {
     "9C": list(range(9)),   # teacher
     "3C": [6, 7, 8],         # O1, Oz, O2
     "1C": [7],                # Oz
+    # Alternative student montages (montage-sensitivity study, plan N3).
+    "3C_PPO": [2, 3, 4],     # PO3, POz, PO4 (shifted to parieto-occipital)
+    "3C_POO": [3, 6, 8],     # POz, O1, O2
+    "1C_POz": [3],            # POz
+    "1C_O1": [6],             # O1
 }
+CH_NAMES = ["Pz", "PO5", "PO3", "POz", "PO4", "PO6", "O1", "Oz", "O2"]
+
+# Feature levels distilled for each --kd_layers value (see models/cckd_backbones.py).
+# "legacy" reproduces the Module 2 / ICERA behaviour exactly: FB-tCNN distills
+# [mid736, last], every other backbone distills [last] only.
+KD_LAYERS = {
+    "last": ["last"],
+    "mid": ["mid"],
+    "both": ["mid", "last"],
+}
+CKA_LAYERS = ("mid", "last")
 FS_PHYS = 250
 GAZE_SHIFT = 0.5
 N_CLASSES = 40
@@ -125,14 +141,25 @@ def train_ce(model, Xtr, ytr, Xva, yva, sva, cfg, device):
     return model, best
 
 
-def train_kd(student, teacher, Xs_tr, Xt_tr, ytr, Xs_va, yva, sva, cfg, device, mode="relational"):
+def _kd_feats(model, x, kd_layers):
+    if kd_layers == "legacy":
+        return model(x, return_feat=True)
+    z, d = model(x, return_feat="all")
+    return z, [d[n] for n in KD_LAYERS[kd_layers]]
+
+
+def train_kd(student, teacher, Xs_tr, Xt_tr, ytr, Xs_va, yva, sva, cfg, device, mode="relational",
+             kd_layers="legacy"):
     """mode: 'logit' (response-based only) | 'relational' (proposed CCKD only)
     | 'hybrid' (response + relational) | 'fitnets' (feature-imitation baseline,
     Romero et al. 2015) | 'attention' (attention-transfer baseline, Zagoruyko
     & Komodakis 2017). The two new baselines are feature-only (no logit term),
     matching how 'relational' is treated, and use their own lambda_sp slot
     value (cfg["lambda_sp"]) since MSE-based losses have a different natural
-    scale from the Gram-matrix relational loss."""
+    scale from the Gram-matrix relational loss.
+
+    kd_layers: 'legacy' | 'last' | 'mid' | 'both' (see KD_LAYERS). With several
+    levels, the feature loss is the mean over levels (CCKDLoss)."""
     feature_loss = mode if mode in ("fitnets", "attention") else "relational"
     lkd = 0.0 if mode in ("relational", "fitnets", "attention") else cfg["lambda_kd"]
     lsp = 0.0 if mode == "logit" else cfg["lambda_sp"]
@@ -151,9 +178,9 @@ def train_kd(student, teacher, Xs_tr, Xt_tr, ytr, Xs_va, yva, sva, cfg, device, 
         for (xs, xt), yb in tr:
             xs, xt, yb = xs.to(device), xt.to(device), yb.to(device)
             opt.zero_grad(set_to_none=True)
-            zs, fs = student(xs, return_feat=True)
+            zs, fs = _kd_feats(student, xs, kd_layers)
             with torch.no_grad():
-                zt, ft = teacher(xt, return_feat=True)
+                zt, ft = _kd_feats(teacher, xt, kd_layers)
             loss, parts = crit(zs, fs, zt, ft, yb)
             loss.backward(); opt.step()
             for k in agg:
@@ -165,6 +192,38 @@ def train_kd(student, teacher, Xs_tr, Xt_tr, ytr, Xs_va, yva, sva, cfg, device, 
             best, state = va, {k: v.clone() for k, v in student.state_dict().items()}
     student.load_state_dict(state)
     return student, best
+
+
+@torch.no_grad()
+def extract_named_feats(model, X, device, names=CKA_LAYERS, batch=256):
+    """Named feature levels on X (eval mode), concatenated, float64, kept on `device`."""
+    model.eval()
+    xb = torch.from_numpy(X)
+    out = {n: [] for n in names}
+    for i in range(0, len(xb), batch):
+        _, d = model(xb[i:i + batch].to(device), return_feat="all")
+        for n in names:
+            out[n].append(d[n].flatten(1).double())
+    return {n: torch.cat(v) for n, v in out.items()}
+
+
+@torch.no_grad()
+def linear_cka(X, Y):
+    """Linear CKA (Kornblith et al., 2019) in Gram form, X: [n, d1], Y: [n, d2].
+    Equal to ||Xc^T Yc||_F^2 / (||Xc^T Xc||_F ||Yc^T Yc||_F) but needs only n x n
+    memory, which matters for the wide "mid" levels (up to 24000-d)."""
+    X = X - X.mean(0, keepdim=True)
+    Y = Y - Y.mean(0, keepdim=True)
+    K, L = X @ X.T, Y @ Y.T
+    den = torch.linalg.norm(K) * torch.linalg.norm(L)
+    if den < 1e-12:
+        return float("nan")
+    return float((K * L).sum() / den)
+
+
+def cka_vs_teacher(teacher_feats, student, X, device):
+    sf = extract_named_feats(student, X, device, names=tuple(teacher_feats))
+    return {n: linear_cka(teacher_feats[n], sf[n]) for n in teacher_feats}
 
 
 def itr(acc, window_s, n_classes=N_CLASSES, gaze=GAZE_SHIFT):

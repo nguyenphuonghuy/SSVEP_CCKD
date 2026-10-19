@@ -1,0 +1,32 @@
+#!/bin/bash
+#PBS -N m3_n0_eeg_bt
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
+#PBS -l walltime=02:00:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_n0_eeg_bt.pbs.out
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module3/n0_smoke/beta_eegnet
+LOG=$PROJ/logs/m3_n0_eeg_bt_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs" "$OUT_DIR"
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  echo "Module 3 N0 smoke: eegnet on beta. Regression test vs HEAD backbones, then 2-epoch run,"
+  echo "1 seed, 6 student montages, kd_layers last/mid/both, CKA on, CSV + config output."
+  "$PY" tests/test_module3_features.py --old_backbones results/module3/n0_smoke/old_cckd_backbones_HEAD.py
+  "$PY" training/train_cckd.py \
+    --dataset beta --data_root "$DATA_ROOT" \
+    --backbone eegnet --n_bands 3 --window_s 1.0 --split_seed 2026 \
+    --seeds 2026 --students 3C 1C 3C_PPO 3C_POO 1C_POz 1C_O1 \
+    --modes relational --kd_layers last mid both \
+    --epochs 2 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
+    --output_dir "$OUT_DIR" --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

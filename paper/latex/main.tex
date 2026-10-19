@@ -14,11 +14,17 @@
 \usepackage{longtable}
 \usepackage{multirow}
 \usepackage{booktabs}
+\usepackage{xcolor}
 \usepackage[ruled,linesnumbered]{algorithm2e}
 \SetKwInOut{KwRequire}{Require}
 \SetKwInOut{KwEnsure}{Ensure}
 
-\title{Cross-Channel Relational Knowledge Distillation for Low-Electrode SSVEP Recognition}
+% Bản nháp tiếng Việt: \tbd đánh dấu số liệu chờ thí nghiệm (paper/TMLR_pivot_plan.md),
+% \cantrich đánh dấu chỗ cần bổ sung trích dẫn đã kiểm chứng DOI. Xoá cả hai trước khi nộp.
+\newcommand{\tbd}[1]{\textcolor{red}{[TBD: #1]}}
+\newcommand{\cantrich}[1]{\textcolor{orange}{[cần trích dẫn: #1]}}
+
+\title{When Does Relational Distillation Transfer Across Electrode Montages? A Multi-Backbone Study for Low-Electrode SSVEP Recognition}
 
 % Authors must not appear in the submitted version. They should be hidden
 % as long as the tmlr package is used without the [accepted] or [preprint] options.
@@ -39,416 +45,450 @@
 \maketitle
 
 \begin{abstract}
-Các hệ thống giao diện não--máy (Brain--Computer Interface -- BCI) dựa trên tín hiệu Steady-State Visual Evoked Potential (SSVEP) thường sử dụng tín hiệu EEG từ nhiều điện cực vùng chẩm để đạt độ chính xác nhận dạng cao. Tuy nhiên, việc sử dụng nhiều điện cực gây khó khăn khi tích hợp vào các hệ thống BCI đeo. Knowledge Distillation (KD) đã được nghiên cứu rộng rãi để truyền tri thức giữa các mô hình học sâu, nhưng phần lớn các phương pháp hiện có giả định teacher và student sử dụng cùng cấu hình đầu vào. Bài báo đề xuất Cross-Channel Relational Knowledge Distillation (CCKD) cho trường hợp teacher sử dụng nhiều điện cực và student sử dụng ít điện cực. Thay vì yêu cầu student mô phỏng phân bố đầu ra của teacher, CCKD hướng student học các quan hệ giữa các mẫu được tính từ đặc trưng của hai mô hình. CCKD được đánh giá trên hai bộ dữ liệu SSVEP công khai (Benchmark và BETA) với hai cấu hình student gồm ba điện cực và một điện cực, sử dụng backbone FB-tCNN -- kiến trúc filter-bank tiêu chuẩn của lĩnh vực SSVEP. Trên split subject gốc, CCKD cải thiện có ý nghĩa thống kê ở cả hai cấu hình trên BETA (38.41\% lên 39.46\%, và 34.62\% lên 35.68\%), trong khi trên Benchmark mức cải thiện khiêm tốn hơn và chưa đạt ngưỡng ý nghĩa trên riêng split này (50.99\% lên 51.44\%, và 44.55\% lên 45.14\%). Tuy nhiên, lặp lại toàn bộ thí nghiệm trên bốn split subject độc lập khác cho thấy chiều cải thiện trung bình là dương ở cả bốn cấu hình, với \textbf{19/20 cặp split--cấu hình dương} (kiểm định t một mẫu qua các split đạt ý nghĩa thống kê cho toàn bộ bốn cấu hình, kể cả hai cấu hình Benchmark), cho thấy kết quả trên một split subject đơn lẻ có thể đánh giá thấp mức cải thiện thực sự khi số subject kiểm thử nhỏ. Kết quả thí nghiệm ablation trên FB-tCNN cho thấy truyền tri thức dựa trên quan hệ giữa các mẫu ổn định hơn truyền tri thức dựa trên phân bố đầu ra, vốn không mang lại cải thiện nhất quán. Để kiểm tra độ vững chắc của phương pháp ngoài kiến trúc SSVEP mục tiêu này, chúng tôi tiếp tục khảo sát CCKD trên bốn backbone công khai khác (EEGNet, DeepConvNet, ShallowConvNet, Compact-CNN), tất cả đều được xác nhận qua 5 split subject độc lập (8 seeds/split) -- cùng quy trình đã tiết lộ hiệu ứng dương thật của FB-tCNN. Khảo sát này cho thấy không có một mẫu hình kiến trúc đơn giản nào giải thích được toàn bộ dữ liệu: DeepConvNet thuận lợi ở 3/4 cấu hình như FB-tCNN; ShallowConvNet (cùng nhóm cơ chế) lại cho hiệu ứng \textbf{âm nhất quán} trên Benchmark và trung tính trên BETA; EEGNet, backbone ban đầu tưởng "thất bại toàn diện" khi chỉ đánh giá trên một split, hoá ra cũng có cấu trúc phụ thuộc dataset tương tự nhưng ngược chiều -- \textbf{dương vững chắc trên Benchmark-3C}, âm vững chắc trên cả hai cấu hình BETA; Compact-CNN trung tính nhất quán ở cả bốn cấu hình. Không backbone/bộ dữ liệu nào khác cho thấy sự thất bại toàn diện và nhất quán như ấn tượng ban đầu (dựa trên một split) từng gợi ý -- một minh hoạ mạnh cho việc đánh giá đa-split là cần thiết, không ảnh hưởng đến kết quả chính trên kiến trúc SSVEP mục tiêu của nghiên cứu.
+Chưng cất tri thức (knowledge distillation, KD) từ một mô hình thầy (teacher) dùng nhiều điện cực có thể bù lại một phần độ chính xác bị mất khi bộ giải mã SSVEP chỉ dùng ít điện cực. Một nghiên cứu trước đã báo cáo mức cải thiện như vậy cho chưng cất quan hệ xuyên kênh (cross-channel relational KD, CCKD) trên một kiến trúc duy nhất là FB-tCNN \citep{icera2026cckd}. Chưa rõ mức cải thiện này có giữ được trên các kiến trúc khác không và đại lượng nào dự đoán được nó. Bài báo đánh giá CCKD trên năm kiến trúc công khai (FB-tCNN, DeepConvNet, ShallowConvNet, EEGNet và Compact-CNN), hai bộ dữ liệu 40 lớp (Benchmark và BETA) và hai cấu hình học trò (student) dùng ba và một điện cực. Mỗi thiết lập được đánh giá trên năm cách chia subject độc lập, mỗi cách chia tám seed. Với trọng số chưng cất cố định, mức thay đổi trung bình nằm trong khoảng $-1.30$ đến $+1.19$ điểm phần trăm (pp). Trong 20 tổ hợp kiến trúc--dữ liệu--cấu hình, tám tổ hợp cải thiện có ý nghĩa, bốn tổ hợp suy giảm có ý nghĩa và tám tổ hợp không phát hiện được hiệu ứng (kiểm định $t$ một mẫu qua các cách chia, $p<0.05$). \tbd{kết quả sau khi chọn trọng số theo validation riêng cho từng kiến trúc và thống nhất tầng chưng cất (N2a, N2b)}. Mức cải thiện đi cùng mức CCKD làm tăng độ tương đồng CKA tuyến tính giữa đặc trưng của teacher và student (Spearman $\rho=0.63$, $p=0.003$, $n=20$), trong khi độ tương đồng trước chưng cất không dự đoán được mức cải thiện ($\rho=0.06$, $p=0.80$). \tbd{kết quả thí nghiệm can thiệp theo tầng chưng cất (N5)}. Đánh giá trên một cách chia subject cho kết luận khác với năm cách chia ở 5 trên 20 tổ hợp, theo cả hai chiều. Nhiễu không xác định giữa các lần chạy đạt $0.51$~pp trên mức cải thiện, cùng bậc với nhiều hiệu ứng được báo cáo. \tbd{kết quả lượng tử hóa INT8 và fixed-point (H1, H2)}. Các kết quả cho thấy chưng cất quan hệ xuyên cấu hình điện cực phụ thuộc vào kiến trúc. Các mức cải thiện KD dưới 1--2~pp trên SSVEP cần được đánh giá trên nhiều cách chia subject.
 \end{abstract}
 
-\textbf{Keywords:} Brain--computer interface (BCI); Steady-state visual evoked potential (SSVEP); Knowledge distillation; Relational knowledge distillation; Cross-channel learning; Low-electrode EEG.
+\textbf{Keywords:} Brain--computer interface (BCI); Steady-state visual evoked potential (SSVEP); Knowledge distillation; Relational knowledge distillation; Electrode reduction; Representation similarity; Evaluation reliability.
 
-\section{Introduction}
+% ======================================================================
+\section{Giới thiệu}
 \label{sec:introduction}
 
-Giao diện não--máy (Brain--Computer Interface - BCI) dựa trên điện não đồ (Electroencephalography - EEG) cho phép truyền lệnh trực tiếp từ não người tới thiết bị bên ngoài mà không cần hoạt động cơ bắp. Trong các hướng tiếp cận BCI dựa trên EEG, Steady-State Visual Evoked Potential (SSVEP) được sử dụng rộng rãi nhờ tốc độ truyền thông tin cao, thời gian hiệu chuẩn ngắn và độ ổn định tốt. SSVEP đã được ứng dụng trong điều khiển thiết bị thông minh, hỗ trợ người khuyết tật, thực tế ảo và các hệ thống BCI di động \citep{chen2015highspeed,zhang2023wearable}.
+Giao diện não--máy (brain--computer interface, BCI) dựa trên điện não đồ (electroencephalography, EEG) cho phép truyền lệnh từ não tới thiết bị bên ngoài mà không cần cử động cơ. Trong các loại BCI dựa trên EEG, điện thế gợi thị giác trạng thái ổn định (steady-state visual evoked potential, SSVEP) được dùng rộng rãi nhờ tốc độ truyền thông tin cao và thời gian hiệu chuẩn ngắn \citep{chen2015highspeed,zhang2023wearable}. Các bộ nhận dạng SSVEP có độ chính xác cao thường dùng tín hiệu từ nhiều điện cực vùng đỉnh--chẩm \citep{wang2017benchmark,liu2020beta}. Số điện cực lớn làm tăng thời gian chuẩn bị và khó tích hợp vào thiết bị đeo, nên giảm số điện cực là một yêu cầu thực tế \citep{zhang2023wearable,zhu2021open,acampora2021dataset}.
 
-Hầu hết các phương pháp nhận dạng SSVEP hiện nay sử dụng tín hiệu EEG từ nhiều điện cực vùng chẩm để khai thác thông tin không gian của tín hiệu não \citep{wang2017benchmark,liu2020beta}. Số lượng điện cực lớn làm tăng thời gian chuẩn bị và gây khó khăn cho các hệ thống BCI đeo. Các nền tảng điện toán biên cũng bị hạn chế bởi số lượng cảm biến cần sử dụng, và đã có những nỗ lực bước đầu triển khai hệ thống SSVEP/EEG trực tiếp trên phần cứng biên chi phí thấp như vi điều khiển hoặc Raspberry Pi \citep{tinocoegas2021ssvep,wang2020eegnetedge,nguyen2026edgessvep}. Phát triển các mô hình nhận dạng SSVEP hoạt động với ít điện cực nhưng vẫn duy trì độ chính xác vì vậy trở thành một hướng nghiên cứu quan trọng \citep{zhang2023wearable,zhu2021open,acampora2021dataset}.
+Khi giảm điện cực, mô hình mất một phần thông tin không gian và độ chính xác giảm. Chưng cất tri thức (knowledge distillation, KD) là một cách bù lại: một mô hình thầy (teacher) huấn luyện trên đủ điện cực hướng dẫn một mô hình học trò (student) chỉ thấy ít điện cực \citep{hinton2015distilling,gou2021survey}. Trường hợp này khác KD thông thường ở chỗ teacher và student không quan sát cùng một đầu vào. Nếu student mô phỏng phân bố đầu ra hoặc đặc trưng tuyệt đối của teacher thì nó bị ép tái tạo thông tin mà đầu vào của nó không chứa. Chưng cất quan hệ (relational KD) tránh vấn đề này bằng cách chỉ truyền cấu trúc tương đồng giữa các mẫu \citep{tung2019spkd}.
 
-Các mô hình học sâu hiện là hướng tiếp cận chủ đạo trong nhận dạng SSVEP nhờ khả năng học trực tiếp từ tín hiệu EEG mà không cần thiết kế đặc trưng thủ công \citep{lawhern2018eegnet,waytowich2018compact,ding2021filterbank,guney2023deep,chen2023transformer,wu2024analysis}. Knowledge Distillation (KD) được sử dụng rộng rãi để truyền tri thức từ mô hình teacher sang mô hình student, qua đó giúp mô hình student duy trì độ chính xác với chi phí tính toán thấp hơn \citep{hinton2015distilling,romero2015fitnets,tung2019spkd,gou2021survey,moslemi2024survey}. Tuy nhiên, phần lớn các phương pháp KD hiện nay đều giả định teacher và student sử dụng cùng dữ liệu đầu vào hoặc cùng không gian đặc trưng. Giả định này không còn phù hợp khi teacher sử dụng nhiều điện cực, trong khi student chỉ sử dụng một số rất ít điện cực.
+Một nghiên cứu trước đã áp dụng ý tưởng này cho SSVEP dưới tên chưng cất quan hệ xuyên kênh (CCKD) \citep{icera2026cckd}. Trên kiến trúc FB-tCNN, CCKD cải thiện student ba điện cực và một điện cực ở cả bốn thiết lập của hai bộ dữ liệu Benchmark và BETA, với mức cải thiện trung bình từ $+0.71$ đến $+1.19$~pp qua năm cách chia subject \citep{icera2026cckd}. Nghiên cứu đó cũng nêu ba câu hỏi còn mở: mức cải thiện phụ thuộc vào tính chất nào của kiến trúc, nó thay đổi thế nào theo tập điện cực và trọng số chưng cất nên được chọn trên dữ liệu validation ra sao.
 
-Sự khác biệt về cấu hình điện cực khiến teacher và student không còn quan sát cùng một không gian tín hiệu. Vì vậy, việc yêu cầu student mô phỏng trực tiếp phân bố đầu ra hoặc đặc trưng của teacher có thể không còn phù hợp. Thay vào đó, teacher cần truyền cho student những tri thức ít phụ thuộc hơn vào cấu hình điện cực. Tuy nhiên, khả năng truyền tri thức giữa các mô hình sử dụng các cấu hình điện cực khác nhau vẫn chưa được khảo sát đầy đủ, đặc biệt đối với bài toán nhận dạng SSVEP \citep{wang2024kdemotion,lan2025rmkd,sun2024mesd}.
-
-Để giải quyết vấn đề trên, bài báo đề xuất Cross-Channel Relational Knowledge Distillation (CCKD) cho bài toán nhận dạng SSVEP ít điện cực. CCKD không sử dụng phân bố đầu ra của teacher làm mục tiêu chưng cất. Thay vào đó, phương pháp xây dựng quan hệ giữa các mẫu từ đặc trưng của teacher và student, sau đó tối ưu student bằng relational distillation. CCKD chỉ được sử dụng trong giai đoạn huấn luyện nên không làm tăng chi phí suy luận của mô hình student.
-
-CCKD được đánh giá trên hai bộ dữ liệu SSVEP công khai (Benchmark và BETA) với hai cấu hình student gồm ba điện cực và một điện cực, sử dụng backbone FB-tCNN -- kiến trúc filter-bank tiêu chuẩn của lĩnh vực SSVEP. Kết quả thực nghiệm cho thấy CCKD cải thiện độ chính xác của các mô hình student trên cả hai bộ dữ liệu, đạt ý nghĩa thống kê trên BETA ở cả hai cấu hình; trên Benchmark, cải thiện trên split subject gốc chưa đạt ngưỡng ý nghĩa thống kê ở cả hai cấu hình, nhưng lặp lại trên bốn split subject độc lập khác cho thấy chiều dương này thực chất nhất quán và có ý nghĩa thống kê qua các split (Mục~\ref{sec:results}), cho thấy một split đơn lẻ có thể đánh giá thấp hiệu quả thực sự của phương pháp. Ngoài ra, các thí nghiệm ablation cho thấy relational distillation (trên backbone FB-tCNN) ổn định hơn response-based distillation trong bài toán truyền tri thức giữa các cấu hình điện cực khác nhau.
-
-Để kiểm tra độ vững chắc của phương pháp ngoài kiến trúc SSVEP mục tiêu này, chúng tôi tiếp tục khảo sát CCKD trên bốn backbone công khai khác (EEGNet, DeepConvNet, ShallowConvNet, Compact-CNN), tất cả đều được xác nhận qua nhiều split subject độc lập. Khảo sát này cho thấy hiệu quả của CCKD relational phụ thuộc mạnh vào cả backbone lẫn bộ dữ liệu, không theo một mẫu hình kiến trúc đơn giản nào -- một giới hạn quan trọng cần lưu ý khi áp dụng CCKD ngoài FB-tCNN, được trình bày chi tiết cùng kết quả chính ở Mục~\ref{sec:results}.
-
-Những đóng góp chính của bài báo được tóm tắt như sau:
+Bài báo này trả lời các câu hỏi đó. Chúng tôi không đề xuất phương pháp mới. Thay vào đó, chúng tôi đánh giá có kiểm soát một phương pháp đã biết trên năm kiến trúc và tìm điều kiện để nó có ích. Bài báo xét bốn câu hỏi nghiên cứu (research question, RQ):
 
 \begin{itemize}
-    \item Đề xuất Cross-Channel Relational Knowledge Distillation (CCKD), một khung chưng cất tri thức cho bài toán truyền tri thức giữa mô hình teacher và mô hình student sử dụng các cấu hình điện cực EEG khác nhau.
-    \item Chứng minh bằng thực nghiệm trên hai bộ dữ liệu SSVEP công khai (Benchmark, BETA) rằng CCKD cải thiện độ chính xác của các mô hình student sử dụng ít điện cực với backbone FB-tCNN mà không làm tăng chi phí suy luận: cải thiện đạt ý nghĩa thống kê trên BETA ở cả hai cấu hình điện cực trên split subject gốc; trên Benchmark, cả hai cấu hình chưa đạt ý nghĩa thống kê trên riêng split gốc, nhưng kiểm tra đa-split (5 split subject độc lập, 8 seeds/split) xác nhận chiều cải thiện dương này nhất quán và có ý nghĩa thống kê qua các split ở cả bốn cấu hình -- cho thấy đánh giá trên một split subject đơn lẻ có thể đánh giá thấp hiệu quả thực sự của phương pháp. Bổ sung khảo sát độ dài cửa sổ tín hiệu ($0.5$--$2.0$ giây) cho thấy $\Delta$ dương ở mọi cửa sổ từ $1.0$ giây trở lên, đạt ý nghĩa sau hiệu chỉnh Holm chủ yếu ở cấu hình 3 điện cực (không có kết quả 1 điện cực nào đạt ý nghĩa sau hiệu chỉnh), và đường cong ITR đạt điểm cân bằng tốc độ/độ chính xác trong khoảng $1.0$--$2.0$ giây, phù hợp thực hành phổ biến trong lĩnh vực SSVEP.
-    \item Chỉ ra thông qua các thí nghiệm ablation, xác nhận qua đa-split, rằng CCKD (relational KD, không nhiệt độ) là phương pháp \textbf{duy nhất cho $\Delta$Acc trung bình dương và bền ở cả bốn cấu hình điện cực}, so với ba cơ chế KD cổ điển khác được cài đặt lại trên cùng backbone/split/seed để so sánh công bằng: response-based (Logit KD) phụ thuộc mạnh và trái chiều vào nhiệt độ $\tau$ giữa hai cấu hình (dương bền ở 3 điện cực với $\tau=2$, âm bền ở 1 điện cực với $\tau=8$, đòi hỏi dò riêng cho từng cấu hình để có lợi); FitNets và Attention Transfer ngang CCKD ở 3 điện cực nhưng không đạt $\Delta$Acc dương có ý nghĩa ở 1 điện cực dù đã quét lại siêu tham số riêng cho từng cấu hình (loại trừ giả thuyết underfit). CCKD vượt có ý nghĩa thống kê (sau hiệu chỉnh Holm) so với FitNets ở cấu hình 1 điện cực và so với Attention Transfer ở Benchmark-1C và BETA-3C.
-    \item Kiểm chứng bằng thực nghiệm thực tế trên phần cứng biên chi phí thấp (Raspberry Pi 4) rằng tổng độ trễ ước lượng của suy luận các mô hình ít điện cực (tiền xử lý filter-bank cộng forward pass) đủ nhỏ cho vận hành thời gian thực, củng cố tính ứng dụng của hướng tiếp cận giảm điện cực ngoài phòng thí nghiệm.
-    \item Đánh giá nghiêm ngặt khả năng tổng quát của CCKD relational sang bốn backbone công khai khác (EEGNet, DeepConvNet, ShallowConvNet, Compact-CNN), mỗi backbone đều được xác nhận qua 5 split subject độc lập (không chỉ nhiều seed trên một split) để loại trừ nhiễu thống kê và sai lệch do cách chia dữ liệu -- quy trình này phát hiện lại và sửa một kết luận sai của chính nghiên cứu (EEGNet, tưởng thất bại toàn diện khi chỉ đánh giá một split, thực chất có hiệu ứng dương vững chắc trên một cấu hình và âm vững chắc trên bộ dữ liệu còn lại); sự phụ thuộc backbone của CCKD relational là có thật nhưng \textbf{không quy giản được về một đặc điểm kiến trúc đơn giản}, một giới hạn quan trọng cần lưu ý trước khi áp dụng CCKD cho backbone khác ngoài FB-tCNN. Một phân tích bổ sung dựa trên Centered Kernel Alignment (CKA) giữa đặc trưng teacher--student cho thấy mức CCKD tăng cường tương đồng biểu diễn tương quan có ý nghĩa thống kê với mức cải thiện độ chính xác (Spearman $\rho=0.627$, $p=0.0031$, $n=20$), cung cấp một tín hiệu định lượng, liên tục -- dù chưa đầy đủ -- để hiểu khi nào phương pháp hiệu quả.
+    \item \textbf{RQ1.} Mức cải thiện của CCKD có giữ được khi thay kiến trúc và khi thay tập điện cực của student không?
+    \item \textbf{RQ2.} Đại lượng nào dự đoán được mức cải thiện? Cụ thể, độ tương đồng biểu diễn giữa teacher và student có đóng vai trò này không?
+    \item \textbf{RQ3.} Đánh giá trên một cách chia subject có cho cùng kết luận với đánh giá trên nhiều cách chia không?
+    \item \textbf{RQ4.} Mức cải thiện có còn khi mô hình chạy ở độ chính xác số học thấp (INT8 trên CPU, fixed-point trên FPGA) không?
 \end{itemize}
 
-Phần còn lại của bài báo được tổ chức như sau. Mục~\ref{sec:related} trình bày các nghiên cứu liên quan. Mục~\ref{sec:method} mô tả phương pháp CCKD đề xuất. Mục~\ref{sec:setup} giới thiệu thiết lập thực nghiệm. Kết quả và thảo luận được trình bày trong Mục~\ref{sec:results}, và cuối cùng là kết luận ở Mục~\ref{sec:conclusion}.
+Các đóng góp chính của bài báo gồm:
 
-\section{Related Work and Research Gap}
+\begin{itemize}
+    \item Một đánh giá có kiểm soát của CCKD trên năm kiến trúc, hai bộ dữ liệu, hai số điện cực và \tbd{số} tập điện cực, mỗi thiết lập dùng năm cách chia subject và tám seed. Tầng chưng cất được định nghĩa thống nhất cho mọi kiến trúc và trọng số chưng cất được chọn trên validation riêng cho từng kiến trúc (Mục~\ref{sec:rq1}).
+    \item Một phân tích cho thấy mức tăng độ tương đồng CKA do CCKD tạo ra đi cùng mức cải thiện độ chính xác, kèm thí nghiệm can thiệp theo tầng chưng cất để kiểm tra quan hệ này (Mục~\ref{sec:cka}).
+    \item Một phân tích độ tin cậy của đánh giá: so sánh kết luận từ một và năm cách chia subject, đo nhiễu không xác định giữa các lần chạy và kiểm tra việc chọn siêu tham số trên một cách chia (Mục~\ref{sec:rq3}).
+    \item Kết quả về mức cải thiện sau lượng tử hóa INT8 và fixed-point, kèm độ trễ đo trên Raspberry Pi 4 và ZCU104 (Mục~\ref{sec:rq4}).
+\end{itemize}
+
+Phần còn lại của bài được tổ chức như sau. Mục~\ref{sec:related} tổng quan các nghiên cứu liên quan. Mục~\ref{sec:method} tóm tắt CCKD. Mục~\ref{sec:setup} trình bày thiết lập thực nghiệm. Các Mục~\ref{sec:rq1} đến~\ref{sec:rq4} lần lượt trả lời RQ1 đến RQ4. Mục~\ref{sec:discussion} thảo luận và nêu giới hạn. Mục~\ref{sec:conclusion} kết luận.
+
+% ======================================================================
+\section{Nghiên cứu liên quan}
 \label{sec:related}
 
-Bài báo này liên quan trực tiếp đến hai hướng nghiên cứu: nhận dạng SSVEP dựa trên học sâu và Knowledge Distillation cho tín hiệu EEG. Phần này tổng quan các nghiên cứu tiêu biểu trong từng hướng, đồng thời phân tích những hạn chế của các phương pháp hiện có để làm rõ khoảng trống nghiên cứu mà CCKD hướng tới.
+\paragraph{Học sâu cho nhận dạng SSVEP.} Các phương pháp không cần huấn luyện như phân tích tương quan chính tắc (canonical correlation analysis, CCA) và FBCCA có chi phí thấp nhưng giảm hiệu năng khi cửa sổ tín hiệu ngắn \citep{lin2007cca,chen2015fbcca}. Các mô hình học sâu học trực tiếp đặc trưng không gian và thời gian từ EEG. Các kiến trúc tiêu biểu gồm EEGNet, Compact-CNN, FB-tCNN, DeepConvNet, ShallowConvNet và các mô hình dựa trên Transformer \citep{lawhern2018eegnet,waytowich2018compact,ding2021filterbank,schirrmeister2017deep,guney2023deep,chen2023transformer,wu2024analysis}. Các kiến trúc này khác nhau ở cách gộp chiều điện cực: tích chập không gian thường (ordinary spatial convolution) ở FB-tCNN, DeepConvNet và ShallowConvNet, tích chập theo chiều sâu (depthwise convolution) ở EEGNet và Compact-CNN. Bài báo dùng chính sự khác biệt này làm một biến giải thích ở RQ2.
 
-\subsection{Deep Learning for SSVEP Recognition}
+\paragraph{Chưng cất tri thức khi teacher và student có đầu vào khác nhau.} KD ban đầu truyền phân bố đầu ra đã làm mềm của teacher \citep{hinton2015distilling}. Các biến thể sau truyền đặc trưng trung gian (FitNets), bản đồ chú ý (attention transfer) hoặc quan hệ giữa các mẫu \citep{romero2015fitnets,zagoruyko2017paying,tung2019spkd,gou2021survey,moslemi2024survey}. Trong EEG, KD đã được dùng cho nhận dạng cảm xúc và nén mô hình \citep{wang2024kdemotion}. Một số nghiên cứu SSVEP xét trường hợp teacher và student thấy đầu vào khác nhau: RMKD chưng cất từ cửa sổ dài sang cửa sổ ngắn \citep{lan2025rmkd}, MESD chưng cất từ EEG da đầu sang EEG tai bằng cách kết hợp chưng cất đặc trưng và chưng cất đầu ra \citep{sun2024mesd}. CCKD xét trường hợp giảm điện cực trên da đầu và chỉ dùng chưng cất quan hệ \citep{icera2026cckd}. Các nghiên cứu này đều báo cáo trên một kiến trúc chính, nên chưa cho biết hiệu quả của KD xuyên đầu vào phụ thuộc vào kiến trúc đến mức nào.
 
-Các phương pháp truyền thống như Canonical Correlation Analysis (CCA) và Filter Bank Canonical Correlation Analysis (FBCCA) đã được sử dụng rộng rãi trong nhận dạng SSVEP nhờ không yêu cầu dữ liệu huấn luyện và có chi phí tính toán thấp \citep{lin2007cca,chen2015fbcca}. Tuy nhiên, hiệu năng của các phương pháp này thường giảm khi tín hiệu EEG có tỷ lệ nhiễu cao hoặc thời gian cửa sổ ngắn.
+\paragraph{Điều kiện để KD có hiệu quả.} Nhiều nghiên cứu trong học máy chỉ ra rằng student không phải lúc nào cũng khớp được teacher và mức cải thiện của KD phụ thuộc vào khoảng cách năng lực giữa hai mô hình \cantrich{nghiên cứu về khoảng cách năng lực teacher--student và độ trung thành của KD, Q1/Q2 từ 2020}. Bài báo này xét một nguồn chênh lệch khác: chênh lệch thông tin đầu vào do teacher và student thấy các tập điện cực khác nhau.
 
-Các mô hình học sâu khắc phục hạn chế trên bằng cách học trực tiếp đặc trưng không gian và thời gian từ tín hiệu EEG. Nhiều kiến trúc đã được đề xuất, bao gồm EEGNet, Compact-CNN, ConvCA, FB-tCNN và các mô hình dựa trên Transformer \citep{lawhern2018eegnet,waytowich2018compact,ding2021filterbank,guney2023deep,chen2023transformer,wu2024analysis}. Các phương pháp này đạt độ chính xác cao hơn các phương pháp truyền thống trên nhiều bộ dữ liệu SSVEP chuẩn.
+\paragraph{Đo độ tương đồng biểu diễn.} CKA (centered kernel alignment) đo độ tương đồng giữa hai tập đặc trưng của cùng các mẫu, bất biến với phép quay trực giao và phép co giãn đẳng hướng \citep{kornblith2019similarity}. Hàm mất mát quan hệ của CCKD so sánh ma trận Gram của teacher và student. CKA tuyến tính cũng được tính từ ma trận Gram, nên nó là thước đo tự nhiên để kiểm tra CCKD đã thay đổi biểu diễn của student đến đâu.
 
-Mặc dù đạt kết quả tốt, phần lớn các mô hình hiện nay vẫn được xây dựng và đánh giá với tín hiệu EEG thu từ nhiều điện cực vùng chẩm. Điều này làm hạn chế khả năng áp dụng trên các hệ thống BCI đeo, nơi số lượng điện cực thường bị giới hạn.
+\paragraph{Độ tin cậy của đánh giá cross-subject.} Nhiều nghiên cứu SSVEP báo cáo kết quả trên một cách chia subject duy nhất hoặc dùng leave-one-subject-out \cantrich{khảo sát về giao thức đánh giá cross-subject trong EEG/SSVEP, Q1/Q2 từ 2020}. Khi mức cải thiện chỉ khoảng 1~pp và tập kiểm thử chỉ có 10--20 subject, kết luận có thể phụ thuộc vào cách chia. Bài báo đo trực tiếp mức phụ thuộc này ở RQ3.
 
-Song song đó, một số nghiên cứu đã bước đầu khảo sát khả năng triển khai mô hình nhận dạng SSVEP/EEG trên phần cứng biên chi phí thấp. \citet{tinocoegas2021ssvep} triển khai một hệ thống phân loại SSVEP trực tiếp trên Raspberry Pi 4, trong khi \citet{nguyen2026edgessvep} phát triển một nền tảng SSVEP hoàn toàn nhúng (fully embedded) trên vi điều khiển ESP32-S3, thực hiện toàn bộ chuỗi xử lý -- từ thu tín hiệu, lọc số đến phân loại -- ngay trên thiết bị. Đối với các kiến trúc học sâu như EEGNet, \citet{wang2020eegnetedge} chứng minh khả năng triển khai trên vi điều khiển Cortex-M công suất thấp. Tuy nhiên, các nghiên cứu này tập trung vào thiết kế phần cứng chuyên dụng hoặc mô hình gốc đầy đủ điện cực; việc đo đạc độ trễ suy luận thực tế của các mô hình \emph{đã được rút gọn số điện cực qua distillation} trên phần cứng biên đa dụng, giá rẻ (như Raspberry Pi) vẫn còn ít được báo cáo -- một khoảng trống thực nghiệm mà Mục~\ref{sec:pi4} của bài báo này bổ sung.
-
-\subsection{Knowledge Distillation for EEG Analysis}
-
-Knowledge Distillation (KD) được đề xuất nhằm truyền tri thức từ mô hình teacher sang mô hình student để xây dựng các mô hình nhỏ gọn nhưng vẫn duy trì độ chính xác \citep{hinton2015distilling}. Các phương pháp KD ban đầu chủ yếu sử dụng phân bố đầu ra của teacher làm mục tiêu chưng cất. Sau đó, nhiều hướng tiếp cận khác đã được phát triển, bao gồm feature-based distillation, attention transfer và relational knowledge distillation, trong đó student học từ đặc trưng trung gian hoặc quan hệ giữa các mẫu thay vì chỉ dựa trên đầu ra của teacher \citep{romero2015fitnets,tung2019spkd,gou2021survey,moslemi2024survey}.
-
-Trong lĩnh vực EEG, KD đã được áp dụng cho nhiều bài toán như phân loại tín hiệu não, nhận dạng cảm xúc và nhận dạng trạng thái nhận thức \citep{wang2024kdemotion}. Các nghiên cứu này cho thấy KD có thể cải thiện hiệu năng của mô hình student hoặc giảm chi phí tính toán mà vẫn duy trì độ chính xác. Tuy nhiên, phần lớn các phương pháp hiện nay đều giả định teacher và student sử dụng cùng cấu hình đầu vào, nghĩa là cùng số lượng kênh EEG hoặc cùng không gian đặc trưng. Trong trường hợp này, student chủ yếu học cách mô phỏng đầu ra hoặc đặc trưng của teacher.
-
-\subsection{Advanced Knowledge Distillation for EEG}
-
-Những năm gần đây, một số nghiên cứu đã mở rộng Knowledge Distillation cho các bài toán mà teacher và student không còn quan sát cùng một dạng dữ liệu đầu vào. Similarity-Preserving Knowledge Distillation (SPKD) cho thấy việc truyền tri thức thông qua quan hệ giữa các mẫu có thể giảm sự phụ thuộc vào biểu diễn tuyệt đối của teacher \citep{tung2019spkd}. Trong lĩnh vực SSVEP, RMKD khai thác Knowledge Distillation để truyền tri thức từ tín hiệu EEG có cửa sổ thời gian dài sang cửa sổ thời gian ngắn \citep{lan2025rmkd}. MESD tiếp tục mở rộng hướng tiếp cận này bằng cách truyền tri thức giữa tín hiệu scalp-EEG và ear-EEG thông qua kết hợp feature distillation và response distillation \citep{sun2024mesd}.
-
-Mặc dù khác nhau về bài toán, các phương pháp trên đều hướng tới việc truyền tri thức giữa các mô hình có đầu vào không hoàn toàn giống nhau. Tuy nhiên, chưa có nghiên cứu nào khảo sát việc truyền tri thức giữa các mô hình sử dụng các cấu hình điện cực scalp-EEG có số lượng kênh khác nhau. Trong trường hợp này, teacher và student không chỉ khác nhau về số lượng điện cực mà còn quan sát các không gian tín hiệu khác nhau, khiến việc mô phỏng trực tiếp đầu ra hoặc đặc trưng của teacher trở nên kém phù hợp.
-
-Xuất phát từ khoảng trống trên, bài báo đề xuất Cross-Channel Relational Knowledge Distillation (CCKD) nhằm truyền tri thức giữa teacher sử dụng nhiều điện cực và student sử dụng ít điện cực. Khác với các phương pháp KD truyền thống, CCKD sử dụng quan hệ giữa các mẫu được tính từ đặc trưng của hai mô hình làm mục tiêu chưng cất, qua đó giảm ảnh hưởng của sự khác biệt về cấu hình điện cực.
-
-\section{Proposed Method}
+% ======================================================================
+\section{Chưng cất quan hệ xuyên kênh (CCKD)}
 \label{sec:method}
 
-\subsection{Framework Overview}
+Mục này tóm tắt CCKD theo \citet{icera2026cckd} và nêu các thay đổi về giao thức trong bài báo này. Teacher nhận tín hiệu từ chín điện cực đỉnh--chẩm và được huấn luyện trước bằng cross-entropy rồi giữ cố định. Student có cùng kiến trúc với teacher nhưng chỉ nhận ba hoặc một điện cực.
 
-Hình~\ref{fig:overview} trình bày tổng quan của Cross-Channel Relational Knowledge Distillation (CCKD). Framework gồm một mô hình teacher sử dụng chín điện cực vùng chẩm (Pz, PO5, PO3, POz, PO4, PO6, O1, Oz và O2) và một mô hình student sử dụng cấu hình ít điện cực hơn, gồm ba điện cực (O1--Oz--O2) hoặc một điện cực (Oz). Teacher và student sử dụng cùng kiến trúc backbone để bảo đảm sự khác biệt về kết quả chỉ đến từ cấu hình điện cực đầu vào.
-
-Trong giai đoạn huấn luyện, teacher được huấn luyện trước và sau đó được giữ cố định. Tín hiệu EEG từ teacher và student được đưa qua hai backbone độc lập để trích xuất đặc trưng ở nhiều mức biểu diễn. Thay vì truyền trực tiếp phân bố đầu ra của teacher, CCKD xây dựng các ma trận quan hệ từ các đặc trưng trung gian và tối ưu student bằng cách bảo toàn cấu trúc quan hệ này. Sau khi huấn luyện hoàn tất, teacher được loại bỏ hoàn toàn và chỉ student được sử dụng trong quá trình suy luận, do đó không làm tăng chi phí triển khai.
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=\linewidth]{figures/fig1_overview.png}
-\end{center}
-\caption{Overall architecture of the proposed Cross-Channel Relational Knowledge Distillation (CCKD) framework for low-electrode SSVEP recognition.}
-\label{fig:overview}
-\end{figure}
-
-\subsection{Multi-level Feature Extraction}
-
-Để khai thác thông tin ở các mức biểu diễn khác nhau, CCKD sử dụng đặc trưng từ hai tầng trung gian của backbone thay vì chỉ sử dụng đặc trưng ở tầng cuối. Với một mini-batch gồm $N$ mẫu, đặc trưng của teacher và student tại tầng thứ $l$ được ký hiệu lần lượt là $F_{T}^{(l)} \in \mathbb{R}^{N \times d_{l}}$, $F_{S}^{(l)} \in \mathbb{R}^{N \times d_{l}}$, trong đó $d_l$ là số chiều đặc trưng tại tầng thứ $l$.
-
-Trong nghiên cứu này, hai tầng đặc trưng được lựa chọn gồm một tầng trung gian có kích thước 736 chiều và tầng biểu diễn cuối có kích thước 32 chiều. Tầng trung gian chủ yếu chứa thông tin cục bộ, trong khi tầng cuối biểu diễn thông tin ngữ nghĩa ở mức cao. Việc kết hợp hai mức biểu diễn giúp student học đồng thời các đặc trưng cục bộ và đặc trưng ngữ nghĩa trong quá trình chưng cất.
-
-Các đặc trưng của teacher và student tại từng tầng sau đó được sử dụng để xây dựng quan hệ giữa các mẫu (Hình~\ref{fig:relational}), làm cơ sở cho quá trình relational knowledge distillation được trình bày trong mục tiếp theo.
-
-\begin{figure}[h]
-\begin{center}
-\includegraphics[width=\linewidth]{figures/fig2_relational.png}
-\end{center}
-\caption{Multi-level relational knowledge transfer between teacher and student feature representations.}
-\label{fig:relational}
-\end{figure}
-
-\subsection{Multi-level Relational Knowledge Distillation}
-
-Các phương pháp Knowledge Distillation truyền thống thường tối ưu student bằng cách mô phỏng phân bố đầu ra hoặc đặc trưng của teacher. Cách tiếp cận này giả định teacher và student quan sát cùng một không gian đầu vào, do đó các biểu diễn đặc trưng có thể được so khớp trực tiếp. Trong bài toán giảm số lượng điện cực, giả định này không còn phù hợp vì teacher và student được xây dựng từ các cấu hình điện cực khác nhau. Thay vì so khớp trực tiếp đặc trưng của từng mẫu, CCKD truyền tri thức thông qua quan hệ giữa các mẫu trong không gian đặc trưng \citep{tung2019spkd}.
-
-Với đặc trưng tại tầng thứ $l$, quan hệ giữa các mẫu được biểu diễn bằng ma trận Gram:
+Với một mini-batch $N$ mẫu, gọi $F_T^{(l)} \in \mathbb{R}^{N \times d_T}$ và $F_S^{(l)} \in \mathbb{R}^{N \times d_S}$ là đặc trưng của teacher và student tại tầng $l$. Ma trận Gram của mỗi mô hình là
 \begin{equation}
-G_{T}^{l} = F_{T}^{l} \left(F_{T}^{l}\right)^{T}, \qquad
-G_{S}^{l} = F_{S}^{l} \left(F_{S}^{l}\right)^{T}, \qquad
-G_{T}^{l}, G_{S}^{l} \in \mathbb{R}^{N \times N}.
+G_{T}^{(l)} = F_{T}^{(l)} \bigl(F_{T}^{(l)}\bigr)^{\top}, \qquad
+G_{S}^{(l)} = F_{S}^{(l)} \bigl(F_{S}^{(l)}\bigr)^{\top} \in \mathbb{R}^{N \times N}.
 \label{eq:gram}
 \end{equation}
-
-Mỗi phần tử của ma trận biểu diễn mức độ tương đồng giữa một cặp mẫu trong mini-batch. Do đó, ma trận Gram mô tả cấu trúc quan hệ của toàn bộ mini-batch thay vì đặc trưng của từng mẫu riêng lẻ.
-
-Để loại bỏ ảnh hưởng của độ lớn đặc trưng và bảo đảm khả năng so sánh giữa teacher và student, mỗi hàng của ma trận Gram được chuẩn hóa L2 độc lập
+Ma trận Gram luôn có kích thước $N \times N$, nên CCKD không đòi hỏi $d_T = d_S$. Mỗi hàng được chuẩn hóa theo chuẩn $\ell_2$:
 \begin{equation}
-\hat{G}_{T}^{l}[i,:] = \frac{G_{T}^{l}[i,:]}{\lVert G_{T}^{l}[i,:] \rVert_2}, \qquad
-\hat{G}_{S}^{l}[i,:] = \frac{G_{S}^{l}[i,:]}{\lVert G_{S}^{l}[i,:] \rVert_2}, \qquad i = 1, \dots, N,
+\hat{G}^{(l)}[i,:] = \frac{G^{(l)}[i,:]}{\lVert G^{(l)}[i,:] \rVert_2}, \qquad i = 1, \dots, N.
 \label{eq:norm}
 \end{equation}
-trong đó $\lVert \cdot \rVert_2$ là chuẩn Euclid và $G^{l}[i,:]$ là hàng thứ $i$ của ma trận Gram — vector biểu diễn độ tương đồng giữa mẫu $i$ và toàn bộ mini-batch. Sau bước chuẩn hóa, mỗi hàng của $\hat{G}^{l}$ có chuẩn Euclid bằng 1, nên quá trình chưng cất chỉ phụ thuộc vào cấu trúc tương đồng tương đối giữa các mẫu thay vì giá trị tuyệt đối của đặc trưng.
-
-Relational loss tại tầng thứ $l$ được tính bằng bình phương khoảng cách Frobenius giữa hai ma trận quan hệ đã chuẩn hóa, chia theo kích thước mini-batch để ổn định thang giá trị khi $N$ thay đổi
+Hàm mất mát quan hệ tại tầng $l$ là
 \begin{equation}
-\mathcal{L}_{\text{CCKD}}^{l} = \frac{1}{N^2} \left\lVert \hat{G}_{T}^{l} - \hat{G}_{S}^{l} \right\rVert_F^2.
+\mathcal{L}_{\text{CCKD}}^{(l)} = \frac{1}{N^2} \bigl\lVert \hat{G}_{T}^{(l)} - \hat{G}_{S}^{(l)} \bigr\rVert_F^2 .
 \label{eq:relloss}
 \end{equation}
 
-Loss này khuyến khích student duy trì cấu trúc quan hệ giữa các mẫu tương tự teacher thay vì mô phỏng trực tiếp phân bố đầu ra hoặc đặc trưng tuyệt đối của teacher. Thành phần relational loss tại từng mức biểu diễn sẽ được kết hợp với các thành phần loss khác trong hàm mục tiêu tổng thể, được trình bày trong mục tiếp theo.
-
-\subsection{Training}
+\subsection{Hàm mục tiêu và tầng chưng cất}
 \label{sec:training}
 
-Mô hình teacher được huấn luyện trước bằng tín hiệu EEG từ chín điện cực. Sau đó, toàn bộ tham số của teacher được giữ cố định trong quá trình chưng cất. Mô hình student được khởi tạo độc lập và được cập nhật bằng hàm mất mát phân loại kết hợp với hàm mất mát quan hệ đa mức.
-
-Với $L=2$ tầng đặc trưng được lựa chọn, hàm mất mát CCKD tổng thể được xác định bằng trung bình relational loss qua các tầng
+Với tập tầng chưng cất $\mathcal{K}$, student tối ưu
 \begin{equation}
-\mathcal{L}_{\text{CCKD}} = \frac{1}{L}\sum_{l=1}^{L} \mathcal{L}_{\text{CCKD}}^{(l)}, \qquad L = 2,
-\label{eq:total_cckd}
-\end{equation}
-trong đó $\mathcal{L}_{\text{CCKD}}^{(l)}$ là relational loss tại tầng thứ $l$; điều này tương đương đặt trọng số bằng nhau $\alpha_l = 1/L$ cho mọi tầng. Hàm mục tiêu dùng để tối ưu student được xác định như sau:
-\begin{equation}
-\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \mathcal{L}_{\text{CCKD}},
+\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \, \frac{1}{\lvert \mathcal{K} \rvert} \sum_{l \in \mathcal{K}} \mathcal{L}_{\text{CCKD}}^{(l)},
 \label{eq:total_loss}
 \end{equation}
-trong đó $\mathcal{L}_{\text{CE}}$ là hàm mất mát cross-entropy của student và $\lambda_{sp}$ kiểm soát mức đóng góp của thành phần chưng cất quan hệ. Trong tất cả các thí nghiệm với CCKD (đề xuất), $\lambda_{sp}$ được đặt bằng 100. Nguồn gốc của giá trị này không được ghi lại đầy đủ trong mã nguồn: các khảo sát $\lambda_{sp}$ đã lưu (FitNets/Attention Transfer, EEGNet) đều báo cáo độ chính xác trên tập test, và không có khảo sát riêng cho CCKD trên FB-tCNN trong kết quả. Vì vậy, để kiểm tra lựa chọn này, chúng tôi đã chạy sweep $\lambda_{sp}$ với lựa chọn theo validation (Mục~\ref{sec:lambda_val}); trên Benchmark, validation chọn giá trị khác 100. Các kết quả từ phiên bản mã hiện tại trở đi lưu độ chính xác validation theo từng seed, nhưng các JSON trong bài không có trường này.
+trong đó $\mathcal{L}_{\text{CE}}$ là cross-entropy của student và $\lambda_{sp}$ là trọng số chưng cất. Sau huấn luyện, teacher bị loại bỏ, nên CCKD không làm thay đổi kiến trúc, số tham số hay chi phí suy luận của student.
 
-Các phương pháp đối chứng dùng trong thí nghiệm ablation (Mục~\ref{sec:results}) được xây dựng từ cùng khung tổng quát $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{kd} \mathcal{L}_{\text{logit}}(\tau) + \lambda_{sp} \mathcal{L}_{\text{CCKD}}$, trong đó $\mathcal{L}_{\text{logit}}(\tau) = \tau^2 \cdot \mathrm{KL}\!\left(\sigma(\mathbf{z}_T/\tau) \,\|\, \sigma(\mathbf{z}_S/\tau)\right)$ là response-based KD (Hinton et al.) giữa logit teacher $\mathbf{z}_T$ và student $\mathbf{z}_S$ ở nhiệt độ $\tau$: \textbf{Response-based KD} ứng với $\lambda_{sp}=0$; \textbf{Response + Relational KD (hybrid)} ứng với cả $\lambda_{kd}, \lambda_{sp} > 0$; \textbf{Proposed CCKD} (Eq.~\ref{eq:total_loss}) ứng với $\lambda_{kd}=0$.
+Trong nghiên cứu trước, FB-tCNN được chưng cất ở hai tầng, còn khi mở rộng sang các kiến trúc khác thì chỉ tầng cuối được chưng cất. Như vậy kiến trúc và số tầng chưng cất bị lẫn vào nhau. Bài báo này định nghĩa hai tầng giống nhau cho mọi kiến trúc:
+\begin{itemize}
+    \item \textbf{Tầng giữa} (\texttt{mid}): đầu ra của khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, trước pooling và dropout. Đây là điểm chiều điện cực vừa bị gộp, nên độ rộng của tầng này không phụ thuộc vào số điện cực đầu vào.
+    \item \textbf{Tầng cuối} (\texttt{last}): đặc trưng áp chót, tức đầu vào của bộ phân loại.
+\end{itemize}
+Giao thức chính chưng cất chỉ tầng cuối ($\mathcal{K}=\{\texttt{last}\}$). Thí nghiệm can thiệp ở RQ2 so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$. Kết quả theo giao thức cũ được ghi rõ là ``giao thức cũ'' mỗi khi được dùng.
 
-Thuật toán~\ref{alg:cckd} trình bày quy trình huấn luyện của CCKD. Với mỗi mini-batch, teacher và student thực hiện lan truyền thuận để thu được các đặc trưng tại hai tầng biểu diễn và đầu ra phân loại tương ứng. Đầu ra của student được sử dụng để tính hàm mất mát cross-entropy, trong khi các đặc trưng tại từng tầng được sử dụng để xây dựng các ma trận Gram, chuẩn hóa L2 theo từng hàng và tính relational loss. Các relational loss theo từng tầng được lấy trung bình thành $\mathcal{L}_{\text{CCKD}}$, sau đó kết hợp với $\mathcal{L}_{\text{CE}}$ để tạo thành hàm mục tiêu tổng thể. Quá trình lan truyền ngược chỉ cập nhật các tham số của student, trong khi teacher được giữ cố định trong toàn bộ quá trình chưng cất.
-
-Sau khi huấn luyện hoàn tất, teacher được loại bỏ và chỉ mô hình student được sử dụng trong giai đoạn suy luận.
-
-\begin{algorithm}[t]
-\caption{Training procedure of the proposed CCKD framework}
-\label{alg:cckd}
-\KwRequire{Training dataset $\mathcal{D}$; teacher network $\mathcal{T}(\cdot)$; student network $\mathcal{S}(\cdot)$; trade-off coefficient $\lambda_{sp}$; number of epochs $E$}
-\KwEnsure{Optimized student network $\mathcal{S}$}
-Train the teacher network $\mathcal{T}$ using 9-channel EEG data\;
-Freeze all parameters of the teacher network\;
-\For{$e = 1$ \KwTo $E$}{
-    \For{each mini-batch $(\mathbf{X}_T, \mathbf{X}_S, \mathbf{Y}) \in \mathcal{D}$}{
-        Extract teacher representations: $\left(F_T^{(1)}, F_T^{(2)}, \mathbf{Z}_T\right) \leftarrow \mathcal{T}(\mathbf{X}_T)$\;
-        Extract student representations: $\left(F_S^{(1)}, F_S^{(2)}, \mathbf{Z}_S\right) \leftarrow \mathcal{S}(\mathbf{X}_S)$\;
-        Compute the classification loss $\mathcal{L}_{\text{CE}}$\;
-        \For{$l = 1$ \KwTo $2$}{
-            Compute teacher Gram matrix $G_T^{(l)} \leftarrow F_T^{(l)} \left(F_T^{(l)}\right)^T$\;
-            Compute student Gram matrix $G_S^{(l)} \leftarrow F_S^{(l)} \left(F_S^{(l)}\right)^T$\;
-            Row-normalize the Gram matrices ($i = 1,\dots,N$): $\hat{G}_T^{(l)}[i,:] \leftarrow G_T^{(l)}[i,:] / \lVert G_T^{(l)}[i,:] \rVert_2$, $\quad \hat{G}_S^{(l)}[i,:] \leftarrow G_S^{(l)}[i,:] / \lVert G_S^{(l)}[i,:] \rVert_2$\;
-            Compute the relational loss $\mathcal{L}_{\text{CCKD}}^{(l)} \leftarrow \frac{1}{N^2}\left\lVert \hat{G}_T^{(l)} - \hat{G}_S^{(l)} \right\rVert_F^2$\;
-        }
-        Aggregate multi-level relational loss: $\mathcal{L}_{\text{CCKD}} \leftarrow \frac{1}{L}\sum_{l=1}^{L} \mathcal{L}_{\text{CCKD}}^{(l)}$\;
-        Compute the total objective: $\mathcal{L} \leftarrow \mathcal{L}_{\text{CE}} + \lambda_{sp} \mathcal{L}_{\text{CCKD}}$\;
-        Update only the parameters of $\mathcal{S}$ by back-propagation\;
-    }
-}
-\Return{Optimized student network $\mathcal{S}$}
-\end{algorithm}
-
-\section{Experimental Setup}
+% ======================================================================
+\section{Thiết lập thực nghiệm}
 \label{sec:setup}
 
-\subsection{Datasets}
+\subsection{Dữ liệu và tập điện cực}
 
-Phương pháp được đánh giá trên hai bộ dữ liệu SSVEP công khai được sử dụng rộng rãi trong nghiên cứu, gồm Benchmark \citep{wang2017benchmark} và BETA \citep{liu2020beta}. Cả hai bộ dữ liệu đều chứa tín hiệu EEG được ghi từ nhiều đối tượng khi quan sát các kích thích thị giác nhấp nháy ở nhiều tần số khác nhau. Các thiết lập thực nghiệm trên hai bộ dữ liệu được tóm tắt trong Bảng~\ref{tab:settings}.
+Bài báo dùng hai bộ dữ liệu SSVEP công khai 40 lớp, lấy mẫu 250~Hz: Benchmark gồm 35 subject \citep{wang2017benchmark} và BETA gồm 70 subject \citep{liu2020beta}. Thiết lập được tóm tắt trong Bảng~\ref{tab:settings}. Mỗi cách chia subject gán các subject rời nhau vào tập huấn luyện, validation và kiểm thử. Tập validation dùng để chọn checkpoint và siêu tham số. Tập kiểm thử chỉ được đánh giá một lần. Năm cách chia dùng các seed chia 2026, 3026, 4026, 5026 và 6026.
 
 \begin{table}[h]
 \caption{Summary of experimental settings.}
 \label{tab:settings}
 \begin{center}
-\begin{tabular}{lccccc}
-\toprule
-Dataset & Subjects & Train/Test & Window length & Teacher & Student \\
-\midrule
-Benchmark & 35 & 25 / 10 & 1.0 s & 9 channels & 3 / 1 channel \\
-BETA      & 70 & 50 / 20 & 1.0 s & 9 channels & 3 / 1 channel \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Trong tất cả các thí nghiệm, mô hình teacher luôn sử dụng chín điện cực vùng chẩm (Pz, PO5, PO3, POz, PO4, PO6, O1, Oz và O2). Mô hình student được đánh giá với hai cấu hình gồm ba điện cực (O1, Oz và O2) và một điện cực (Oz). Việc đánh giá được thực hiện theo giao thức subject-independent, trong đó tập huấn luyện và tập kiểm thử không có đối tượng trùng lặp.
-
-\subsection{Implementation Details}
-
-Teacher được huấn luyện trước bằng dữ liệu từ chín điện cực và được giữ cố định trong toàn bộ quá trình chưng cất. Student được khởi tạo ngẫu nhiên và được tối ưu bằng hàm mục tiêu trình bày trong Mục~\ref{sec:training}.
-
-Tất cả các mô hình được huấn luyện bằng bộ tối ưu Adam với cùng một thiết lập siêu tham số. Đối với CCKD, hệ số cân bằng giữa hàm mất mát phân loại và relational loss được đặt là $\lambda_{sp} = 100$. Đối với phương pháp response-based knowledge distillation, nhiệt độ làm mềm phân bố đầu ra mặc định được đặt là $\tau = 4$ (Mục~\ref{sec:results} khảo sát thêm $\tau \in \{2,4,8\}$).
-
-Để bảo đảm so sánh công bằng, tất cả các phương pháp đều sử dụng cùng kiến trúc backbone, cùng quy trình tiền xử lý dữ liệu và cùng giao thức đánh giá.
-
-\paragraph{Hạn chế về kiểm soát ngẫu nhiên và độ chính xác số.} Trong mã huấn luyện, seed được đặt một lần trước khi huấn luyện teacher; các student baseline và KD sau đó được huấn luyện liên tiếp từ cùng một trạng thái sinh số ngẫu nhiên. Vì vậy, cùng một nhãn seed không bảo đảm cùng khởi tạo và cùng thứ tự shuffle giữa các phương pháp, và kết quả của một phương pháp có thể phụ thuộc vào việc các phương pháp khác có được chạy trước trong cùng tiến trình hay không. Ngoài ra, huấn luyện cross-entropy dùng độ chính xác hỗn hợp (AMP) trên GPU, trong khi huấn luyện KD dùng FP32; chúng tôi chưa đo riêng ảnh hưởng của khác biệt này lên độ chính xác. Các kết quả trong bài được báo cáo với cấu trúc này; việc tách seed theo từng phương pháp và thống nhất độ chính xác số là các cải tiến cần làm trong các thí nghiệm tiếp theo. Cuối cùng, các giá trị $\tau$ của Logit KD được đánh giá trên tập test (Mục~\ref{sec:results}), nên lựa chọn $\tau$ theo cấu hình không được coi là đã kiểm định độc lập. Các $p$-value Wilcoxon trên một split (Bảng~\ref{tab:overall}, \ref{tab:window}) được tính lại bằng \texttt{scipy.stats.wilcoxon} (scipy 1.15.3, phương thức \texttt{auto}) trên đúng các mảng $\Delta$ theo subject đã lưu trong JSON; một phiên bản scipy cũ hơn (1.13.1) xử lý khác các cặp giá trị bằng nhau và cho $p$ lệch tới $0.02$ ở một số ô (không có ô nào đổi chiều ý nghĩa thống kê), nên phiên bản scipy cần được cố định khi tái lập các số liệu này.
-
-\subsection{Comparison Methods and Evaluation Metrics}
-
-Để đánh giá hiệu quả của phương pháp đề xuất, CCKD được so sánh với bốn phương pháp đại diện và một mô hình teacher tham chiếu:
-
-\begin{itemize}
-    \item \textbf{Teacher (9C)}: mô hình teacher sử dụng đầy đủ chín điện cực, đóng vai trò hiệu năng tham chiếu (\emph{upper bound}).
-    \item \textbf{Student Baseline}: mô hình student được huấn luyện độc lập chỉ với hàm mất mát cross-entropy.
-    \item \textbf{Response-based KD}: phương pháp Knowledge Distillation truyền thống sử dụng phân bố đầu ra của teacher.
-    \item \textbf{Response-based + Relational KD}: phương pháp kết hợp response-based distillation và relational distillation.
-    \item \textbf{Proposed CCKD}: phương pháp đề xuất sử dụng multi-level relational knowledge distillation.
-\end{itemize}
-
-Hiệu năng được đánh giá bằng classification accuracy (\%) trên tập kiểm thử. Ngoài độ chính xác trung bình, nghiên cứu còn báo cáo mức cải thiện so với Student Baseline ($\Delta$Acc), số lượng đối tượng có độ chính xác được cải thiện và kết quả kiểm định Wilcoxon signed-rank \citep{wilcoxon1945individual} nhằm đánh giá ý nghĩa thống kê của các khác biệt quan sát được. Để đánh giá khả năng triển khai thực tế, nghiên cứu đồng thời báo cáo số lượng tham số của mô hình và số lượng điện cực sử dụng.
-
-\section{Kết quả và thảo luận}
-\label{sec:results}
-
-\subsection{Overall Performance}
-
-Bảng~\ref{tab:overall} so sánh hiệu năng của CCKD với các phương pháp đối chứng trên hai bộ dữ liệu SSVEP công khai, sử dụng backbone FB-tCNN, trên split subject gốc (\texttt{split\_seed=2026}) với 8 seeds khởi tạo mạng. Trên bộ dữ liệu BETA, CCKD cải thiện độ chính xác của mô hình student ở cả hai cấu hình, với mức tăng 1.05 điểm phần trăm đối với cấu hình ba điện cực và 1.06 điểm phần trăm đối với cấu hình một điện cực; cả hai đều đạt ý nghĩa thống kê theo kiểm định Wilcoxon ($p < 0.05$). Trên bộ dữ liệu Benchmark, cấu hình một điện cực tăng 0.59 điểm phần trăm và cấu hình ba điện cực tăng 0.45 điểm phần trăm; trên chính split này, cả hai đều chưa đạt ngưỡng ý nghĩa thống kê ($p = 0.193$ và $p = 0.375$ tương ứng) do cỡ mẫu nhỏ (10 subject kiểm thử).
-
-Ngoài độ chính xác trung bình, Bảng~\ref{tab:overall} còn cho thấy số lượng đối tượng có độ chính xác được cải thiện lớn hơn số lượng đối tượng bị suy giảm ở hầu hết các thiết lập. Cụ thể, CCKD cải thiện kết quả trên 6/10 và 7/10 đối tượng của bộ dữ liệu Benchmark, cũng như trên 16/20 và 15/20 đối tượng của bộ dữ liệu BETA đối với cấu hình ba điện cực và một điện cực tương ứng.
-
-Do tập subject kiểm thử của Benchmark chỉ có 10 đối tượng, kiểm định Wilcoxon trên một split đơn lẻ có thể thiếu công suất thống kê để phát hiện một hiệu ứng thật nhưng vừa phải. Để kiểm tra xem hai cấu hình Benchmark có thực sự trung tính hay chỉ do split gốc kém may mắn, chúng tôi lặp lại toàn bộ thí nghiệm trên bốn split subject độc lập khác (Bảng~\ref{tab:multisplit}), giữ nguyên mọi siêu tham số.
-
-\begin{table}[h]
-\caption{Overall performance comparison of different methods on the Benchmark and BETA datasets (FB-tCNN backbone, fixed subject-independent split \texttt{split\_seed=2026}, mean over 8 seeds).}
-\label{tab:overall}
-\begin{center}
-\begin{tabular}{llccccc}
-\toprule
-Dataset & Student & Baseline (\%) & CCKD (\%) & $\Delta$Acc (pp) & Improved Subjects & $p$-value \\
-\midrule
-\multirow{2}{*}{Benchmark (Teacher 9C: \textbf{65.69\%})}
- & 3 C & 50.99 & 51.44 & +0.45 & 6 / 10  & 0.375 \\
- & 1 C & 44.55 & 45.14 & +0.59 & 7 / 10  & 0.193 \\
-\multirow{2}{*}{BETA (Teacher 9C: \textbf{53.91\%})}
- & 3 C & 38.41 & \textbf{39.46} & \textbf{+1.05} & 16 / 20 & \textbf{0.0124} \\
- & 1 C & 34.62 & \textbf{35.68} & \textbf{+1.06} & 15 / 20 & \textbf{0.0038} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}[h]
-\caption{Kiểm tra độ vững chắc của CCKD (relational, FB-tCNN) qua 5 split subject độc lập khác nhau (8 seeds mỗi split, mọi siêu tham số giữ nguyên). $\bar\Delta \pm$ SD là trung bình/độ lệch chuẩn của $\Delta$Acc qua 5 split; $p_t$ là kiểm định t một mẫu ($H_0$: $\bar\Delta=0$) trên 5 giá trị $\Delta$ theo split, độc lập với kiểm định Wilcoxon theo từng split riêng lẻ ở Bảng~\ref{tab:overall}.}
-\label{tab:multisplit}
-\begin{center}
-\begin{tabular}{llccccccc}
-\toprule
-Dataset & Cấu hình & \multicolumn{5}{c}{$\Delta$Acc (pp) theo split\_seed} & $\bar\Delta \pm$ SD & $p_t$ \\
- & & 2026 & 3026 & 4026 & 5026 & 6026 & & \\
-\midrule
-\multirow{2}{*}{Benchmark} & 3C & +0.45 & +1.14 & +0.85 & +1.02 & +1.54 & +1.00 $\pm$ 0.40 & \textbf{0.0050} \\
- & 1C & +0.59 & +0.51 & +0.98 & +1.17 & +0.32 & +0.71 $\pm$ 0.35 & \textbf{0.0103} \\
-\multirow{2}{*}{BETA} & 3C & +1.05 & +1.29 & +1.12 & +0.97 & +1.50 & +1.19 $\pm$ 0.21 & \textbf{0.0002} \\
- & 1C & +1.06 & +1.16 & +0.63 & $-0.06$ & +0.82 & +0.72 $\pm$ 0.49 & \textbf{0.0293} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Bảng~\ref{tab:multisplit} cho thấy chiều dương của CCKD (relational) trên FB-tCNN là \textbf{dương ở đa số split subject độc lập} ở cả bốn cấu hình (19/20 ô dương; ô còn lại là BETA-1C/split 5026 với $-0.06$pp, gần trung tính), và kiểm định t một mẫu qua 5 split đạt ý nghĩa thống kê cho cả bốn cấu hình -- bao gồm cả \textbf{Benchmark-3C và Benchmark-1C}, hai cấu hình mà kiểm định Wilcoxon trên riêng split gốc (Bảng~\ref{tab:overall}) không đạt ngưỡng ý nghĩa do cỡ mẫu nhỏ. Đáng chú ý, mức cải thiện trung bình qua 5 split của Benchmark-3C ($+1.00$pp) thực ra \emph{cao hơn} Benchmark-1C ($+0.71$pp) -- ngược với ấn tượng ban đầu từ split gốc, nơi 3C có vẻ trung tính còn 1C có vẻ nổi bật hơn. Điều này cho thấy đánh giá trên một split subject đơn lẻ, dù phổ biến trong literature SSVEP, có thể đánh giá thấp hoặc sai lệch mức cải thiện thực sự của một phương pháp khi số lượng subject kiểm thử nhỏ; kiểm tra qua nhiều split độc lập là cần thiết để phân biệt một hiệu ứng thật khỏi đặc thù của một cách chia dữ liệu cụ thể.
-
-\subsection{Ablation Study}
-
-Bảng~\ref{tab:ablation_strategy} so sánh các chiến lược Knowledge Distillation khác nhau trên bộ dữ liệu Benchmark (backbone FB-tCNN) nhằm đánh giá chiến lược chưng cất phù hợp cho bài toán truyền tri thức giữa các cấu hình điện cực khác nhau.
-
-Response-based Knowledge Distillation không cải thiện hiệu năng của mô hình student ở cả hai cấu hình điện cực (giảm 0.33 điểm phần trăm đối với cấu hình ba điện cực và 1.54 điểm phần trăm đối với cấu hình một điện cực trên split này), và không đạt ý nghĩa thống kê trên Benchmark. Khi kết hợp response-based và relational distillation, độ chính xác cũng giảm so với Student Baseline ở cả hai cấu hình (giảm 0.53 điểm phần trăm ở cấu hình ba điện cực, giảm 1.62 điểm phần trăm ở cấu hình một điện cực). Ngược lại, CCKD (relational distillation) là chiến lược duy nhất mang lại cải thiện dương ở cả hai cấu hình trên split này, và là chiến lược duy nhất được xác nhận vững chắc qua kiểm tra đa-split (Bảng~\ref{tab:multisplit}). Kết quả này cho thấy việc ép student mô phỏng trực tiếp phân bố đầu ra của teacher không mang lại lợi ích rõ ràng khi teacher và student sử dụng các cấu hình điện cực khác nhau, trong khi truyền tri thức qua quan hệ giữa các mẫu ổn định hơn.
-
-\begin{table}[h]
-\caption{Kết quả thí nghiệm ablation đối với các chiến lược chưng cất tri thức khác nhau (Benchmark, FB-tCNN, split gốc, mean over 8 seeds).}
-\label{tab:ablation_strategy}
-\begin{center}
-\begin{tabular}{lccl}
-\toprule
-Knowledge Distillation Method & 3 Channels & 1 Channel & Observation \\
-\midrule
-Response KD              & $-0.33$ pp        & $-1.54$ pp        & Neutral/negative \\
-Response + Relational KD & $-0.53$ pp        & $-1.62$ pp        & Neutral/negative \\
-Proposed CCKD (relational) & \textbf{+0.45} pp & \textbf{+0.59} pp & Best (nhất quán dương, xác nhận qua đa-split) \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Để đánh giá hiệu quả của chiến lược truyền tri thức được đề xuất, chúng tôi so sánh CCKD với phương pháp \textbf{logit-based knowledge distillation} dưới các giá trị nhiệt độ (\emph{temperature}) khác nhau. Mỗi giá trị $\tau$ được huấn luyện trong một lần chạy độc lập với baseline tự huấn luyện riêng (dao động nhẹ quanh 51.0\%/3C và 44.0\%/1C do biến thiên ngẫu nhiên giữa các lần chạy); Bảng~\ref{tab:ablation_temperature} vì vậy hiển thị baseline riêng cho từng hàng thay vì một baseline chung, để mức cải thiện ($\Delta$) được tính đúng theo cặp trong cùng một lần chạy. Kết quả cho thấy Logit KD không cải thiện hiệu năng của mô hình student một cách nhất quán: ở cấu hình 3 điện cực, Logit KD có thể tăng nhẹ ($\tau=2$: $+0.36$pp) hoặc giảm nhẹ ($\tau=4$: $-0.54$pp, $\tau=8$: $-0.78$pp) so với baseline riêng của từng lần chạy; ở cấu hình 1 điện cực, Logit KD tăng ở $\tau=2$ ($+1.35$pp) nhưng giảm độ chính xác có ý nghĩa thống kê khi $\tau=8$ ($-1.50$pp, $p=0.049$). Việc tăng nhiệt độ từ 2 lên 8 không mang lại cải thiện, và có xu hướng làm giảm hiệu năng ở cấu hình 1 điện cực.
-
-Ngược lại, CCKD (SP-KD) đạt cải thiện ổn định trên cả hai cấu hình so với baseline, nâng độ chính xác của mô hình \textbf{3 điện cực} từ \textbf{50.99\% lên 51.44\%} và của mô hình \textbf{1 điện cực} từ \textbf{44.55\% lên 45.14\%}, không phụ thuộc vào việc lựa chọn một siêu tham số nhạy cảm như nhiệt độ; kiểm tra đa-split (Bảng~\ref{tab:multisplit}) xác nhận chiều cải thiện này vững chắc, không phụ thuộc vào cách chia subject cụ thể. Trên split này, Logit KD ở $\tau=2$ đạt độ chính xác nhỉnh hơn SP-KD ở cấu hình 1 điện cực (45.36\% so với 45.14\%, $p=0.049$); tuy nhiên, để tránh lặp lại sai lầm phương pháp luận đã phát hiện ở các phần trước (một-split có thể đánh giá sai cả hai hướng), chúng tôi xác nhận thêm Logit KD qua 5 split subject độc lập, 8 seeds/split, cho cả ba giá trị $\tau$ (Bảng~\ref{tab:logit_ms}).
-
-\begin{table}[h]
-\caption{Đa-split (5 split, 8 seeds/split, Benchmark): $\Delta$Acc trung bình của Logit KD theo $\tau$; $p_t$ là kiểm định $t$ một mẫu ($H_0$: $\bar\Delta=0$); $p_{\text{Holm}}$ hiệu chỉnh Holm--Bonferroni trên họ 6 phép thử (3 giá trị $\tau$ $\times$ 2 cấu hình). In đậm nếu $p_{\text{Holm}}<0.05$.}
-\label{tab:logit_ms}
-\begin{center}
-\begin{tabular}{lcccc}
-\toprule
-$\tau$ & Cấu hình & $\bar\Delta$ (pp) & split dương & $p_t$ ($p_{\text{Holm}}$) \\
-\midrule
-2 & 3C & +1.02 & 5/5 & \textbf{0.0053 (0.032)} \\
-2 & 1C & $-0.06$ & 2/5 & 0.850 (1.000) \\
-4 & 3C & +0.57 & 4/5 & 0.113 (0.338) \\
-4 & 1C & $-0.96$ & 1/5 & 0.034 (0.137) \\
-8 & 3C & $-0.25$ & 2/5 & 0.502 (1.000) \\
-8 & 1C & $-2.06$ & 0/5 & \textbf{0.0060 (0.032)} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Đa-split cho thấy nhận định "Logit KD $\tau=2$ nhỉnh hơn SP-KD ở 1C" trên split gốc \textbf{không bền}: gộp 5 split, $\Delta$ trung bình gần 0 ($-0.06$pp, chỉ 2/5 split dương), tức lợi thế $+1.35$pp quan sát trên split gốc là nhiễu của cách chia subject cụ thể, không phải hiệu ứng thật. Ở cấu hình 3 điện cực thì ngược lại: $\tau=2$ có hiệu ứng dương thật và bền (5/5 split, sống sót Holm, $p_{\text{Holm}}=0.032$) -- một phát hiện dương khác của Logit KD mà đánh giá một-split ban đầu ($+0.36$pp, không ý nghĩa) đã đánh giá thấp. Ở $\tau=8$, hiệu ứng âm ở 1C cũng được xác nhận bền và sống sót Holm ($p_{\text{Holm}}=0.032$, 0/5 split dương). Tóm lại, hiệu quả của Logit KD phụ thuộc mạnh và trái chiều vào cả $\tau$ \emph{và} cấu hình điện cực (dương ở 3C với $\tau=2$, âm ở 1C với $\tau=8$), đòi hỏi dò nhiệt độ riêng cho từng cấu hình để có lợi -- trong khi CCKD dùng \emph{một} công thức không có nhiệt độ, cho kết quả dương nhất quán ở cả hai cấu hình (Bảng~\ref{tab:multisplit}). Đây là điểm khác biệt thực dụng quan trọng hơn là "CCKD luôn thắng Logit KD tại mọi cấu hình", một khẳng định mà dữ liệu ở đây \emph{không} ủng hộ tuyệt đối (Logit KD $\tau=2$ tại 3C có hiệu ứng dương bền, đôi khi cạnh tranh với CCKD).
-
-\begin{table}[h]
-\caption{So sánh các chiến lược knowledge distillation trên bộ dữ liệu Benchmark (cửa sổ 1.0 s, backbone FB-tCNN). Mỗi hàng đến từ một lần chạy độc lập với baseline riêng (cột "Baseline"); $\Delta$ được tính theo cặp trong cùng lần chạy đó. Các hàng Logit KD dùng 3 seeds (thí nghiệm dò $\tau$ riêng); hàng SP-KD dùng 8 seeds, khớp với Bảng~\ref{tab:overall}.}
-\label{tab:ablation_temperature}
-\begin{center}
 \begin{tabular}{lcccccc}
 \toprule
-Phương pháp & $\tau$ & Baseline 3C (\%) & 3C acc (\%) & Baseline 1C (\%) & 1C acc (\%) & $\Delta$1C (pp) \\
+Dataset & Subjects & Train/Val/Test & Splits & Window & Teacher & Student montages \\
 \midrule
-Logit KD          & 2    & 51.06 & 51.42 & 44.01 & \textbf{45.36} & \textbf{+1.35} \\
-Logit KD          & 4    & 50.97 & 50.43 & 44.04 & 43.58 & $-0.46$ \\
-Logit KD          & 8    & 50.96 & 50.18 & 44.03 & 42.53 & \textbf{$-1.50$} \\
-SP-KD (đề xuất)   & ---  & 50.99 & \textbf{51.44} & 44.55 & 45.14 & \textbf{+0.59} \\
+Benchmark & 35 & 21 / 4 / 10 & 5 & 1.0 s & 9 channels & 3C, 1C \tbd{+ alternatives} \\
+BETA      & 70 & 42 / 8 / 20 & 5 & 1.0 s & 9 channels & 3C, 1C \tbd{+ alternatives} \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-\paragraph{So sánh với các cơ chế KD dựa trên đặc trưng.} Ngoài response-based KD và hybrid, chúng tôi cài đặt lại hai cơ chế KD cổ điển khác làm đối chứng: \textbf{FitNets} \citep{romero2015fitnets} (mô phỏng trực tiếp biểu diễn đặc trưng tuyệt đối của teacher) và \textbf{Attention Transfer} \citep{zagoruyko2017paying} (mô phỏng bản đồ chú ý dựa trên kích hoạt, được điều chỉnh để hoạt động trên vector đặc trưng phẳng). Cả bốn cơ chế đặc trưng/quan hệ đều tác động lên \emph{cùng} vector đặc trưng penultimate (\texttt{return\_feat}), trên cùng backbone FB-tCNN, cùng split gốc, cùng 8 seeds, nên khác biệt chỉ nằm ở công thức loss. Do thang đo MSE khác hẳn loss Gram-matrix, chúng tôi hiệu chỉnh riêng $\lambda_{sp} \in \{0.1, 1, 10, 100, 1000\}$ cho hai loss mới (Benchmark-3C, 3 seeds); $\lambda_{sp}=100$ cho kết quả tốt và ổn định nhất ở cả hai (đồng thời trùng giá trị dùng cho CCKD; $\lambda_{sp}=1000$ làm Attention Transfer sụp đổ, $-5.58$pp, $p=0.011$). Hiệu chỉnh ban đầu này thực hiện trên một cấu hình duy nhất (Benchmark-3C); để loại trừ khả năng $\lambda_{sp}=100$ đặt hai đối chứng vào trạng thái underfit ở các cấu hình khác, chúng tôi quét lại $\lambda_{sp} \in \{0.1,1,10,100,1000\}$ riêng cho \emph{cả bốn} cấu hình (split gốc, 3 seeds). Kết quả: ở 3 điện cực, $\lambda_{sp}=100$ vẫn là lựa chọn tốt nhất hoặc gần tốt nhất cho cả FitNets và Attention Transfer (chỉ FitNets trên BETA-3C đạt $+1.06$pp, $p=0.018$, ở đúng $\lambda_{sp}=100$); ở 1 điện cực, \textbf{không giá trị $\lambda_{sp}$ nào} trong dải quét đưa $\Delta$Acc của FitNets hoặc Attention Transfer lên dương có ý nghĩa -- giảm $\lambda_{sp}$ chỉ kéo $\Delta$ về quanh 0, còn tăng lên 1000 làm cả hai sụp đổ nặng hơn (đến $-24$pp trên BETA-1C với Attention Transfer). Do đó, giả thuyết "hai đối chứng thua vì chọn sai $\lambda_{sp}$" không được dữ liệu ủng hộ; nhược điểm của chúng ở cấu hình 1 điện cực có vẻ là hạn chế cấu trúc của việc khớp biểu diễn/kích hoạt tuyệt đối, không phải do hiệu chỉnh siêu tham số chưa tối ưu. Quét này vẫn dùng 3 seeds trên một split, nên chỉ đóng vai trò loại trừ giả thuyết underfit chứ không thay thế xác nhận đa-split ở trên.
+Teacher dùng chín điện cực Pz, PO5, PO3, POz, PO4, PO6, O1, Oz và O2. Tập điện cực gốc của student là O1, Oz, O2 (3C) và Oz (1C), giống nghiên cứu trước. Để trả lời RQ1 về tập điện cực, bài báo thêm hai tập ba điện cực là \{PO3, POz, PO4\} và \{POz, O1, O2\}, cùng hai tập một điện cực là \{POz\} và \{O1\}. Các tập này được cố định trước khi chạy thí nghiệm.
+
+\subsection{Năm kiến trúc}
+\label{sec:backbones}
+
+Bảng~\ref{tab:backbones} liệt kê năm kiến trúc cùng các tính chất được dùng làm biến giải thích ở RQ2. Một số siêu tham số kiến trúc được điều chỉnh cho cửa sổ 1.0~s (250 mẫu). DeepConvNet giữ ba khối tích chập--pooling thay vì bốn. ShallowConvNet dùng pooling 35 mẫu, bước 7. Compact-CNN dùng kernel thời gian 64 thay vì 256.
 
 \begin{table}[h]
-\caption{So sánh CCKD với các cơ chế KD khác (FB-tCNN, split gốc, 8 seeds): $\Delta$Acc (pp) so với baseline và $p$ (Wilcoxon) trong ngoặc; in đậm nếu $p<0.05$. Các hàng Response KD và Hybrid được chạy lại để có nguồn kiểm chứng được (cùng $\tau=4$, $\lambda_{sp}=100$, môi trường hiện tại); số liệu khác với một bản thảo nội bộ trước đó không truy được nguồn.}
-\label{tab:sota}
+\caption{Backbones and their architectural properties. ``mid'' and ``last'' are the widths of the two distillation levels; ``mid'' does not depend on the number of input electrodes.}
+\label{tab:backbones}
+\begin{center}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+Backbone & Spatial conv & Nonlinearity & Max temporal kernel & mid & last & Params (9C) \\
+\midrule
+FB-tCNN \citep{ding2021filterbank} & ordinary, shared across 3 bands & ELU & 250 & 12000 & 32 & 90,536 \\
+DeepConvNet \citep{schirrmeister2017deep} & ordinary & ELU & 10 & 6250 & 900 & \tbd{} \\
+ShallowConvNet \citep{schirrmeister2017deep} & ordinary & square, log & 25 & 10000 & 1240 & \tbd{} \\
+EEGNet \citep{lawhern2018eegnet} & depthwise & ELU & 64 & 4016 & 112 & \tbd{} \\
+Compact-CNN \citep{waytowich2018compact} & depthwise & ELU & 64 & 24096 & 672 & 45,256 \\
+\bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+
+\subsection{Huấn luyện và chọn siêu tham số}
+
+Mọi mô hình được huấn luyện 100 epoch bằng Adam (tốc độ học $10^{-3}$, weight decay $10^{-4}$), lịch cosine annealing và batch 64. Checkpoint được chọn theo độ chính xác validation trung bình theo subject. Mỗi cấu hình chạy tám seed khởi tạo (2026--2033) trên mỗi cách chia. Các seed của Python, NumPy và PyTorch được cố định.
+
+Trọng số chưng cất được chọn trong $\lambda_{sp} \in \{1, 10, 100, 1000\}$ theo độ chính xác validation, riêng cho từng kiến trúc, bộ dữ liệu, cấu hình và cách chia. Tập kiểm thử không tham gia vào lựa chọn này. Kết quả với $\lambda_{sp}=100$ cố định (giá trị của nghiên cứu trước) được báo cáo song song để so sánh.
+
+\subsection{Thước đo và kiểm định}
+
+Thước đo chính là độ chính xác phân loại trên các subject kiểm thử. Mức cải thiện $\Delta$ là chênh lệch theo cặp giữa student chưng cất và student baseline (chỉ huấn luyện bằng cross-entropy) trong cùng lần chạy, tính theo điểm phần trăm (pp), lấy trung bình qua subject sau khi lấy trung bình qua seed. Trên một cách chia, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-rank qua subject \citep{wilcoxon1945individual}. Qua năm cách chia, ý nghĩa được kiểm bằng kiểm định $t$ một mẫu trên năm giá trị $\Delta$ ($H_0$: $\bar\Delta = 0$). Khi nhiều kiểm định thuộc cùng một họ, giá trị $p$ được hiệu chỉnh Holm--Bonferroni \cantrich{Holm (1979)}. Kết luận ``không có hiệu ứng'' chỉ được đưa ra khi kiểm định tương đương TOST đạt ý nghĩa \cantrich{Lakens, TOST}.
+
+\subsection{Hạn chế kỹ thuật đã biết}
+
+Ba hạn chế kỹ thuật ảnh hưởng tới cách đọc kết quả. Nếu không nêu rõ thì người đọc có thể hiểu sai độ chính xác của các con số.
+\begin{itemize}
+    \item Huấn luyện GPU không tái lập đúng từng bit. Mức nhiễu này được đo ở Mục~\ref{sec:nondeterminism}.
+    \item Student baseline dùng độ chính xác hỗn hợp (automatic mixed precision, AMP), còn student chưng cất dùng FP32. Thiết kế theo cặp giữ cùng chênh lệch này ở mọi kiến trúc, nhưng chúng tôi chưa đo riêng ảnh hưởng của nó.
+    \item Trong một seed, teacher, baseline và các student chưng cất được huấn luyện nối tiếp từ cùng một trạng thái sinh số ngẫu nhiên. Vì vậy cùng nhãn seed không bảo đảm cùng khởi tạo giữa các phương pháp.
+\end{itemize}
+
+% ======================================================================
+\section{RQ1: Mức cải thiện theo kiến trúc và tập điện cực}
+\label{sec:rq1}
+\label{sec:results}
+\label{sec:generalization}
+
+\subsection{Kết quả theo giao thức cũ}
+
+Bảng~\ref{tab:five_backbones} tổng hợp mức cải thiện của CCKD trên năm kiến trúc theo giao thức cũ. Theo giao thức này, $\lambda_{sp}=100$ được giữ cố định cho mọi kiến trúc, FB-tCNN được chưng cất ở hai tầng và các kiến trúc khác chỉ ở tầng cuối. Dòng FB-tCNN lấy từ nghiên cứu trước \citep{icera2026cckd}.
+
+\begin{table}[h]
+\caption{CCKD gain over five subject splits under the earlier protocol ($\lambda_{sp}=100$ for all backbones; FB-tCNN distills two levels, the other backbones the last level only). Entries: mean $\Delta$ (pp) and one-sample $t$-test $p$ over splits. Bold: $p<0.05$. FB-tCNN row from \citet{icera2026cckd}.}
+\label{tab:five_backbones}
 \begin{center}
 \begin{tabular}{lcccc}
 \toprule
-Phương pháp & Benchmark 3C & Benchmark 1C & BETA 3C & BETA 1C \\
+Backbone & Benchmark 3C & Benchmark 1C & BETA 3C & BETA 1C \\
 \midrule
-Response KD \citep{hinton2015distilling} & $-0.33$ (0.734) & $-1.54$ (0.131) & $-0.03$ (0.970) & \textbf{$-0.90$ (0.0196)} \\
-Hybrid (response + relational) & $-0.53$ (0.652) & $-1.62$ (0.084) & $-0.13$ (0.970) & \textbf{$-1.21$ (0.0083)} \\
-FitNets \citep{romero2015fitnets} & +0.43 (0.441) & $-0.01$ (1.000) & \textbf{+1.04 (0.0218)} & $-0.36$ (0.627) \\
-Attention Transfer \citep{zagoruyko2017paying} & +0.54 (0.301) & $-0.32$ (0.432) & \textbf{$-2.14$ (0.0003)} & \textbf{$-1.79$ (0.0003)} \\
-\textbf{CCKD (relational, đề xuất)} & +0.45 (0.375) & +0.59 (0.193) & \textbf{+1.05 (0.0124)} & \textbf{+1.06 (0.0038)} \\
+FB-tCNN & \textbf{+1.00 (0.0050)} & \textbf{+0.71 (0.0103)} & \textbf{+1.19 (0.0002)} & \textbf{+0.72 (0.0293)} \\
+DeepConvNet & \textbf{+0.59 (0.0006)} & +0.13 (0.684) & \textbf{+0.84 (0.0047)} & \textbf{+0.61 (0.0161)} \\
+ShallowConvNet & \textbf{$-0.91$ (0.0125)} & \textbf{$-0.95$ (0.0161)} & +0.46 (0.191) & +0.17 (0.300) \\
+EEGNet & \textbf{+1.09 (0.0179)} & $-0.66$ (0.120) & \textbf{$-1.30$ (0.0006)} & \textbf{$-1.29$ (0.0036)} \\
+Compact-CNN & +0.06 (0.872) & $-0.27$ (0.128) & $-0.24$ (0.190) & $-0.20$ (0.219) \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-Bảng~\ref{tab:sota} cho thấy CCKD là phương pháp \textbf{duy nhất có $\Delta$Acc dương ở cả bốn cấu hình}. Kết quả cần được đọc trung thực: (i) ở cấu hình \emph{3 điện cực}, \textbf{FitNets ngang CCKD} (BETA-3C: $+1.04$pp so với $+1.05$pp, cả hai có ý nghĩa; Benchmark-3C: $+0.43$ so với $+0.45$pp), nên chúng tôi \emph{không} khẳng định CCKD vượt trội FitNets ở cấu hình này; (ii) ở cấu hình \emph{1 điện cực} -- nơi khoảng cách thông tin đầu vào giữa teacher và student lớn nhất -- CCKD dương ở cả hai bộ dữ liệu ($+0.59$, $+1.06$pp) trong khi FitNets về $\approx 0$/âm nhẹ, còn Response KD, Hybrid và Attention Transfer đều suy giảm có ý nghĩa thống kê trên BETA-1C ($-0.90$pp $p=0.0196$; $-1.21$pp $p=0.0083$; $-1.79$pp $p=0.0003$, tương ứng), phù hợp với động cơ của phương pháp (khớp \emph{quan hệ} giữa các mẫu bền hơn khớp \emph{biểu diễn tuyệt đối} khi hai mô hình quan sát không gian tín hiệu khác nhau nhiều); (iii) Attention Transfer trên split gốc suy giảm có ý nghĩa ở cả hai cấu hình BETA -- nhưng đây chỉ là kết quả một split, và đa-split bên dưới cho thấy nhận định này \emph{không} bền. Theo bài học phương pháp luận của nghiên cứu này, chúng tôi xác nhận thêm hai đối thủ (FitNets, Attention Transfer) qua 5 split subject độc lập (Bảng~\ref{tab:fitnets_ms}, \ref{tab:at_ms}).
+Trong 20 tổ hợp, tám tổ hợp cải thiện có ý nghĩa, bốn tổ hợp suy giảm có ý nghĩa và tám tổ hợp không đạt ý nghĩa (Bảng~\ref{tab:five_backbones}). Kết quả không xếp được theo nhóm kiến trúc. Trong nhóm tích chập không gian thường, FB-tCNN cải thiện ở cả bốn thiết lập, DeepConvNet cải thiện ở ba thiết lập, còn ShallowConvNet suy giảm ở cả hai thiết lập của Benchmark. Trong nhóm tích chập theo chiều sâu, EEGNet cải thiện ở Benchmark-3C nhưng suy giảm ở cả hai thiết lập của BETA, còn Compact-CNN không cho hiệu ứng nào đạt ý nghĩa. Các tổ hợp không đạt ý nghĩa được xếp là ``không phát hiện được hiệu ứng'', chưa phải ``không có hiệu ứng''. \tbd{TOST trên dữ liệu năm cách chia; phân tích trước chỉ chạy TOST trên một cách chia}.
+
+Bảng~\ref{tab:five_backbones} chưa trả lời được RQ1, vì hai yếu tố bị lẫn vào biến kiến trúc. Thứ nhất, $\lambda_{sp}=100$ được chọn cho FB-tCNN. Nếu không chọn lại thì một kiến trúc có thể suy giảm chỉ vì trọng số không phù hợp với nó. Thứ hai, số tầng chưng cất khác nhau giữa FB-tCNN và các kiến trúc còn lại. Mục~\ref{sec:rq1_matched} loại bỏ cả hai yếu tố này.
+
+\subsection{Kết quả với tầng chưng cất thống nhất và trọng số chọn theo validation}
+\label{sec:rq1_matched}
+
+\tbd{Bảng N2: 5 kiến trúc $\times$ 4 thiết lập, chưng cất tầng cuối; hai khối dòng: $\lambda_{sp}=100$ cố định và $\lambda_{sp}$ chọn theo validation; mỗi ô $\bar\Delta$ ($p_t$, số cách chia dương); cột $p_{\text{Holm}}$ trên họ 20 kiểm định. Nguồn: \texttt{results/module3/n2a}, \texttt{n2b}.}
+
+\tbd{Đoạn diễn giải: số tổ hợp đổi kết luận so với Bảng~\ref{tab:five_backbones}; phân bố $\lambda_{sp}$ được chọn theo kiến trúc.}
+
+\subsection{Độ nhạy theo tập điện cực}
+\label{sec:montage}
+
+\tbd{Bảng N3: 5 kiến trúc $\times$ 2 bộ dữ liệu $\times$ 6 tập điện cực (3C, 3C\_PPO, 3C\_POO, 1C, 1C\_POz, 1C\_O1), $\lambda_{sp}$ theo N2b; nguồn \texttt{results/module3/n3}.}
+
+% ======================================================================
+\section{RQ2: Đại lượng dự đoán mức cải thiện}
+\label{sec:rq2}
+
+\subsection{Độ tương đồng CKA giữa teacher và student}
+\label{sec:cka}
+
+Hàm mất mát~\eqref{eq:relloss} kéo ma trận Gram của student về phía ma trận Gram của teacher. Nếu CCKD có ích bằng cơ chế này thì mức cải thiện độ chính xác phải đi cùng mức tăng tương đồng biểu diễn. Chúng tôi đo độ tương đồng bằng CKA tuyến tính \citep{kornblith2019similarity} giữa đặc trưng tầng cuối của teacher và student trên tập kiểm thử. Ký hiệu $\Delta$CKA là CKA của student chưng cất trừ CKA của student baseline.
+
+Phân tích sơ bộ dùng một seed trên cách chia 2026 theo giao thức cũ (Bảng~\ref{tab:cka}). $\Delta$CKA dương ở hầu hết các tổ hợp. Ngoại lệ là ShallowConvNet, có $\Delta$CKA xấp xỉ 0 ở cả hai bộ dữ liệu, cũng là kiến trúc duy nhất suy giảm ổn định trên Benchmark. Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ qua năm cách chia (Pearson $r=0.58$, $p=0.007$; Spearman $\rho=0.63$, $p=0.003$). Khi bỏ lần lượt từng kiến trúc, giá trị $p$ của tương quan vẫn dưới $0.06$ ở mọi trường hợp. CKA của student baseline không tương quan với mức cải thiện ($r=0.13$, $p=0.58$; $\rho=0.06$, $p=0.80$). Như vậy, mức chênh biểu diễn ban đầu giữa teacher và student không dự đoán được hiệu quả của CCKD. Điều dự đoán được là mức CCKD thu hẹp chênh lệch đó.
 
 \begin{table}[h]
-\caption{Đa-split (5 split, 8 seeds/split): $\Delta$Acc trung bình của FitNets và CCKD (FB-tCNN); $p_t$ là kiểm định $t$ một mẫu ($H_0$: $\bar\Delta=0$) cho FitNets; $p_{\text{cặp}}$ là kiểm định $t$ cặp CCKD so với FitNets trên 5 split (số split CCKD cao hơn trong ngoặc). In đậm nếu $p<0.05$.}
-\label{tab:fitnets_ms}
+\caption{Linear CKA between teacher and student last-level features before and after CCKD (preliminary: one seed, split 2026, earlier protocol; 3C and 1C averaged per backbone and dataset).}
+\label{tab:cka}
 \begin{center}
-\begin{tabular}{lccccc}
+\begin{tabular}{llccc}
 \toprule
-Cấu hình & FitNets $\bar\Delta$ & $p_t$ & CCKD $\bar\Delta$ & CCKD $-$ FitNets & $p_{\text{cặp}}$ \\
+Backbone & Dataset & CKA (baseline) & CKA (CCKD) & $\Delta$CKA \\
 \midrule
-Benchmark 3C & +1.09 & \textbf{0.0089} & +1.00 & $-0.09$ (2/5) & 0.394 \\
-Benchmark 1C & $-0.10$ & 0.696 & +0.71 & +0.81 (5/5) & \textbf{0.0045} \\
-BETA 3C & +0.95 & \textbf{0.0030} & +1.19 & +0.23 (5/5) & 0.145 \\
-BETA 1C & $-0.44$ & 0.150 & +0.72 & +1.16 (5/5) & \textbf{0.0007} \\
+\multirow{2}{*}{FB-tCNN} & Benchmark & 0.45 & 0.51 & +0.06 \\
+ & BETA & 0.14 & 0.17 & +0.03 \\
+\multirow{2}{*}{DeepConvNet} & Benchmark & 0.51 & 0.55 & +0.04 \\
+ & BETA & 0.23 & 0.26 & +0.03 \\
+\multirow{2}{*}{ShallowConvNet} & Benchmark & 0.67 & 0.67 & $-0.01$ \\
+ & BETA & 0.38 & 0.38 & +0.00 \\
+\multirow{2}{*}{EEGNet} & Benchmark & 0.43 & 0.50 & +0.08 \\
+ & BETA & 0.06 & 0.07 & +0.01 \\
+\multirow{2}{*}{Compact-CNN} & Benchmark & 0.49 & 0.50 & +0.01 \\
+ & BETA & 0.02 & 0.03 & +0.00 \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-Đa-split xác nhận hai điểm. \textbf{Thứ nhất}, ở cấu hình \emph{3 điện cực}, FitNets \emph{cũng} cải thiện vững chắc (5/5 split dương, $p_t\le 0.009$ chưa hiệu chỉnh; sau Holm--Bonferroni trên họ 8 phép thử $\Delta\neq 0$ của FitNets và AT chỉ BETA-3C còn ý nghĩa, $p_{\text{Holm}}=0.024$, Benchmark-3C là $0.062$) và \textbf{không khác biệt có ý nghĩa với CCKD} ($p_{\text{cặp}}=0.39$ và $0.15$; CCKD nhỉnh hơn nhẹ trên BETA ở cả 5 split nhưng chưa đạt ý nghĩa) -- nên CCKD \emph{không} vượt trội FitNets ở 3C, và điều này cũng cho thấy chính FitNets ở 3C khi đánh giá một split ($+0.43$pp, $p=0.41$ ở Benchmark) từng bị đánh giá thấp giống CCKD. \textbf{Thứ hai}, ở cấu hình \emph{1 điện cực}, CCKD vượt FitNets \textbf{có ý nghĩa thống kê và nhất quán} (cao hơn ở 5/5 split cho cả hai bộ dữ liệu; $p_{\text{cặp}}=0.0045$ và $0.0007$), trong khi FitNets không khác 0 hoặc âm nhẹ. Nói cách khác, lợi thế của khớp \emph{quan hệ} so với khớp \emph{biểu diễn tuyệt đối} chỉ xuất hiện khi khoảng cách thông tin đầu vào teacher--student đủ lớn (1 điện cực), phù hợp với động cơ của CCKD, nhưng không phải một ưu thế phổ quát.
+Phân tích này có ba giới hạn. Nó chỉ dùng một seed, lẫn yếu tố số tầng chưng cất của giao thức cũ và chỉ cho thấy tương quan. Trường hợp EEGNet--BETA có $\Delta$CKA gần 0 nhưng suy giảm mạnh nhất ($-1.30$~pp), nên còn yếu tố khác chưa được nắm bắt. Các thí nghiệm mới tính CKA ở cả hai tầng cho mọi lần chạy, trên năm cách chia và tám seed.
+
+\tbd{Bảng N4: tương quan $\Delta$CKA--$\bar\Delta$ ở tầng giữa và tầng cuối, 8 seed $\times$ 5 cách chia, giao thức thống nhất; khoảng tin cậy bootstrap.}
+
+\subsection{Thí nghiệm can thiệp theo tầng chưng cất}
+\label{sec:layer_intervention}
+
+Tương quan ở trên không phân biệt được hai giải thích. Hoặc mức tăng tương đồng gây ra cải thiện, hoặc cả hai cùng do một tính chất của kiến trúc. Để tách hai khả năng, chúng tôi thay đổi tầng chưng cất trong khi giữ nguyên kiến trúc, dữ liệu và cách chia.
+
+\tbd{Bảng N5: $\bar\Delta$ và $\Delta$CKA theo $\mathcal{K} \in \{\texttt{last}, \texttt{mid}, \texttt{mid+last}\}$ cho 5 kiến trúc $\times$ 4 thiết lập.}
+
+% ======================================================================
+\section{RQ3: Độ tin cậy của đánh giá}
+\label{sec:rq3}
+\label{sec:mc_multisplit}
+
+\subsection{Một cách chia so với năm cách chia}
+
+Bảng~\ref{tab:single_vs_multi} so sánh kết luận rút ra từ cách chia 2026 với kết luận từ năm cách chia cho 20 tổ hợp của Bảng~\ref{tab:five_backbones}. Kết luận trên một cách chia dựa vào kiểm định Wilcoxon qua subject, còn kết luận trên năm cách chia dựa vào kiểm định $t$ qua cách chia. Mỗi kết luận được xếp vào một trong ba loại: cải thiện ($+$), suy giảm ($-$) hoặc không đạt ý nghĩa ($0$), với ngưỡng $p<0.05$.
 
 \begin{table}[h]
-\caption{Đa-split (5 split, 8 seeds/split): $\Delta$Acc trung bình của Attention Transfer (AT) và CCKD (FB-tCNN); $p_t$ là kiểm định $t$ một mẫu cho AT; $p_{\text{cặp}}$ là kiểm định $t$ cặp CCKD so với AT trên 5 split (số split CCKD cao hơn trong ngoặc). In đậm nếu $p<0.05$.}
-\label{tab:at_ms}
+\caption{Verdict from split 2026 alone (Wilcoxon over test subjects, 8 seeds) vs.\ five splits (one-sample $t$-test over split-level gains) for CCKD under the earlier protocol. $+$/$-$: significant gain/loss ($p<0.05$); 0: not significant. Rows where the verdicts differ are marked with $\star$. Source: \texttt{scripts/single\_vs\_multisplit.py}.}
+\label{tab:single_vs_multi}
 \begin{center}
-\begin{tabular}{lccccc}
+\footnotesize
+\begin{tabular}{lllcccccl}
 \toprule
-Cấu hình & AT $\bar\Delta$ & $p_t$ & CCKD $\bar\Delta$ & CCKD $-$ AT & $p_{\text{cặp}}$ \\
+Backbone & Dataset & Student & $\Delta_{2026}$ (pp) & $p_{\text{W}}$ & $\bar\Delta_{5}$ (pp) & Pos.\ splits & $p_t$ & Verdict (1 $\to$ 5) \\
 \midrule
-Benchmark 3C & +0.77 & \textbf{0.0122} & +1.00 & +0.23 (3/5) & 0.209 \\
-Benchmark 1C & $-0.30$ & 0.252 & +0.71 & +1.01 (5/5) & \textbf{0.0043} \\
-BETA 3C & $-0.66$ & 0.221 & +1.19 & +1.85 (5/5) & \textbf{0.0091} \\
-BETA 1C & $-2.76$ & 0.085 & +0.72 & +3.48 (5/5) & 0.058 \\
+FB-tCNN & Benchmark & 3C & +0.45 & 0.375 & +1.00 & 5/5 & 0.0050 & 0 $\to$ $+$ $\star$ \\
+ & & 1C & +0.59 & 0.193 & +0.71 & 5/5 & 0.0103 & 0 $\to$ $+$ $\star$ \\
+ & BETA & 3C & +1.05 & 0.012 & +1.19 & 5/5 & 0.0002 & $+$ $\to$ $+$ \\
+ & & 1C & +1.06 & 0.004 & +0.72 & 4/5 & 0.0293 & $+$ $\to$ $+$ \\
+DeepConvNet & Benchmark & 3C & +0.52 & 0.012 & +0.59 & 5/5 & 0.0006 & $+$ $\to$ $+$ \\
+ & & 1C & +1.17 & 0.084 & +0.13 & 2/5 & 0.684 & 0 $\to$ 0 \\
+ & BETA & 3C & +0.90 & 0.006 & +0.84 & 5/5 & 0.0047 & $+$ $\to$ $+$ \\
+ & & 1C & +0.56 & 0.023 & +0.61 & 5/5 & 0.0161 & $+$ $\to$ $+$ \\
+ShallowConvNet & Benchmark & 3C & $-0.31$ & 0.432 & $-0.91$ & 0/5 & 0.0125 & 0 $\to$ $-$ $\star$ \\
+ & & 1C & $-0.55$ & 0.016 & $-0.95$ & 0/5 & 0.0161 & $-$ $\to$ $-$ \\
+ & BETA & 3C & +0.50 & 0.040 & +0.46 & 4/5 & 0.191 & $+$ $\to$ 0 $\star$ \\
+ & & 1C & +0.32 & 0.239 & +0.17 & 3/5 & 0.300 & 0 $\to$ 0 \\
+EEGNet & Benchmark & 3C & +0.66 & 0.084 & +1.09 & 5/5 & 0.0179 & 0 $\to$ $+$ $\star$ \\
+ & & 1C & $-0.17$ & 0.492 & $-0.66$ & 0/5 & 0.120 & 0 $\to$ 0 \\
+ & BETA & 3C & $-1.30$ & 0.003 & $-1.29$ & 0/5 & 0.0006 & $-$ $\to$ $-$ \\
+ & & 1C & $-1.02$ & 0.004 & $-1.29$ & 0/5 & 0.0036 & $-$ $\to$ $-$ \\
+Compact-CNN & Benchmark & 3C & $-0.21$ & 0.742 & +0.06 & 1/5 & 0.872 & 0 $\to$ 0 \\
+ & & 1C & $-0.52$ & 0.375 & $-0.27$ & 1/5 & 0.128 & 0 $\to$ 0 \\
+ & BETA & 3C & $-0.04$ & 0.695 & $-0.24$ & 1/5 & 0.190 & 0 $\to$ 0 \\
+ & & 1C & $-0.12$ & 0.526 & $-0.20$ & 1/5 & 0.219 & 0 $\to$ 0 \\
 \bottomrule
 \end{tabular}
 \end{center}
 \end{table}
 
-Đối với Attention Transfer, đa-split \textbf{chỉnh lại} kết luận từ một split. Mức suy giảm có ý nghĩa trên BETA ở split gốc ($-2.14$, $-1.79$pp) \emph{không} còn ý nghĩa khi gộp 5 split ($p_t=0.22$ và $0.085$): dấu vẫn âm ở BETA-1C (0/5 split dương, trung bình $-2.76$pp, với một split rất xấu $-7.57$pp) nhưng phương sai giữa các split lớn. Ngược lại, ở Benchmark-3C AT lại cải thiện ($+0.77$pp, 5/5 split dương, $p_t=0.012$ chưa hiệu chỉnh, $p_{\text{Holm}}=0.073$ trong họ 8 phép thử nên không còn ý nghĩa) và không khác CCKD ($p_{\text{cặp}}=0.21$), tức tương tự FitNets ở 3C. CCKD vượt AT ở Benchmark-1C và BETA-3C (sau Holm trên họ 8 phép so sánh cặp: $0.030$ và $0.046$; vượt FitNets ở 1C: $0.030$ và $0.006$), và gần ý nghĩa ở BETA-1C ($p_{\text{cặp}}=0.058$, 5/5 split). Do đó, kết luận trung thực là: ở 3 điện cực, cả FitNets và AT đều có thể cạnh tranh với CCKD; CCKD chỉ là cơ chế \emph{ổn định nhất} (mean $\Delta$ dương ở cả bốn cấu hình, trong khi AT âm ở ba cấu hình), chứ không phải luôn vượt trội có ý nghĩa thống kê.
+Kết luận thay đổi ở 5 trên 20 tổ hợp, theo cả hai chiều (Bảng~\ref{tab:single_vs_multi}). Ở ba tổ hợp, một cách chia bỏ sót một cải thiện ổn định: FB-tCNN Benchmark-3C và 1C, EEGNet Benchmark-3C. Ở một tổ hợp, một cách chia bỏ sót một suy giảm ổn định: ShallowConvNet Benchmark-3C. Ở một tổ hợp, một cách chia báo cáo một cải thiện không lặp lại: ShallowConvNet BETA-3C. Ngoài ra, DeepConvNet Benchmark-1C cho $+1.17$~pp trên cách chia 2026 nhưng chỉ $+0.13$~pp trung bình qua năm cách chia. Các sai lệch tập trung ở Benchmark, nơi tập kiểm thử chỉ có 10 subject.
 
-\subsection{Độ nhạy với $\lambda_{sp}$ và lựa chọn theo validation}
+Hai kiểm định không cùng đơn vị lặp: Wilcoxon lặp qua subject, kiểm định $t$ lặp qua cách chia. Vì vậy bảng không cho biết kiểm định nào có công suất cao hơn. Điều bảng cho thấy là một nghiên cứu chỉ báo cáo một cách chia có thể đi đến kết luận ngược với kết luận khi lặp lại trên các tập subject khác.
+
+\subsection{Nhiễu không xác định giữa các lần chạy}
+\label{sec:nondeterminism}
+
+Chúng tôi lặp lại năm lần một cấu hình giống hệt nhau (FB-tCNN, $\lambda_{sp}=100$, seed 2026, cách chia 2026) theo hai cách. Cách thứ nhất chạy năm tiến trình riêng. Cách thứ hai lặp năm lần trong cùng một tiến trình. Bảng~\ref{tab:nondeterminism} cho thấy teacher tái lập gần như đúng từng bit (SD $\le 0.02$~pp). Với các student, độ lệch chuẩn của $\Delta$ dao động từ $0.04$ đến $0.51$~pp, lớn nhất ở cấu hình một điện cực. Nhiễu cỡ $0.3$--$0.5$~pp cùng bậc với nhiều hiệu ứng trong bài, nên các so sánh có $\lvert\Delta\rvert < 0.5$~pp chỉ có nghĩa khi đã lấy trung bình qua nhiều seed và nhiều cách chia.
+
+\begin{table}[h]
+\caption{Run-to-run nondeterminism over five repetitions of an identical configuration (FB-tCNN, $\lambda_{sp}=100$, seed 2026, split 2026). ``Across processes'': five separate script calls. ``Within process'': five repetitions in one Python/CUDA process. Units: pp.}
+\label{tab:nondeterminism}
+\begin{center}
+\footnotesize
+\begin{tabular}{llcccc}
+\toprule
+Dataset & Quantity & \multicolumn{2}{c}{Across processes} & \multicolumn{2}{c}{Within process} \\
+ & & range & SD & range & SD \\
+\midrule
+\multirow{7}{*}{Benchmark} & Teacher-9C & 0.00 & 0.00 & 0.00 & 0.00 \\
+ & 3C baseline & 0.42 & 0.19 & 0.04 & 0.02 \\
+ & 1C baseline & 0.46 & 0.18 & 0.25 & 0.11 \\
+ & 3C CCKD & 0.17 & 0.06 & 0.13 & 0.05 \\
+ & 1C CCKD & 0.79 & 0.40 & 1.04 & 0.40 \\
+ & $\Delta$ (3C) & 0.46 & 0.19 & 0.08 & 0.04 \\
+ & $\Delta$ (1C) & 1.08 & 0.51 & 0.92 & 0.33 \\
+\midrule
+\multirow{7}{*}{BETA} & Teacher-9C & 0.03 & 0.01 & 0.03 & 0.02 \\
+ & 3C baseline & 0.09 & 0.05 & 0.09 & 0.04 \\
+ & 1C baseline & 0.06 & 0.02 & 0.31 & 0.12 \\
+ & 3C CCKD & 0.19 & 0.08 & 0.25 & 0.10 \\
+ & 1C CCKD & 0.13 & 0.05 & 0.50 & 0.26 \\
+ & $\Delta$ (3C) & 0.19 & 0.07 & 0.22 & 0.08 \\
+ & $\Delta$ (1C) & 0.16 & 0.06 & 0.78 & 0.37 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\subsection{Chọn siêu tham số trên một cách chia}
 \label{sec:lambda_val}
 
-Để kiểm tra việc chọn $\lambda_{sp}=100$ có phụ thuộc vào tập test hay không, chúng tôi chạy lại CCKD (relational, FB-tCNN, cửa sổ 1.0 s, split gốc 2026, 8 seeds) với $\lambda_{sp}\in\{1,10,100,1000\}$ trên cả hai bộ dữ liệu. Quy tắc chọn được cố định trước khi chạy: với mỗi bộ dữ liệu và cấu hình điện cực, chọn $\lambda_{sp}$ có độ chính xác validation trung bình qua 8 seeds cao nhất; tập test chỉ dùng để báo cáo. Bảng~\ref{tab:lambda_val} trình bày kết quả.
+Chọn $\lambda_{sp}$ theo validation trên cách chia 2026 cho FB-tCNN dẫn đến $\lambda_{sp}=1$ trên Benchmark và $\lambda_{sp}=100$ trên BETA (Bảng~\ref{tab:lambda_val} ở Phụ lục). Chênh lệch validation giữa các giá trị trên Benchmark chỉ khoảng $0.2$--$0.3$~pp. Khi lặp lại trên bốn cách chia còn lại, $\lambda_{sp}=1$ không cho cải thiện ổn định, còn $\lambda_{sp}=100$ cải thiện ở cả năm cách chia (Bảng~\ref{tab:lambda_robust}). Như vậy, lựa chọn theo validation trên một cách chia có thể không lặp lại được. Đây là lý do giao thức mới chọn $\lambda_{sp}$ riêng trên từng cách chia và báo cáo phân bố của các giá trị được chọn.
 
 \begin{table}[h]
-\caption{Độ nhạy với $\lambda_{sp}$ (CCKD relational, FB-tCNN, cửa sổ 1.0 s, split 2026, 8 seeds). Val là độ chính xác validation trung bình qua seed (\%); Test là độ chính xác test trung bình (\%) và $\Delta$ là chênh lệch so với baseline trong cùng lần chạy (pp), kèm $p$ của kiểm định Wilcoxon theo subject. $\star$ đánh dấu $\lambda_{sp}$ được chọn theo validation.}
+\caption{Robustness of $\lambda_{sp}=1$ (selected on validation of split 2026) and $\lambda_{sp}=100$ over five Benchmark splits (FB-tCNN, earlier protocol, 8 seeds per split). $\Delta$ (pp) per split; $p_t$: one-sample $t$-test over the five gains.}
+\label{tab:lambda_robust}
+\begin{center}
+\footnotesize
+\begin{tabular}{llccccccc}
+\toprule
+$\lambda_{sp}$ & Student & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ \\
+\midrule
+\multirow{2}{*}{1} & 3C & +0.22 & $-0.36$ & $-0.23$ & +0.60 & +0.52 & +0.15 $\pm$ 0.43 & 0.4845 \\
+ & 1C & $-0.33$ & +0.29 & +0.01 & $-0.22$ & +0.29 & +0.01 $\pm$ 0.28 & 0.9631 \\
+\multirow{2}{*}{100} & 3C & +0.44 & +1.17 & +0.94 & +0.95 & +1.49 & +1.00 $\pm$ 0.38 & \textbf{0.0043} \\
+ & 1C & +0.73 & +0.59 & +0.83 & +0.74 & +0.60 & +0.70 $\pm$ 0.10 & \textbf{0.0001} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+% ======================================================================
+\section{RQ4: Mức cải thiện ở độ chính xác số học thấp}
+\label{sec:rq4}
+\label{sec:pi4}
+
+Nghiên cứu trước đã đo độ trễ FP32 của FB-tCNN trên Raspberry Pi 4 và thấy giảm điện cực gần như không giảm tính toán, vì tầng đầu gộp chiều điện cực \citep{icera2026cckd}. Vì vậy mục này không xét tốc độ. Câu hỏi ở đây là mức cải thiện cỡ 1~pp của CCKD có bị lượng tử hóa xóa mất hay không.
+
+\tbd{H1: $\Delta$ trước và sau INT8 PTQ cho 5 kiến trúc $\times$ 4 thiết lập trên 5 cách chia.}
+
+\tbd{H2: $\Delta$ theo độ rộng bit fixed-point (16, 12, 10, 8 bit) bằng mô phỏng bit-accurate hls4ml.}
+
+\tbd{H3: độ trễ và bộ nhớ FP32/INT8 của 5 kiến trúc trên Raspberry Pi 4 (Cortex-A72) và ZCU104 (Cortex-A53), batch 1, cửa sổ 1.0 s; đường Pareto độ chính xác--độ trễ.}
+
+\tbd{H4 (tùy chọn): một kiến trúc tổng hợp trên PL của ZCU104 (Vitis HLS 2024.2): độ trễ, LUT/DSP/BRAM, công suất, xác minh độ chính xác trên board.}
+
+% ======================================================================
+\section{Thảo luận}
+\label{sec:discussion}
+
+\tbd{Viết lại sau khi có N2--N5 và H1--H4.} Các điểm dự kiến thảo luận:
+\begin{itemize}
+    \item Nếu Bảng N2 vẫn cho thấy phụ thuộc kiến trúc sau khi thống nhất tầng chưng cất và chọn $\lambda_{sp}$ theo validation, thì kết luận của nghiên cứu trước chỉ đúng cho FB-tCNN và không nên khái quát cho CCKD nói chung.
+    \item Quan hệ giữa $\Delta$CKA và mức cải thiện gợi ý một chỉ báo có thể đo trên validation trước khi chạy đầy đủ. Cần kiểm tra chỉ báo này có dự đoán được kết quả trên tập kiểm thử không.
+    \item Kích thước tập kiểm thử của Benchmark (10 subject) là nguồn chính của sai lệch giữa một và năm cách chia.
+\end{itemize}
+
+\paragraph{Giới hạn.} Năm kiến trúc đều là mạng tích chập, chưa có mô hình dựa trên Transformer. Các tập điện cực thay thế được cố định trước và không bao phủ mọi tổ hợp. Hai bộ dữ liệu có thể có chung thiết bị thu và quy trình ghi \cantrich{kiểm tra thiết bị và quy trình ghi của Benchmark và BETA}, nên kết quả cần được kiểm tra thêm trên dữ liệu thu bằng thiết bị đeo. Các hạn chế kỹ thuật ở Mục~\ref{sec:setup} vẫn áp dụng.
+
+% ======================================================================
+\section{Kết luận}
+\label{sec:conclusion}
+
+\tbd{Viết lại sau khi có kết quả.} Bài báo đánh giá chưng cất quan hệ xuyên kênh cho SSVEP ít điện cực trên năm kiến trúc, hai bộ dữ liệu và năm cách chia subject. Với giao thức cũ, mức cải thiện phụ thuộc mạnh vào kiến trúc và bộ dữ liệu. Đánh giá trên một cách chia cho kết luận khác ở 5 trên 20 tổ hợp.
+
+% ======================================================================
+\bibliography{main}
+\bibliographystyle{tmlr}
+
+\appendix
+\section{Phụ lục: số liệu theo từng cách chia}
+
+\begin{table}[h]
+\caption{Per-split CCKD gains for DeepConvNet, ShallowConvNet and Compact-CNN (earlier protocol, $\lambda_{sp}=100$, 8 seeds per split). $\bar\Delta \pm$ SD over five splits; $p_t$: one-sample $t$-test; bold if $p_t<0.05$.}
+\label{tab:multisplit_gen}
+\begin{center}
+\footnotesize
+\begin{tabular}{llccccccc}
+\toprule
+Backbone & Setting & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ \\
+\midrule
+\multirow{4}{*}{DeepConvNet} & BM-3C & +0.52 & +0.45 & +0.53 & +0.67 & +0.79 & +0.59 $\pm$ 0.13 & \textbf{0.0006} \\
+ & BM-1C & +1.17 & +0.45 & $-0.20$ & $-0.34$ & $-0.42$ & +0.13 $\pm$ 0.68 & 0.684 \\
+ & BETA-3C & +0.90 & +1.16 & +0.92 & +0.96 & +0.28 & +0.84 $\pm$ 0.33 & \textbf{0.0047} \\
+ & BETA-1C & +0.56 & +0.84 & +0.86 & +0.75 & +0.04 & +0.61 $\pm$ 0.34 & \textbf{0.0161} \\
+\multirow{4}{*}{ShallowConvNet} & BM-3C & $-0.31$ & $-1.34$ & $-0.83$ & $-0.66$ & $-1.43$ & $-0.91 \pm 0.47$ & \textbf{0.0125} \\
+ & BM-1C & $-0.55$ & $-0.78$ & $-0.43$ & $-1.30$ & $-1.69$ & $-0.95 \pm 0.53$ & \textbf{0.0161} \\
+ & BETA-3C & +0.50 & +0.12 & +1.48 & +0.46 & $-0.27$ & +0.46 $\pm$ 0.65 & 0.191 \\
+ & BETA-1C & +0.32 & $-0.14$ & +0.60 & +0.24 & $-0.16$ & +0.17 $\pm$ 0.32 & 0.300 \\
+\multirow{4}{*}{Compact-CNN} & BM-3C & $-0.21$ & $-0.14$ & $-0.62$ & +1.36 & $-0.10$ & +0.06 $\pm$ 0.76 & 0.872 \\
+ & BM-1C & $-0.52$ & $-0.47$ & $-0.20$ & $-0.43$ & +0.26 & $-0.27 \pm 0.32$ & 0.128 \\
+ & BETA-3C & $-0.04$ & $-0.34$ & $-0.07$ & $-0.78$ & +0.04 & $-0.24 \pm 0.34$ & 0.190 \\
+ & BETA-1C & $-0.12$ & $-0.63$ & $-0.22$ & $-0.27$ & +0.23 & $-0.20 \pm 0.31$ & 0.219 \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Per-split CCKD gains for EEGNet (earlier protocol, $\lambda_{sp}=100$, 8 seeds per split). Bold if $p_t<0.05$.}
+\label{tab:eegnet_multisplit}
+\begin{center}
+\footnotesize
+\begin{tabular}{lccccccc}
+\toprule
+Setting & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ \\
+\midrule
+Benchmark 3C & +0.66 & +0.48 & +0.77 & +1.66 & +1.85 & \textbf{+1.09 $\pm$ 0.63} & \textbf{0.0179} \\
+Benchmark 1C & $-0.17$ & $-1.83$ & $-0.96$ & $-0.31$ & $-0.03$ & $-0.66 \pm 0.75$ & 0.120 \\
+BETA 3C & $-1.30$ & $-1.30$ & $-1.23$ & $-0.92$ & $-1.73$ & \textbf{$-1.30 \pm 0.29$} & \textbf{0.0006} \\
+BETA 1C & $-1.02$ & $-1.52$ & $-0.60$ & $-1.55$ & $-1.75$ & \textbf{$-1.29 \pm 0.47$} & \textbf{0.0036} \\
+\bottomrule
+\end{tabular}
+\end{center}
+\end{table}
+
+\begin{table}[h]
+\caption{Sensitivity to $\lambda_{sp}$ (FB-tCNN, earlier protocol, 1.0 s, split 2026, 8 seeds). Val: mean validation accuracy over seeds (\%); Test: mean test accuracy (\%); $\Delta$: paired gain over the baseline of the same run (pp) with Wilcoxon $p$. $\star$: value selected on validation.}
 \label{tab:lambda_val}
 \begin{center}
 \footnotesize
 \begin{tabular}{llccccc}
 \toprule
-Dataset & Cấu hình & $\lambda_{sp}$ & Val (\%) & Test (\%) & $\Delta$ (pp) & $p$ \\
+Dataset & Student & $\lambda_{sp}$ & Val (\%) & Test (\%) & $\Delta$ (pp) & $p$ \\
 \midrule
 \multirow{4}{*}{Benchmark} & \multirow{4}{*}{3C} & 1$^\star$ & 53.66 & 51.23 & +0.22 & 0.594 \\
  & & 10 & 53.42 & 51.55 & +0.51 & 0.055 \\
@@ -473,480 +513,5 @@ Dataset & Cấu hình & $\lambda_{sp}$ & Val (\%) & Test (\%) & $\Delta$ (pp) & 
 \end{tabular}
 \end{center}
 \end{table}
-
-Trên BETA, lựa chọn theo validation trùng với $\lambda_{sp}=100$ được dùng trong bài. Trên Benchmark, validation lại chọn $\lambda_{sp}=1$ cho cả hai cấu hình điện cực; tại giá trị này, cải thiện trên split 2026 không có ý nghĩa thống kê ($\Delta=+0.22$pp cho 3C và $-0.33$pp cho 1C). Chúng tôi vẫn giữ $\lambda_{sp}=100$ làm giá trị báo cáo trong toàn bộ bài, nhưng cần nêu rõ rằng trên Benchmark giá trị này không phải lựa chọn tốt nhất theo validation, và kết quả Benchmark của CCKD nhạy với $\lambda_{sp}$. Chênh lệch validation giữa các $\lambda_{sp}$ trên Benchmark rất nhỏ (khoảng 0.2--0.3pp), nên lựa chọn này bản thân không chắc chắn.
-
-Các kết quả trong bảng không tái lập đúng từng bit. Để đo trực tiếp mức độ này, chúng tôi lặp lại một cấu hình giống hệt nhau ($\lambda_{sp}=100$, relational, FB-tCNN, seed=2026, split=2026) 5 lần theo hai cách, trên cả hai bộ dữ liệu: (i) \textbf{liên tiến trình} -- 5 lần gọi \texttt{train\_cckd.py} riêng biệt, mỗi lần một tiến trình Python/CUDA mới; (ii) \textbf{trong tiến trình} -- 5 lần lặp lại việc tái khởi tạo seed và huấn luyện trong cùng một tiến trình, dùng lại dữ liệu đã nạp. Bảng~\ref{tab:nondeterminism} trình bày kết quả. Teacher tái lập gần như đúng từng bit ở cả hai cách đo và cả hai bộ dữ liệu (SD $\le 0.02$pp). Với các thành phần còn lại, mức nhiễu dao động từ khoảng $0.02$pp đến $0.51$pp tuỳ thành phần/bộ dữ liệu/cách đo, lớn nhất và biến động nhất ở cấu hình 1 điện cực.
-
-Chúng tôi ban đầu kỳ vọng nhiễu liên tiến trình luôn lớn hơn nhiễu trong tiến trình (nếu nguyên nhân là một lựa chọn cố định mỗi khi tiến trình khởi động, ví dụ thuật toán cuDNN) hoặc luôn xấp xỉ nhau (nếu nhiễu nội tại ở từng lệnh gọi huấn luyện). Dữ liệu không ủng hộ rõ một trong hai: trên Benchmark, nhiễu liên tiến trình lớn hơn nhiễu trong tiến trình ở cả 3C và 1C (rõ nhất ở 3C, SD $0.19$ so với $0.04$pp trên $\Delta$); trên BETA thì ngược lại ở 1C, nhiễu trong tiến trình (SD $=0.37$pp trên $\Delta$) còn lớn hơn nhiễu liên tiến trình (SD $=0.06$pp). Với cỡ mẫu 5 lần lặp, các SD này bản thân có sai số lớn, nên chúng tôi không khẳng định một cơ chế cụ thể (cuDNN, DataLoader, hay nguyên nhân khác) -- chỉ báo cáo độ lớn quan sát được. Điểm quan trọng với việc đọc bài là: nhiễu không xác định có thể đạt tới khoảng $0.3$--$0.5$pp trên $\Delta$ ở cấu hình 1 điện cực, cùng bậc với nhiều hiệu ứng báo cáo trong bài; các kết quả đơn-seed hoặc các so sánh có $\lvert\Delta\rvert<0.5$pp nên được đọc cùng với số seed đã dùng để lấy trung bình, không tách riêng.
-
-\begin{table}[h]
-\caption{Nhiễu không xác định quan sát được, đo trên 5 lần lặp lại cấu hình giống hệt nhau ($\lambda_{sp}=100$, relational, FB-tCNN, seed=2026, split=2026) trên cả hai bộ dữ liệu. "Liên tiến trình": 5 lần gọi script độc lập. "Trong tiến trình": 5 lần lặp lại trong cùng một tiến trình Python/CUDA. Đơn vị: điểm phần trăm (pp). Không suy ra cơ chế cụ thể từ bảng này (xem văn bản).}
-\label{tab:nondeterminism}
-\begin{center}
-\footnotesize
-\begin{tabular}{llcccc}
-\toprule
-Dataset & Đại lượng & \multicolumn{2}{c}{Liên tiến trình} & \multicolumn{2}{c}{Trong tiến trình} \\
- & & range & SD & range & SD \\
-\midrule
-\multirow{7}{*}{Benchmark} & Teacher-9C & 0.00 & 0.00 & 0.00 & 0.00 \\
- & 3C baseline & 0.42 & 0.19 & 0.04 & 0.02 \\
- & 1C baseline & 0.46 & 0.18 & 0.25 & 0.11 \\
- & 3C relational & 0.17 & 0.06 & 0.13 & 0.05 \\
- & 1C relational & 0.79 & 0.40 & 1.04 & 0.40 \\
- & $\Delta$ (3C) & 0.46 & 0.19 & 0.08 & 0.04 \\
- & $\Delta$ (1C) & 1.08 & 0.51 & 0.92 & 0.33 \\
-\midrule
-\multirow{7}{*}{BETA} & Teacher-9C & 0.03 & 0.01 & 0.03 & 0.02 \\
- & 3C baseline & 0.09 & 0.05 & 0.09 & 0.04 \\
- & 1C baseline & 0.06 & 0.02 & 0.31 & 0.12 \\
- & 3C relational & 0.19 & 0.08 & 0.25 & 0.10 \\
- & 1C relational & 0.13 & 0.05 & 0.50 & 0.26 \\
- & $\Delta$ (3C) & 0.19 & 0.07 & 0.22 & 0.08 \\
- & $\Delta$ (1C) & 0.16 & 0.06 & 0.78 & 0.37 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Ngoài phép đo có hệ thống này, một quan sát không chính thức cùng chiều: lần chạy lại với $\lambda_{sp}=100$ trên Benchmark (Bảng~\ref{tab:lambda_val}) cho CCKD 1C đạt 45.35\% (baseline 44.61\%), khác với các giá trị 45.14\% (baseline 44.55\%) trong Bảng~\ref{tab:overall} -- kết quả của một tiến trình chạy trước; giá trị 3C (51.44\%) khớp hoàn toàn với bảng đó.
-
-
-Vì lựa chọn theo validation trên một split (split 2026) không chắc chắn, chúng tôi kiểm tra độ bền của cả hai giá trị $\lambda_{sp}=1$ và $\lambda_{sp}=100$ bằng cách lặp lại trên 4 split Benchmark còn lại (3026--6026, cùng 8 seeds, cùng giao thức). Bảng~\ref{tab:lambda_robust} cho thấy kết quả đối lập rõ ràng: $\lambda_{sp}=1$ không cho hiệu ứng dương bền qua 5 split ở cả hai cấu hình ($\bar\Delta=+0.15$pp, 3/5 split dương, $p_t=0.48$ ở 3C; $\bar\Delta\approx 0$pp, 3/5 split dương, $p_t=0.96$ ở 1C), trong khi $\lambda_{sp}=100$ cho hiệu ứng dương ở cả 5/5 split và đạt ý nghĩa thống kê ở cả hai cấu hình ($\bar\Delta=+1.00$pp, $p_t=0.0043$ ở 3C; $\bar\Delta=+0.70$pp, $p_t=0.0001$ ở 1C) -- khớp với Bảng~\ref{tab:multisplit} trong phạm vi nhiễu không xác định đã nêu trên. Nói cách khác, lựa chọn $\lambda_{sp}=1$ theo validation trên một split riêng lẻ không sống sót qua kiểm tra đa-split, nhiều khả năng là nhiễu của split 2026 cụ thể (chênh lệch validation giữa các $\lambda_{sp}$ trên split này rất nhỏ, Bảng~\ref{tab:lambda_val}); còn $\lambda_{sp}=100$ là giá trị có bằng chứng đa-split vững chắc hơn. Đây là lý do cụ thể, dựa trên dữ liệu, để giữ $\lambda_{sp}=100$ làm giá trị báo cáo trong toàn bộ bài, không chỉ vì đó là lựa chọn ban đầu.
-
-\begin{table}[h]
-\caption{Kiểm tra độ bền của $\lambda_{sp}=1$ (chọn theo validation trên split 2026) và $\lambda_{sp}=100$ (giá trị báo cáo) qua 5 split Benchmark độc lập (FB-tCNN, relational, 8 seeds/split). $\Delta$Acc (pp) theo split; $p_t$ là kiểm định $t$ một mẫu trên 5 giá trị $\Delta$.}
-\label{tab:lambda_robust}
-\begin{center}
-\footnotesize
-\begin{tabular}{llccccccc}
-\toprule
-$\lambda_{sp}$ & Cấu hình & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ \\
-\midrule
-\multirow{2}{*}{1} & 3C & +0.22 & $-0.36$ & $-0.23$ & +0.60 & +0.52 & +0.15 $\pm$ 0.43 & 0.4845 \\
- & 1C & $-0.33$ & +0.29 & +0.01 & $-0.22$ & +0.29 & +0.01 $\pm$ 0.28 & 0.9631 \\
-\multirow{2}{*}{100} & 3C & +0.44 & +1.17 & +0.94 & +0.95 & +1.49 & +1.00 $\pm$ 0.38 & \textbf{0.0043} \\
- & 1C & +0.73 & +0.59 & +0.83 & +0.74 & +0.60 & +0.70 $\pm$ 0.10 & \textbf{0.0001} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\subsection{Ảnh hưởng của độ dài cửa sổ tín hiệu}
-\label{sec:window}
-
-Toàn bộ kết quả ở trên cố định cửa sổ tín hiệu ở 1.0 giây. Đây là một lựa chọn phổ biến trong literature SSVEP nhưng không phải lựa chọn duy nhất; các hệ thống SSVEP thực tế thường đánh đổi giữa độ chính xác (tăng theo độ dài cửa sổ) và tốc độ truyền thông tin -- Information Transfer Rate, ITR (giảm nếu cửa sổ quá dài do mất thời gian). Để kiểm tra CCKD có mang lại lợi ích nhất quán qua các độ dài cửa sổ khác hay không, chúng tôi lặp lại thí nghiệm chính (FB-tCNN, relational, $\lambda_{sp}=100$, split gốc, 8 seeds) ở $\text{window\_s} \in \{0.5, 1.0, 1.5, 2.0\}$ giây. Dải này bị giới hạn trên bởi độ dài trial ngắn nhất trong hai bộ dữ liệu: trial của BETA chỉ dài 3.0 giây (750 mẫu @ 250Hz), nên sau khi trừ độ trễ tiền xử lý (PRE-STIM + $t_{\text{start}}$, tổng 0.64 giây), cửa sổ khả dụng tối đa chỉ còn khoảng 2.36 giây; chúng tôi dùng cùng một dải cho cả hai bộ dữ liệu để đảm bảo so sánh công bằng, thay vì để Benchmark (trial dài 6.0 giây, dư dả hơn) đi xa hơn BETA.
-
-\begin{table}[h]
-\caption{Ảnh hưởng của độ dài cửa sổ tín hiệu lên CCKD (FB-tCNN, relational, split gốc, 8 seeds). $\Delta$Acc và $p$ trên một split đơn lẻ -- xem lưu ý về độ tin cậy ở cuối mục.}
-\label{tab:window}
-\begin{center}
-\begin{tabular}{lccccccc}
-\toprule
-Window (s) & Dataset & Cấu hình & Baseline (\%) & CCKD (\%) & $\Delta$ (pp) & $p$ & ITR CCKD (bit/min) \\
-\midrule
-\multirow{4}{*}{0.5} & Benchmark & 3C & 24.21 & 24.06 & $-0.15$ & 0.375 & 30.72 \\
- & Benchmark & 1C & 21.15 & 21.61 & +0.46 & 0.160 & 25.54 \\
- & BETA & 3C & 21.21 & 21.42 & +0.21 & 0.522 & 25.15 \\
- & BETA & 1C & 18.71 & 18.67 & $-0.04$ & 0.926 & 19.72 \\
-\multirow{4}{*}{1.0} & Benchmark & 3C & 50.99 & 51.44 & +0.45 & 0.375 & 70.23 \\
- & Benchmark & 1C & 44.55 & 45.14 & +0.59 & 0.193 & 57.17 \\
- & BETA & 3C & 38.41 & \textbf{39.46} & \textbf{+1.05} & \textbf{0.0124} & 46.18 \\
- & BETA & 1C & 34.62 & \textbf{35.68} & \textbf{+1.06} & \textbf{0.0038} & 39.29 \\
-\multirow{4}{*}{1.5} & Benchmark & 3C & 62.54 & 63.35 & \textbf{+0.82} & \textbf{0.0488} & 73.11 \\
- & Benchmark & 1C & 59.06 & 59.80 & +0.74 & 0.160 & 66.76 \\
- & BETA & 3C & 50.22 & \textbf{50.69} & \textbf{+0.47} & \textbf{0.0289} & 51.47 \\
- & BETA & 1C & 47.32 & 47.41 & +0.09 & 0.542 & 46.32 \\
-\multirow{4}{*}{2.0} & Benchmark & 3C & 72.51 & \textbf{73.05} & \textbf{+0.54} & \textbf{0.0312} & 73.37 \\
- & Benchmark & 1C & 70.05 & 70.09 & +0.04 & 0.604 & 68.66 \\
- & BETA & 3C & 57.69 & \textbf{58.80} & \textbf{+1.11} & \textbf{0.0124} & 52.01 \\
- & BETA & 1C & 56.07 & 56.53 & +0.46 & 0.185 & 48.88 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\begin{table}[h]
-\caption{Đa-split (5 split subject độc lập, 8 seeds/split, FB-tCNN, relational, $\lambda_{sp}=100$) theo độ dài cửa sổ. $\Delta$Acc (pp) là chênh lệch CCKD $-$ baseline theo từng split; $\bar\Delta \pm$ SD là trung bình/độ lệch chuẩn qua 5 split; $p_t$ là kiểm định $t$ một mẫu trên 5 giá trị $\Delta$ ($H_0$: $\bar\Delta=0$); $p_{\text{Holm}}$ hiệu chỉnh Holm--Bonferroni trên họ 16 phép thử. In đậm nếu $p_{\text{Holm}}<0.05$. Cột 1.0 giây lấy từ Bảng~\ref{tab:multisplit}.}
-\label{tab:window_ms}
-\begin{center}
-\footnotesize
-\begin{tabular}{llcccccccc}
-\toprule
-Window (s) & Cấu hình & 2026 & 3026 & 4026 & 5026 & 6026 & $\bar\Delta \pm$ SD & $p_t$ & $p_{\text{Holm}}$ \\
-\midrule
-\multirow{4}{*}{0.5} & Benchmark-3C & $-0.15$ & $-0.19$ & +1.14 & +0.07 & +0.98 & +0.37 $\pm$ 0.64 & 0.2665 & 0.7994 \\
- & Benchmark-1C & +0.46 & $-0.50$ & +0.64 & $-0.10$ & $-0.30$ & +0.04 $\pm$ 0.49 & 0.8723 & 0.8723 \\
- & BETA-3C & +0.21 & +1.02 & +0.49 & +0.45 & +1.21 & +0.68 $\pm$ 0.42 & 0.0229 & 0.1832 \\
- & BETA-1C & $-0.04$ & +0.48 & +0.43 & +0.30 & +0.08 & +0.25 $\pm$ 0.23 & 0.0679 & 0.4073 \\
-\midrule
-\multirow{4}{*}{1.0} & Benchmark-3C & +0.45 & +1.14 & +0.85 & +1.02 & +1.54 & +1.00 $\pm$ 0.40 & 0.0050 & 0.0599 \\
- & Benchmark-1C & +0.59 & +0.51 & +0.98 & +1.17 & +0.32 & +0.71 $\pm$ 0.35 & 0.0103 & 0.1137 \\
- & BETA-3C & +1.05 & +1.29 & +1.12 & +0.97 & +1.50 & +1.19 $\pm$ 0.21 & 0.0002 & \textbf{0.0034} \\
- & BETA-1C & +1.06 & +1.16 & +0.63 & $-0.06$ & +0.82 & +0.72 $\pm$ 0.48 & 0.0293 & 0.2048 \\
-\midrule
-\multirow{4}{*}{1.5} & Benchmark-3C & +0.82 & +0.79 & +2.37 & +0.69 & +1.23 & +1.18 $\pm$ 0.70 & 0.0195 & 0.1751 \\
- & Benchmark-1C & +0.74 & +0.07 & +1.28 & +0.41 & +0.14 & +0.53 $\pm$ 0.50 & 0.0763 & 0.4073 \\
- & BETA-3C & +0.47 & +1.49 & +1.43 & +1.38 & +1.81 & +1.32 $\pm$ 0.50 & 0.0043 & 0.0554 \\
- & BETA-1C & +0.09 & +1.00 & +0.17 & $-0.12$ & +1.13 & +0.45 $\pm$ 0.57 & 0.1499 & 0.5996 \\
-\midrule
-\multirow{4}{*}{2.0} & Benchmark-3C & +0.54 & +0.89 & +0.78 & +0.53 & +0.87 & +0.72 $\pm$ 0.18 & 0.0008 & \textbf{0.0109} \\
- & Benchmark-1C & +0.04 & +0.71 & +0.42 & +0.01 & $-0.18$ & +0.20 $\pm$ 0.36 & 0.2834 & 0.7994 \\
- & BETA-3C & +1.11 & +0.99 & +1.37 & +0.95 & +1.06 & +1.10 $\pm$ 0.17 & 0.0001 & \textbf{0.0019} \\
- & BETA-1C & +0.46 & +0.84 & +0.59 & +0.11 & +0.62 & +0.52 $\pm$ 0.27 & 0.0122 & 0.1223 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Bảng~\ref{tab:window} (split gốc) và Bảng~\ref{tab:window_ms} (5 split độc lập) cho thấy các xu hướng sau. \textbf{Thứ nhất}, ở cửa sổ 0.5 giây, Benchmark không có hiệu ứng ($p_t\ge 0.27$, trung bình gần 0), nhưng BETA-3C có $\Delta$ dương ở cả 5/5 split ($+0.68$pp, $p_t=0.023$); hiệu ứng này không còn ý nghĩa sau hiệu chỉnh Holm trên họ 16 phép thử ($p_{\text{Holm}}=0.18$), nên chỉ nên coi là gợi ý yếu. Điều này sửa lại nhận định trên split gốc, nơi mọi $p>0.1$ ở 0.5 giây: đánh giá trên một split đã bỏ sót một hiệu ứng nhỏ nhưng nhất quán. \textbf{Thứ hai}, từ 1.0 giây trở lên, cấu hình \textbf{3 điện cực} cho $\Delta$ dương ở cả 5/5 split và đạt $p_t<0.05$ ở mọi cửa sổ trong dải này cho cả hai bộ dữ liệu; sau Holm, các kết quả còn ý nghĩa là BETA-3C ở 1.0 giây ($p_{\text{Holm}}=0.003$) và 2.0 giây ($p_{\text{Holm}}=0.002$), cùng Benchmark-3C ở 2.0 giây ($p_{\text{Holm}}=0.011$). Cấu hình \textbf{1 điện cực} không có kết quả nào đạt ý nghĩa sau Holm: Benchmark-1C chỉ đạt $p_t<0.05$ ở 1.0 giây ($p_{\text{Holm}}=0.11$), còn BETA-1C đạt $p_t<0.05$ ở 1.0 và 2.0 giây nhưng $p_{\text{Holm}}\ge 0.20$. Giả thuyết ceiling effect (baseline 1C đạt độ chính xác cao hơn ở cửa sổ dài, làm thu hẹp khoảng trống thông tin) phù hợp với Benchmark-1C, nơi $\Delta$ trung bình ở 2.0 giây chỉ $+0.20$pp; nhưng nó không giải thích được BETA-1C, nơi $\Delta$ ở 2.0 giây dương ở 5/5 split ($+0.52$pp) dù baseline chỉ khoảng $56\%$. Vì vậy, nhận định trước đây rằng 1 điện cực chỉ có ý nghĩa ở 1.0 giây cần được nới ra thành: không có kết quả 1 điện cực nào vượt qua hiệu chỉnh Holm trên toàn bộ dải cửa sổ đã thử.
-
-Về ITR, giá trị tăng nhanh khi cửa sổ tăng từ 0.5 lên 1.0--1.5 giây rồi bắt đầu chững lại (Benchmark-3C: $30.72 \to 70.23 \to 73.11 \to 73.37$ bit/phút; BETA-3C: $25.15 \to 46.18 \to 51.47 \to 52.01$), gợi ý điểm cân bằng tốc độ/độ chính xác tối ưu nằm trong khoảng $1.0$--$2.0$ giây cho cả hai bộ dữ liệu -- phù hợp với thực hành phổ biến trong literature SSVEP. Do giới hạn độ dài trial của BETA, chúng tôi không thể xác nhận liệu ITR có tiếp tục tăng, chững hẳn, hay bắt đầu giảm ở cửa sổ trên 2.0 giây; đây là một giới hạn của bộ dữ liệu, không phải của phương pháp.
-
-\textbf{Lưu ý về độ tin cậy.} Bảng~\ref{tab:window} dùng split gốc (2026) và chỉ là một điểm ước lượng cho mỗi cấu hình; các kết luận thống kê trong đoạn trên dựa trên Bảng~\ref{tab:window_ms}. Ngay cả trên 5 split, $\Delta$ dao động đáng kể theo split (ví dụ Benchmark-3C ở 1.5 giây từ $+0.69$ đến $+2.37$pp), nên giá trị $p$ ở từng cửa sổ vẫn phụ thuộc vào tập subject cụ thể và các kết quả ở mức $p\approx 0.01$--$0.05$ chưa qua hiệu chỉnh nên được đọc thận trọng. Đường cong ITR trong Bảng~\ref{tab:window} chỉ dựa trên split gốc và chỉ nên được xem là mô tả xu hướng.
-
-\subsection{Khả năng tổng quát trên các kiến trúc mạng khác nhau}
-\label{sec:generalization}
-
-\begin{table}[h]
-\caption{Đánh giá CCKD với backbone EEGNet trên hai bộ dữ liệu Benchmark và BETA ($\lambda_{sp}=100$, mean over 3 seeds).}
-\label{tab:eegnet}
-\begin{center}
-\begin{tabular}{llccccc}
-\toprule
-Dataset & Channels & Baseline (\%) & CCKD (\%) & $\Delta$ (pp) & $p$ \\
-\midrule
-\multirow{3}{*}{Benchmark} & 9 (teacher) & 47.38 & --- & --- & --- \\
- & 3 & 36.47 & 36.68 & +0.21 & 0.496 \\
- & 1 & 28.39 & 27.94 & $-0.44$ & 0.154 \\
-\multirow{3}{*}{BETA} & 9 (teacher) & 41.01 & --- & --- & --- \\
- & 3 & 28.66 & 27.17 & \textbf{$-1.49$} & \textbf{0.0021} \\
- & 1 & 26.08 & 24.47 & \textbf{$-1.61$} & \textbf{0.0036} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Để đánh giá khả năng tổng quát của phương pháp, chúng tôi thay thế FB-tCNN bằng EEGNet trong khi giữ nguyên toàn bộ quy trình huấn luyện và các siêu tham số ($\lambda_{sp}=100$, giá trị dùng cho FB-tCNN; xem lưu ý về lựa chọn siêu tham số ở Mục~\ref{sec:training}). Trên split subject gốc, kết quả trong Bảng~\ref{tab:eegnet} cho thấy CCKD (relational thuần) có vẻ gần như trung tính trên Benchmark (+0.21pp/$-0.44$pp, không có ý nghĩa thống kê) và làm \textbf{giảm} độ chính xác có ý nghĩa thống kê trên BETA ($-1.49$pp/$-1.61$pp, $p<0.005$).
-
-Áp dụng đúng bài học phương pháp luận đã rút ra từ FB-tCNN và các backbone khác (Mục~\ref{sec:mc_multisplit}), chúng tôi xác nhận lại cả bốn cấu hình của EEGNet qua 5 split subject độc lập (8 seeds/split) \emph{trước khi} tiến hành các kiểm tra bổ sung khác. Kết quả (Bảng~\ref{tab:eegnet_multisplit}) tiết lộ điều hoàn toàn bất ngờ: \textbf{Benchmark-3C không hề trung tính} -- CCKD relational cải thiện độ chính xác \textbf{trên cả 5/5 split} ($\bar\Delta=+1.09$pp, $p_t=0.0179$, sống sót hiệu chỉnh Holm nội bộ), một hiệu ứng dương thật đã bị che khuất bởi chính split gốc (nơi $\Delta=+0.21$pp có vẻ không đáng kể). Ngược lại, \textbf{Benchmark-1C} cho xu hướng âm không nhất quán ($\bar\Delta=-0.66$pp, $p_t=0.120$, không đạt ý nghĩa), còn \textbf{cả hai cấu hình trên BETA vẫn suy giảm vững chắc}, thậm chí còn nhất quán hơn split gốc ($-1.30$pp và $-1.29$pp, cả 5/5 split đều âm, $p_t \le 0.004$, sống sót Holm).
-
-\begin{table}[h]
-\caption{Kiểm tra độ vững chắc qua 5 split subject độc lập cho EEGNet (relational, $\lambda_{sp}=100$), cùng quy trình đã dùng cho các backbone khác. In đậm nếu $p_t<0.05$.}
-\label{tab:eegnet_multisplit}
-\begin{center}
-\begin{tabular}{lccccccc}
-\toprule
-Cấu hình & \multicolumn{5}{c}{$\Delta$Acc (pp) theo split\_seed} & $\bar\Delta \pm$ SD & $p_t$ \\
- & 2026 & 3026 & 4026 & 5026 & 6026 & & \\
-\midrule
-Benchmark 3C & +0.66 & +0.48 & +0.77 & +1.66 & +1.85 & \textbf{+1.09 $\pm$ 0.63} & \textbf{0.0179} \\
-Benchmark 1C & $-0.17$ & $-1.83$ & $-0.96$ & $-0.31$ & $-0.03$ & $-0.66 \pm 0.75$ & 0.120 \\
-BETA 3C & $-1.30$ & $-1.30$ & $-1.23$ & $-0.92$ & $-1.73$ & \textbf{$-1.30 \pm 0.29$} & \textbf{0.0006} \\
-BETA 1C & $-1.02$ & $-1.52$ & $-0.60$ & $-1.55$ & $-1.75$ & \textbf{$-1.29 \pm 0.47$} & \textbf{0.0036} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Kiểm tra trực tiếp accuracy (không chỉ $\Delta$) xác nhận đây là hiệu ứng thật: relational cao hơn baseline ở toàn bộ 5/5 split trên Benchmark-3C, và thấp hơn baseline ở toàn bộ 5/5 split trên BETA (cả hai cấu hình) -- không phải một điểm nhiễu ngẫu nhiên. Phát hiện này buộc phải viết lại kết luận ban đầu: CCKD relational trên EEGNet \textbf{không "thất bại toàn diện"} như bức tranh một-split gợi ý, mà có cấu trúc \textbf{phụ thuộc bộ dữ liệu tương tự ShallowConvNet} -- dương vững chắc trên một cấu hình (Benchmark-3C), âm vững chắc trên bộ dữ liệu còn lại (BETA, cả hai cấu hình), và trung tính ở cấu hình còn lại (Benchmark-1C).
-
-Trước khi diễn giải sâu hơn, chúng tôi đặt ra hai câu hỏi kiểm chứng bổ sung: (i) liệu bức tranh mới này có nhất quán qua các giá trị $\lambda_{sp}$ khác hay đây là đặc thù của $\lambda_{sp}=100$, và (ii) liệu có dạng tri thức chưng cất nào khác (ngoài relational thuần) cho bức tranh khác trên EEGNet hay không.
-
-\paragraph{Độ nhạy với $\lambda_{sp}$.} Chúng tôi dò lại $\lambda_{sp} \in \{1, 5, 20, 100, 500, 2000\}$ cho CCKD (relational thuần) trên EEGNet, giữ nguyên mọi siêu tham số khác. \textbf{Lưu ý quan trọng:} khảo sát này (Bảng~\ref{tab:eegnet_lsp}) được thực hiện trên một split subject đơn lẻ (3 seeds/điểm), \emph{trước khi} phát hiện đa-split ở trên; vì $\lambda_{sp}=100$ chính là điểm vừa được xác nhận là dương vững chắc trên Benchmark-3C khi kiểm tra qua nhiều split, các điểm khác trong bảng này (đặc biệt cột Benchmark) có thể chịu cùng loại sai lệch một-split và cần được đọc với sự cẩn trọng tương ứng -- chúng tôi không xác nhận lại toàn bộ sweep này qua đa-split ($5\times$ chi phí tính toán) trong phạm vi bài báo hiện tại. Với lưu ý đó, xu hướng \textbf{định tính} quan sát được vẫn là: trên \textbf{BETA}, độ chính xác giảm đơn điệu khi $\lambda_{sp}$ tăng, và mức suy giảm này \emph{độc lập được xác nhận} bởi phân tích đa-split ở $\lambda_{sp}=100$ (Bảng~\ref{tab:eegnet_multisplit}) -- nên riêng phần BETA của sweep này đáng tin cậy. Trên \textbf{Benchmark}, xu hướng cũng đơn điệu xấu đi khi $\lambda_{sp}$ tăng, nhưng dựa trên phát hiện đa-split ở $\lambda_{sp}=100$, các điểm ở $\lambda_{sp}$ nhỏ (1, 5, 20) rất có thể đang bị đánh giá thấp trên split này giống như $\lambda_{sp}=100$ đã từng -- nên chúng tôi \textbf{không còn coi} "không tồn tại $\lambda_{sp}$ nào cho cải thiện dương trên Benchmark" là một kết luận đáng tin cậy.
-
-\begin{table}[h]
-\caption{Độ nhạy của CCKD (relational thuần) trên EEGNet với $\lambda_{sp}$ ($\Delta$Acc so với baseline, pp; $p$ trong ngoặc; in đậm nếu $p<0.05$; 3 seeds).}
-\label{tab:eegnet_lsp}
-\begin{center}
-\begin{tabular}{lcccc}
-\toprule
-$\lambda_{sp}$ & Benchmark 3C & Benchmark 1C & BETA 3C & BETA 1C \\
-\midrule
-1    & $+0.35$ (0.410) & $-0.69$ (0.447) & $-0.23$ (0.267) & $+0.10$ (0.872) \\
-5    & $+0.35$ (0.375) & $-0.12$ (0.922) & $-0.32$ (0.507) & $-0.26$ (0.533) \\
-20   & $-0.01$ (0.678) & $-0.01$ (0.922) & \textbf{$-0.93$ (0.0166)} & $-0.45$ (0.218) \\
-100 (= Bảng~\ref{tab:eegnet}) & $+0.21$ (0.496) & $-0.44$ (0.154) & \textbf{$-1.49$ (0.0021)} & \textbf{$-1.61$ (0.0036)} \\
-500  & \textbf{$-1.74$ (0.0078)} & \textbf{$-1.68$ (0.0098)} & \textbf{$-2.77$ (0.0005)} & \textbf{$-2.64$ (0.0004)} \\
-2000 & \textbf{$-2.32$ (0.0117)} & \textbf{$-2.14$ (0.0039)} & \textbf{$-3.51$ (0.0001)} & \textbf{$-3.01$ (0.0000)} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\paragraph{Chiến lược chưng cất thay thế.} Chúng tôi tiếp tục thử hai dạng tri thức khác cho EEGNet: \textbf{response-based KD thuần} (mô phỏng phân bố đầu ra của teacher, không có relational) ở ba mức nhiệt độ $\tau \in \{2,4,8\}$, và \textbf{hybrid} (response-based + relational) ở $\lambda_{sp} \in \{1,5,20\}$ -- tổng cộng 6 cấu hình mới trên mỗi bộ dữ liệu, mỗi cấu hình 3 seeds. Ở cấu hình 3 điện cực trên Benchmark, cả 6 cấu hình đều cho $\Delta$Acc dương (đối lập hoàn toàn với xu hướng của relational-only), với ba cấu hình đạt $p<0.05$ ở mức 3 seeds: Logit KD $\tau=8$ ($+0.75$pp, $p=0.0371$), Hybrid $\lambda_{sp}=1$ ($+0.71$pp, $p=0.0391$) và Hybrid $\lambda_{sp}=5$ ($+0.81$pp, $p=0.0488$). Vì tổng cộng có khoảng 48 phép kiểm định thống kê được thực hiện xuyên suốt hai vòng dò (sweep $\lambda_{sp}$ và sweep chiến lược, trên cả hai cấu hình điện cực và hai bộ dữ liệu), số lượng kết quả đạt $p<0.05$ nằm trong khoảng có thể giải thích bởi hiện tượng multiple comparisons đơn thuần ($\approx 2.4$ kết quả dương giả kỳ vọng ở mức $\alpha=0.05$ nếu không có hiệu ứng thật). Do đó, chúng tôi không dừng lại ở kết quả 3-seed này mà tiến hành \textbf{chạy lại xác nhận độc lập} với cỡ mẫu lớn hơn cho hai ứng viên tốt nhất (Logit $\tau=8$ và Hybrid $\lambda_{sp}=5$), tăng từ 3 lên \textbf{8 seeds}, chỉ trên cấu hình 3 điện cực.
-
-Bảng~\ref{tab:eegnet_confirm} trình bày kết quả xác nhận. Trên \textbf{Benchmark}, cả hai ứng viên không những không mất ý nghĩa mà còn \textbf{mạnh hơn}: $\Delta$Acc tăng lên $+1.18$pp và $+1.31$pp, cả hai đạt $p=0.0020$ và cải thiện trên \textbf{toàn bộ 10/10} đối tượng kiểm thử -- một tín hiệu nhất quán, không phải nhiễu thống kê (một false positive từ multiple comparisons thường \emph{yếu đi}, không mạnh lên, khi tăng cỡ mẫu). Tuy nhiên, khi lặp lại đúng quy trình này trên \textbf{BETA} với cùng hai cấu hình (không chọn lại "best-of-BETA" để tránh tái diễn selection bias), $\Delta$Acc chỉ đạt $+0.51$pp và $+0.52$pp, cải thiện khoảng một nửa số đối tượng (11/20, 12/20) và \textbf{không đạt ý nghĩa thống kê} ($p=0.16$ và $p=0.12$) dù cùng hướng dương với Benchmark.
-
-\begin{table}[h]
-\caption{Xác nhận độc lập (8 seeds, cấu hình 3 điện cực) cho hai chiến lược chưng cất thay thế trên EEGNet.}
-\label{tab:eegnet_confirm}
-\begin{center}
-\begin{tabular}{llccccc}
-\toprule
-Dataset & Chiến lược & Baseline (\%) & KD (\%) & $\Delta$Acc (pp) & Improved & $p$ \\
-\midrule
-\multirow{2}{*}{Benchmark} & Hybrid ($\lambda_{sp}=5$) & 36.19 & 37.37 & \textbf{+1.18} & \textbf{10/10} & \textbf{0.0020} \\
- & Logit KD ($\tau=8$)      & 36.19 & 37.49 & \textbf{+1.31} & \textbf{10/10} & \textbf{0.0020} \\
-\multirow{2}{*}{BETA} & Hybrid ($\lambda_{sp}=5$) & 28.88 & 29.39 & +0.51 & 11/20 & 0.1615 \\
- & Logit KD ($\tau=8$)      & 28.88 & 29.40 & +0.52 & 12/20 & 0.1231 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Ở cấu hình \textbf{1 điện cực}, không cấu hình chưng cất nào (relational, logit hay hybrid) cho cải thiện nhất quán trên cả hai bộ dữ liệu ở mức 3-seed thăm dò, nên chúng tôi không tiến hành xác nhận thêm cho cấu hình này.
-
-Tổng hợp lại, bức tranh về khả năng tổng quát của CCKD sang EEGNet \textbf{tinh tế hơn nhiều} so với một kết luận nhị phân đơn giản, và cũng tinh tế hơn so với những gì chúng tôi từng viết dựa trên kết quả một-split. Xác nhận đa-split cho thấy cơ chế \textbf{relational thuần} (Gram-matrix similarity-preserving) có bức tranh \emph{phụ thuộc bộ dữ liệu}: dương vững chắc trên Benchmark-3C, âm vững chắc trên cả hai cấu hình BETA, trung tính trên Benchmark-1C -- không phải "thất bại nhất quán" như kết luận ban đầu. Điều này cũng làm thay đổi cách hiểu về vai trò của response-based KD và hybrid: hai chiến lược này \emph{cũng} cho cải thiện có ý nghĩa thống kê trên Benchmark-3C (xác nhận qua 8 seeds, $+1.18$pp/$+1.31$pp) -- nhưng nay ta biết bản thân relational-only \emph{cũng} cải thiện trên đúng cấu hình này ($+1.09$pp qua đa-split), nên đây nhiều khả năng phản ánh việc Benchmark-3C nói chung là một thiết lập thuận lợi cho EEGNet+KD, không phải bằng chứng cho thấy tránh cơ chế relational là chìa khoá. Điểm phân biệt thực sự rõ ràng nhất giữa các chiến lược nằm ở \textbf{BETA}: relational suy giảm vững chắc và có ý nghĩa ở cả hai cấu hình, trong khi response-based/hybrid chỉ trung tính (không âm, dù cũng không đạt ý nghĩa dương). Vì vậy, phát biểu chính xác hơn là: cơ chế Gram-matrix relational có một \textbf{điểm yếu cụ thể trên BETA} so với các dạng chưng cất khác, chứ không phải một điểm yếu toàn diện so với chưng cất cross-channel nói chung. Để kiểm tra xem sự phụ thuộc bộ dữ liệu/backbone quan sát được ở trên có mang tính hệ thống hay chỉ đặc thù cho hai backbone đã thử (FB-tCNN, EEGNet), chúng tôi mở rộng đánh giá sang ba backbone khác.
-
-\paragraph{Đánh giá trên nhiều backbone hơn.} Chúng tôi đánh giá thêm CCKD (relational thuần, $\lambda_{sp}=100$) trên ba backbone: \textbf{DeepConvNet} \citep{schirrmeister2017deep}, \textbf{ShallowConvNet} \citep{schirrmeister2017deep} và \textbf{Compact-CNN} \citep{waytowich2018compact} -- đều là các kiến trúc CNN tổng quát cho EEG/SSVEP đã được công bố, được lựa chọn vì đã có mô tả kiến trúc rõ ràng trong tài liệu, không dựa trên kỳ vọng về kết quả. Do cửa sổ tín hiệu ngắn của nghiên cứu này (1.0 giây, 250 mẫu), một số siêu tham số kiến trúc gốc được điều chỉnh cho phù hợp (DeepConvNet: rút còn ba khối conv-pool; ShallowConvNet/Compact-CNN: giảm kích thước kernel/pooling tương ứng, chi tiết trong mã nguồn); mọi siêu tham số CCKD khác ($\tau$, $\lambda_{sp}=100$) được giữ nguyên để so sánh công bằng. Cả ba backbone đều được chạy lại xác nhận độc lập với 8 seeds trước khi báo cáo kết quả cuối cùng, theo đúng quy trình đã dùng cho EEGNet ở Mục trước -- kể cả DeepConvNet, dù kết quả 3-seed thăm dò ban đầu đã thuận lợi, để tránh áp chuẩn kiểm chứng thấp hơn cho một kết quả chỉ vì nó "đẹp" ngay từ đầu.
-
-\begin{table}[h]
-\caption{Đánh giá CCKD với backbone DeepConvNet trên hai bộ dữ liệu Benchmark và BETA, xác nhận độc lập với 8 seeds ($\lambda_{sp}=100$).}
-\label{tab:deepconvnet}
-\begin{center}
-\begin{tabular}{llccccc}
-\toprule
-Dataset & Channels & Baseline (\%) & CCKD (\%) & $\Delta$ (pp) & Improved & $p$ \\
-\midrule
-\multirow{3}{*}{Benchmark} & 9 (teacher) & 64.38 & --- & --- & --- & --- \\
- & 3 & 51.09 & \textbf{51.61} & \textbf{+0.52} & 8/10 & \textbf{0.0117} \\
- & 1 & 40.71 & 41.88 & +1.17 & 8/10 & 0.0840 \\
-\multirow{3}{*}{BETA} & 9 (teacher) & 49.83 & --- & --- & --- & --- \\
- & 3 & 32.70 & \textbf{33.59} & \textbf{+0.90} & 16/20 & \textbf{0.0056} \\
- & 1 & 27.73 & \textbf{28.29} & \textbf{+0.56} & 15/20 & \textbf{0.0227} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Bảng~\ref{tab:deepconvnet} cho thấy DeepConvNet có 3/4 cấu hình cải thiện có ý nghĩa thống kê trên split gốc (Benchmark-3C: $+0.52$pp, $p=0.0117$; BETA-3C: $+0.90$pp, $p=0.0056$; BETA-1C: $+0.56$pp, $p=0.0227$), cấu hình còn lại (Benchmark-1C) cho $\Delta$Acc dương ($+1.17$pp) nhưng chưa đạt ngưỡng ý nghĩa ($p=0.084$) trên riêng split này. Áp dụng đúng bài học từ FB-tCNN (Bảng~\ref{tab:multisplit}), chúng tôi lặp lại cả bốn cấu hình của DeepConvNet trên 4 split subject độc lập khác (Bảng~\ref{tab:multisplit_gen}): ba cấu hình dương nêu trên được \textbf{xác nhận vững chắc} qua toàn bộ 5 split ($p_t \le 0.0161$), nhưng Benchmark-1C hoá ra \textbf{không phải một xu hướng thật} -- $\Delta$Acc dao động cả hai chiều qua các split ($+1.17, +0.45, -0.20, -0.34, -0.42$pp), trung bình chỉ $+0.13$pp và không đạt ý nghĩa ($p_t=0.684$). Nói cách khác, kết quả dương $+1.17$pp trên split gốc là một điểm ngoại lệ (outlier) của riêng split đó, không phải một hiệu ứng thật bị che khuất bởi thiếu công suất -- ngược chiều với những gì đã xảy ra ở Benchmark-3C/1C của FB-tCNN, nơi split gốc lại \emph{đánh giá thấp} hiệu ứng thật. Cả hai trường hợp cùng minh hoạ rằng ước lượng trên một split đơn lẻ, dù có nhiều seed, có thể sai lệch theo cả hai hướng.
-
-\begin{table}[h]
-\caption{Đánh giá CCKD với backbone ShallowConvNet và Compact-CNN, xác nhận độc lập với 8 seeds ($\lambda_{sp}=100$).}
-\label{tab:shallow_compact}
-\begin{center}
-\begin{tabular}{lllcccc}
-\toprule
-Backbone & Dataset & Cấu hình & Baseline (\%) & CCKD (\%) & $\Delta$ (pp) & $p$ \\
-\midrule
-\multirow{4}{*}{ShallowConvNet} & Benchmark & 3C & 35.80 & 35.49 & $-0.31$ & 0.432 \\
- & Benchmark & 1C & 32.92 & 32.37 & \textbf{$-0.55$} & \textbf{0.0156} \\
- & BETA & 3C & 22.40 & 22.90 & \textbf{+0.50} & \textbf{0.0401} \\
- & BETA & 1C & 22.86 & 23.17 & +0.32 & 0.240 \\
-\multirow{4}{*}{Compact-CNN} & Benchmark & 3C & 47.25 & 47.04 & $-0.21$ & 0.742 \\
- & Benchmark & 1C & 41.03 & 40.51 & $-0.52$ & 0.375 \\
- & BETA & 3C & 37.25 & 37.22 & $-0.04$ & 0.695 \\
- & BETA & 1C & 34.54 & 34.42 & $-0.12$ & 0.526 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Trên riêng split gốc, Bảng~\ref{tab:shallow_compact} cho kết quả có vẻ không theo một mẫu hình đơn giản: \textbf{ShallowConvNet} ghi nhận cả một cấu hình suy giảm đạt $p<0.05$ (Benchmark-1C, $-0.55$pp, $p=0.0156$) \textbf{và} một cấu hình cải thiện đạt $p<0.05$ (BETA-3C, $+0.50$pp, $p=0.0401$) trên cùng một backbone; \textbf{Compact-CNN} không cho hiệu ứng đáng kể ở bất kỳ cấu hình nào (tất cả $p>0.37$). Tuy nhiên, đây chỉ là bức tranh trên \emph{một} split subject. Mục~\ref{sec:mc_multisplit} trình bày kết quả sau khi mở rộng kiểm tra qua 5 split độc lập (Bảng~\ref{tab:multisplit_gen}): bức tranh thay đổi đáng kể, đặc biệt đối với ShallowConvNet.
-
-\begin{table}[h]
-\caption{Tổng hợp CCKD (relational thuần, $\lambda_{sp}=100$) trên năm backbone, tất cả đều đã được xác nhận qua 5 split subject độc lập (8 seeds/split). Số liệu là trung bình $\pm$ SD của $\Delta$Acc qua 5 split và $p$ từ kiểm định $t$ một mẫu ($H_0$: $\bar\Delta=0$). In đậm nếu $p<0.05$.}
-\label{tab:five_backbones}
-\begin{center}
-\begin{tabular}{lccccc}
-\toprule
-Backbone & Splits & Benchmark 3C & Benchmark 1C & BETA 3C & BETA 1C \\
-\midrule
-FB-tCNN & 5 & \textbf{+1.00 (0.0050)} & \textbf{+0.71 (0.0103)} & \textbf{+1.19 (0.0002)} & \textbf{+0.72 (0.0293)} \\
-DeepConvNet & 5 & \textbf{+0.59 (0.0006)} & +0.13 (0.684) & \textbf{+0.84 (0.0047)} & \textbf{+0.61 (0.0161)} \\
-ShallowConvNet & 5 & \textbf{$-0.91$ (0.0125)} & \textbf{$-0.95$ (0.0161)} & +0.46 (0.191) & +0.17 (0.300) \\
-EEGNet & 5 & \textbf{+1.09 (0.0179)} & $-0.66$ (0.120) & \textbf{$-1.30$ (0.0006)} & \textbf{$-1.29$ (0.0036)} \\
-Compact-CNN & 5 & +0.06 (0.872) & $-0.27$ (0.128) & $-0.24$ (0.190) & $-0.20$ (0.219) \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Bảng~\ref{tab:five_backbones} tổng hợp kết quả trên cả năm backbone, giờ đây \textbf{toàn bộ đều dựa trên chứng cứ đa-split} -- không còn ngoại lệ nào chỉ có một-split. \textbf{Không có mẫu hình đơn giản nào theo đặc điểm kiến trúc giải thích được toàn bộ dữ liệu}, và bức tranh phong phú hơn nhiều so với những gì một-split từng gợi ý cho cả FB-tCNN, DeepConvNet, ShallowConvNet \emph{lẫn} EEGNet. Trong nhóm conv thường: \textbf{FB-tCNN} dương vững chắc ở cả 4/4 cấu hình, \textbf{DeepConvNet} dương vững chắc ở 3/4 (Benchmark-1C là nhiễu thật, không phải hiệu ứng bị che khuất), còn \textbf{ShallowConvNet} lại âm vững chắc trên Benchmark và trung tính trên BETA -- ba bức tranh khác nhau trong cùng một nhóm cơ chế. Trong nhóm depthwise: \textbf{EEGNet}, vốn được cho là "thất bại toàn diện" dựa trên một-split, hoá ra có cấu trúc phụ thuộc dataset y hệt ShallowConvNet nhưng theo chiều ngược lại -- \textbf{dương vững chắc trên Benchmark-3C} ($+1.09$pp, $p=0.0179$), âm vững chắc trên cả hai cấu hình BETA, trung tính trên Benchmark-1C; \textbf{Compact-CNN} vẫn là backbone trung tính nhất quán nhất trong cả năm, không cấu hình nào đạt ý nghĩa dù đã kiểm tra qua 5 split (Bảng~\ref{tab:multisplit_gen}). Cả EEGNet và ShallowConvNet đều thể hiện đảo chiều hiệu ứng theo bộ dữ liệu -- nhưng theo hướng \emph{đối lập nhau} (EEGNet: dương trên Benchmark/âm trên BETA; ShallowConvNet: âm trên Benchmark/trung tính-dương trên BETA), nên đây không phải là một mẫu hình "backbone X luôn lợi cho dataset Y" có thể khái quát hoá. Tóm lại, hiệu quả của CCKD (relational) phụ thuộc vào cả backbone lẫn bộ dữ liệu theo cách mà nghiên cứu này \textbf{chưa xác định được nguyên nhân cụ thể}; đây là một câu hỏi mở cho các nghiên cứu tiếp theo.
-
-\paragraph{Kiểm soát sai số do kiểm định đa trọng, và vì sao cần đa-split.}
-\label{sec:mc_multisplit}
-Trước khi có dữ liệu đa-split cho ba backbone DeepConvNet/ShallowConvNet/Compact-CNN, chúng tôi đã thử đánh giá độ tin cậy của Bảng~\ref{tab:deepconvnet}--\ref{tab:shallow_compact} (khi đó vẫn ở dạng một-split, 8 seeds) bằng hiệu chỉnh Holm--Bonferroni \emph{trong nội bộ từng backbone} (4 test/họ). Kết quả (Bảng~\ref{tab:mc_correction}) cho thấy hai kết quả đạt $p<0.05$ riêng lẻ của ShallowConvNet (Benchmark-1C suy giảm, BETA-3C cải thiện) đều \textbf{không còn ý nghĩa} sau hiệu chỉnh ($p_{\text{Holm}}=0.062$ và $0.120$), khiến chúng tôi tạm xếp ShallowConvNet vào nhóm "không phát hiện được hiệu ứng" giống Compact-CNN. Tuy nhiên, kiểm định tương đương (TOST, cận $\pm0.2$ Cohen's $d_z$) cho cả tám cấu hình "không hiệu ứng" của hai backbone này đều \textbf{không đạt equivalence} ($p_{\text{TOST}}$ từ $0.23$ đến $0.95$) -- nghĩa là ở cỡ mẫu một-split, dữ liệu chưa đủ mạnh để phân biệt "không có hiệu ứng thật" với "có hiệu ứng nhưng bị che khuất bởi một split kém may mắn", đúng như tình huống đã xảy ra với FB-tCNN Benchmark.
-
-\begin{table}[h]
-\caption{Số kết quả còn ý nghĩa thống kê sau hiệu chỉnh Holm--Bonferroni trong nội bộ từng họ kiểm định (4 test/họ, $\alpha=0.05$). Các hàng "một-split" phản ánh đánh giá sơ bộ ban đầu (đã được thay thế); các hàng "đa-split" (bao gồm cả EEGNet, xác nhận sau cùng) dùng $p$ từ Bảng~\ref{tab:five_backbones}, \ref{tab:multisplit_gen}, \ref{tab:eegnet_multisplit} -- bằng chứng mạnh hơn và là số liệu chính thức của bài báo.}
-\label{tab:mc_correction}
-\begin{center}
-\begin{tabular}{lcc}
-\toprule
-Họ kiểm định & Sống sót (thô) & Sống sót (Holm, nội bộ họ) \\
-\midrule
-FB-tCNN một-split (Bảng~\ref{tab:overall}) & 2/4 & 2/4 \\
-FB-tCNN Logit+Hybrid (đối chứng, một-split) & 0/4 & 0/4 \\
-FB-tCNN đa-split (Bảng~\ref{tab:multisplit}) & 4/4 & 4/4 \\
-EEGNet chính (Bảng~\ref{tab:eegnet}) & 2/4 & 2/4 \\
-EEGNet xác nhận chiến lược thay thế (Bảng~\ref{tab:eegnet_confirm}) & 2/4 & 2/4 \\
-DeepConvNet một-split (sơ bộ, đã thay bằng đa-split) & 3/4 & 3/4 \\
-ShallowConvNet một-split (sơ bộ, đã thay bằng đa-split) & 2/4 & 0/4 \\
-Compact-CNN một-split (sơ bộ, đã thay bằng đa-split) & 0/4 & 0/4 \\
-\midrule
-DeepConvNet đa-split (Bảng~\ref{tab:multisplit_gen}) & 3/4 & 3/4 \\
-ShallowConvNet đa-split (Bảng~\ref{tab:multisplit_gen}) & \textbf{2/4} & \textbf{2/4} \\
-Compact-CNN đa-split (Bảng~\ref{tab:multisplit_gen}) & 0/4 & 0/4 \\
-EEGNet đa-split (Bảng~\ref{tab:eegnet_multisplit}) & \textbf{3/4} & \textbf{3/4} \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Vì vậy, chúng tôi mở rộng đúng quy trình đa-split đã dùng cho FB-tCNN (5 split subject độc lập, 8 seeds/split) sang cả ba backbone DeepConvNet, ShallowConvNet và Compact-CNN. Bảng~\ref{tab:multisplit_gen} trình bày kết quả đầy đủ.
-
-\begin{table}[h]
-\caption{Kiểm tra độ vững chắc qua 5 split subject độc lập cho DeepConvNet, ShallowConvNet và Compact-CNN (8 seeds/split, cùng quy trình đã dùng cho FB-tCNN ở Bảng~\ref{tab:multisplit}). $\bar\Delta \pm$ SD qua 5 split; $p_t$ là kiểm định $t$ một mẫu; in đậm nếu $p_t<0.05$.}
-\label{tab:multisplit_gen}
-\begin{center}
-\begin{tabular}{llccccccc}
-\toprule
-Backbone & Cấu hình & \multicolumn{5}{c}{$\Delta$Acc (pp) theo split\_seed} & $\bar\Delta \pm$ SD & $p_t$ \\
- & & 2026 & 3026 & 4026 & 5026 & 6026 & & \\
-\midrule
-\multirow{4}{*}{DeepConvNet} & BM-3C & +0.52 & +0.45 & +0.53 & +0.67 & +0.79 & +0.59 $\pm$ 0.13 & \textbf{0.0006} \\
- & BM-1C & +1.17 & +0.45 & $-0.20$ & $-0.34$ & $-0.42$ & +0.13 $\pm$ 0.68 & 0.684 \\
- & BETA-3C & +0.90 & +1.16 & +0.92 & +0.96 & +0.28 & +0.84 $\pm$ 0.33 & \textbf{0.0047} \\
- & BETA-1C & +0.56 & +0.84 & +0.86 & +0.75 & +0.04 & +0.61 $\pm$ 0.34 & \textbf{0.0161} \\
-\multirow{4}{*}{ShallowConvNet} & BM-3C & $-0.31$ & $-1.34$ & $-0.83$ & $-0.66$ & $-1.43$ & $-0.91 \pm 0.47$ & \textbf{0.0125} \\
- & BM-1C & $-0.55$ & $-0.78$ & $-0.43$ & $-1.30$ & $-1.69$ & $-0.95 \pm 0.53$ & \textbf{0.0161} \\
- & BETA-3C & +0.50 & +0.12 & +1.48 & +0.46 & $-0.27$ & +0.46 $\pm$ 0.65 & 0.191 \\
- & BETA-1C & +0.32 & $-0.14$ & +0.60 & +0.24 & $-0.16$ & +0.17 $\pm$ 0.32 & 0.300 \\
-\multirow{4}{*}{Compact-CNN} & BM-3C & $-0.21$ & $-0.14$ & $-0.62$ & +1.36 & $-0.10$ & +0.06 $\pm$ 0.76 & 0.872 \\
- & BM-1C & $-0.52$ & $-0.47$ & $-0.20$ & $-0.43$ & +0.26 & $-0.27 \pm 0.32$ & 0.128 \\
- & BETA-3C & $-0.04$ & $-0.34$ & $-0.07$ & $-0.78$ & +0.04 & $-0.24 \pm 0.34$ & 0.190 \\
- & BETA-1C & $-0.12$ & $-0.63$ & $-0.22$ & $-0.27$ & +0.23 & $-0.20 \pm 0.31$ & 0.219 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Đa-split thay đổi hoàn toàn kết luận cho hai trong ba backbone. \textbf{ShallowConvNet}: hoá ra \emph{không} phải "không phát hiện được hiệu ứng" như suy luận từ một-split -- nó có hiệu ứng \textbf{âm, nhất quán ở cả 5/5 split} trên cả hai cấu hình Benchmark (Cấu hình 3C: $-0.91\pm0.47$pp, $p_t=0.0125$; 1C: $-0.95\pm0.53$pp, $p_t=0.0161$), sống sót cả sau hiệu chỉnh Holm--Bonferroni nội bộ ($p_{\text{Holm}}=0.05$ cho cả hai). Trên BETA, ngược lại, hiệu ứng có xu hướng dương nhưng không nhất quán đủ để đạt ý nghĩa (4/5 và 3/5 split dương). \textbf{DeepConvNet}: ba cấu hình dương ở Bảng~\ref{tab:deepconvnet} đều được xác nhận vững chắc; riêng Benchmark-1C -- kết quả dương duy nhất "đẹp" trên split gốc ($p=0.084$, gần ngưỡng) -- hoá ra là nhiễu thật sự (dao động cả hai chiều qua 5 split, $p_t=0.684$), chứ không phải một xu hướng thật bị thiếu công suất. \textbf{Compact-CNN}: là backbone duy nhất trong ba mà đa-split \emph{không} thay đổi kết luận -- cả 4 cấu hình vẫn không đạt ý nghĩa ($p_t$ từ $0.13$ đến $0.87$), củng cố thêm cho vai trò của nó như backbone trung tính nhất quán nhất trong nghiên cứu.
-
-Bài học chung, giờ được minh hoạ trên cả 5/5 backbone đã kiểm tra: đánh giá trên một split subject đơn lẻ -- dù có nhiều seed khởi tạo mạng -- có thể sai lệch theo \emph{cả hai hướng}. Nó có thể \textbf{đánh giá thấp} một hiệu ứng dương thật (FB-tCNN Benchmark-3C/1C, và đặc biệt rõ ràng ở EEGNet Benchmark-3C -- nơi một-split cho $\Delta=+0.21$pp không ý nghĩa nhưng đa-split tiết lộ $+1.09$pp có ý nghĩa vững chắc, $p=0.0179$); nó có thể \textbf{che khuất} một hiệu ứng âm thật (ShallowConvNet trên Benchmark); và nó cũng có thể \textbf{đánh giá cao} một điểm nhiễu ngẫu nhiên thành có vẻ như một xu hướng thật (DeepConvNet Benchmark-1C). Trường hợp EEGNet đặc biệt đáng chú ý vì đây chính là backbone được dùng làm bằng chứng trung tâm cho câu chuyện "CCKD relational thất bại trên kiến trúc khác" trong các phần trước của nghiên cứu này -- và ngay cả bằng chứng đó cũng cần được viết lại sau khi kiểm tra đa-split. Kiểm tra qua nhiều split độc lập, dù tốn thêm chi phí tính toán, là cần thiết để phân biệt các khả năng này -- một khuyến nghị về phương pháp luận có thể áp dụng rộng hơn cho các nghiên cứu SSVEP khác thường chỉ báo cáo trên một cách chia subject duy nhất.
-
-Về mặt tham số, khác với FB-tCNN (gần như bất biến với số kênh), số lượng tham số của DeepConvNet, ShallowConvNet và Compact-CNN đều thay đổi nhẹ theo số kênh đầu vào (dưới 5-15\%, do các conv không gian/depthwise của các kiến trúc này không chia sẻ trọng số qua kênh theo cách FB-tCNN làm); mức chênh lệch này vẫn nhỏ so với tổng số tham số, không ảnh hưởng đến kết luận về động lực giảm điện cực đã trình bày ở Mục~\ref{sec:pi4}.
-
-\subsection{Phân tích không gian đặc trưng: khi nào CCKD thực sự tăng cường tương đồng biểu diễn?}
-\label{sec:cka}
-
-Bảng~\ref{tab:five_backbones} cho thấy không có đặc điểm kiến trúc rời rạc nào (conv thường/depthwise) dự đoán được khi CCKD thành công. Để tìm một biến \emph{liên tục} có thể giải thích tốt hơn, chúng tôi đo trực tiếp mức độ tương đồng giữa không gian đặc trưng của teacher và student bằng \textbf{Centered Kernel Alignment (CKA)} tuyến tính \citep{kornblith2019similarity} -- cùng loại đặc trưng penultimate mà hàm mất mát relational (Gram-matrix) của CCKD trực tiếp tối ưu. Với mỗi backbone/bộ dữ liệu/cấu hình, chúng tôi huấn luyện teacher, student-baseline và student-CCKD (một seed, split gốc), trích đặc trưng trên tập test, và tính $\text{CKA}(\text{teacher}, \text{baseline})$ và $\text{CKA}(\text{teacher}, \text{CCKD})$; $\Delta\text{CKA}$ đo mức CCKD làm tăng tương đồng biểu diễn so với baseline.
-
-\begin{table}[h]
-\caption{CKA tuyến tính giữa đặc trưng teacher và student, trước/sau CCKD (một seed, split gốc, cấu hình 3C và 1C gộp chung theo backbone/dataset để tiết kiệm không gian; giá trị đầy đủ 20 dòng trong mã nguồn).}
-\label{tab:cka}
-\begin{center}
-\begin{tabular}{lcccc}
-\toprule
-Backbone & Dataset & CKA(baseline) & CKA(CCKD) & $\Delta$CKA \\
-\midrule
-\multirow{2}{*}{FB-tCNN} & Benchmark & 0.45 & 0.51 & +0.06 \\
- & BETA & 0.14 & 0.17 & +0.03 \\
-\multirow{2}{*}{DeepConvNet} & Benchmark & 0.51 & 0.55 & +0.04 \\
- & BETA & 0.23 & 0.26 & +0.03 \\
-\multirow{2}{*}{ShallowConvNet} & Benchmark & 0.67 & 0.67 & $-0.01$ \\
- & BETA & 0.38 & 0.38 & +0.00 \\
-\multirow{2}{*}{EEGNet} & Benchmark & 0.43 & 0.50 & +0.08 \\
- & BETA & 0.06 & 0.07 & +0.01 \\
-\multirow{2}{*}{Compact-CNN} & Benchmark & 0.49 & 0.50 & +0.01 \\
- & BETA & 0.02 & 0.03 & +0.00 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Bảng~\ref{tab:cka} trình bày kết quả. Hai quan sát nổi bật. \textbf{Thứ nhất}, $\Delta$CKA hầu như luôn dương -- đúng như kỳ vọng, vì hàm mất mát relational được thiết kế chính xác để tăng tương đồng cấu trúc Gram-matrix giữa teacher và student -- \textbf{ngoại trừ ShallowConvNet}, backbone duy nhất có $\Delta$CKA xấp xỉ 0 hoặc âm nhẹ ở cả hai bộ dữ liệu, trùng khớp với việc đây cũng là backbone duy nhất CCKD gây suy giảm vững chắc (trên Benchmark). \textbf{Thứ hai}, mức tăng CKA rất khác nhau giữa các backbone/dataset (từ gần 0 đến $+0.09$), gợi ý rằng không phải bản thân việc "có tăng CKA hay không" mà \emph{mức độ} tăng mới là yếu tố liên quan đến hiệu quả thực tế.
-
-Để kiểm định trực tiếp, chúng tôi tính tương quan giữa $\Delta$CKA (cả 20 tổ hợp backbone×dataset×cấu hình) và $\Delta$Acc \textbf{đã xác nhận đa-split} (Bảng~\ref{tab:five_backbones}, \ref{tab:multisplit_gen}, \ref{tab:eegnet_multisplit} -- dùng số liệu đáng tin cậy hơn thay vì accuracy một-seed của chính lần chạy CKA, vốn nhiễu hơn nhiều theo đúng bài học đã rút ra xuyên suốt nghiên cứu này). Kết quả: \textbf{tương quan Pearson $r=0.582$ ($p=0.0072$), Spearman $\rho=0.627$ ($p=0.0031$), $n=20$} -- có ý nghĩa thống kê. Kiểm tra độ vững chắc bằng leave-one-backbone-out cho thấy tương quan không bị một backbone đơn lẻ chi phối: loại bỏ EEGNet, tương quan còn \textbf{mạnh hơn} ($\rho=0.797$, $p=0.0002$); loại bỏ bất kỳ backbone nào khác, tương quan vẫn có ý nghĩa ($p<0.06$ trong mọi trường hợp). Ngược lại, CKA \emph{trước khi} áp dụng CCKD (mức tương đồng baseline), tương quan với cùng $\Delta$Acc đa-split nói trên, \textbf{không} có ý nghĩa ($r=0.131$, $p=0.582$; Spearman $\rho=0.060$, $p=0.801$) -- bác bỏ giả thuyết đơn giản "backbone có student càng khác teacher ban đầu thì càng có nhiều dư địa để CCKD giúp ích".
-
-Tóm lại, \textbf{mức độ CCKD thành công trong việc tăng cường tương đồng biểu diễn Gram-matrix giữa teacher và student tương quan có ý nghĩa thống kê với mức độ nó cải thiện độ chính xác} -- một tín hiệu định lượng, liên tục, giải thích được phần nào câu hỏi "khi nào CCKD hiệu quả" mà không nhãn kiến trúc rời rạc nào (Bảng~\ref{tab:five_backbones}) làm được. Tuy nhiên, cần nhấn mạnh đây là \textbf{tương quan, không phải quan hệ nhân quả đã kiểm chứng}, dựa trên $n=20$ điểm dữ liệu mang tính khám phá (một seed cho CKA, dù ghép với $\Delta$Acc đáng tin cậy), và không giải thích được toàn bộ hiện tượng: trường hợp EEGNet--BETA có $\Delta$CKA gần như bằng 0 ($+0.01$) nhưng $\Delta$Acc âm mạnh nhất trong toàn bộ nghiên cứu ($-1.29$ đến $-1.30$pp) -- phù hợp với chiều tương quan chung (thay đổi CKA nhỏ đi cùng kết quả kém) nhưng ở mức cực đoan hơn nhiều so với những gì độ dốc tương quan trung bình dự đoán, cho thấy còn yếu tố khác chưa được nắm bắt. Xác nhận lại phát hiện này với nhiều seed hơn, và mở rộng sang các lớp đặc trưng trung gian thay vì chỉ lớp cuối, là hướng nghiên cứu tiếp theo tự nhiên.
-
-\subsection{Khả năng triển khai thời gian thực trên phần cứng biên (Raspberry Pi 4)}
-\label{sec:pi4}
-
-Bên cạnh độ chính xác, một động lực quan trọng của việc giảm số lượng điện cực là cho phép triển khai hệ thống SSVEP trên phần cứng biên (edge) chi phí thấp, tài nguyên hạn chế. Để kiểm chứng tính khả thi này bằng thực nghiệm thay vì suy diễn, chúng tôi đo độ trễ suy luận thực tế của các mô hình FB-tCNN (teacher 9C, student 3C, student 1C) trên Raspberry Pi 4 Model B (CPU ARM Cortex-A72, 4 nhân, kiến trúc aarch64) -- một nút tính toán biên phổ biến, giá thành thấp.
-
-Chúng tôi đo độ trễ suy luận trên một mẫu (batch size = 1) theo hai thành phần: tiền xử lý filter-bank (Butterworth bậc 4, scipy, giống hệt quá trình huấn luyện) và forward pass của mô hình, trên cửa sổ tín hiệu 1.0 giây (250 mẫu tại 250 Hz). Hai thành phần được đo bằng hai vòng lặp riêng biệt và tổng độ trễ là tổng trung bình của chúng; chúng tôi chưa đo liên tục từ tín hiệu thô đến đầu ra trong một vòng lặp duy nhất, nên số liệu này là ước lượng tổng hai thành phần chứ không phải độ trễ end-to-end. Vì độ trễ chỉ phụ thuộc vào kiến trúc và kích thước đầu vào chứ không phụ thuộc giá trị trọng số đã học, mô hình khởi tạo ngẫu nhiên (không cần transfer checkpoint) là hợp lệ cho mục đích đo độ trễ này. Mỗi cấu hình được đo với 20 lần warm-up và 200 lần lặp, tại hai mức số luồng CPU (1 và 4 luồng). Để tránh sai lệch do hiện tượng giảm xung nhịp vì nhiệt (thermal throttling), toàn bộ quy trình đo được lặp lại độc lập \textbf{7 lần} (mỗi lần là một tiến trình Python riêng biệt), nghỉ 15 giây giữa các lần; kết quả báo cáo là trung bình $\pm$ khoảng tin cậy 95\% (phân phối $t$, $df=6$) qua 7 lần chạy.
-
-Bảng~\ref{tab:pi4} trình bày tổng độ trễ ước lượng (tiền xử lý + suy luận) trung bình cho từng cấu hình điện cực. Ở cả hai mức số luồng, tổng này dao động trong khoảng 13--17 mili-giây -- thấp hơn nhiều so với độ dài cửa sổ tín hiệu (1000 mili-giây), cho thấy toàn bộ pipeline khả thi vận hành thời gian thực với biên độ dư thừa lớn ngay cả trên phần cứng giá rẻ này. Bộ nhớ RSS đỉnh đo được trong suốt quá trình benchmark (toàn bộ 6 tổ hợp cấu hình/số luồng, đo một lần cho cả tiến trình) là $298.37 \pm 0.06$ MB (trung bình $\pm$ CI95\%, $n=7$), không đáng kể so với dung lượng RAM của Raspberry Pi 4.
-
-Đáng chú ý, độ trễ giữa các cấu hình 9C/3C/1C chênh lệch rất nhỏ (dưới 1 mili-giây), \textbf{không} tỉ lệ thuận với mức giảm số điện cực. Điều này khớp với phân tích số lượng tham số (Mục~\ref{sec:setup}): do conv đầu tiên của FB-tCNN có kernel $(C,1)$ thu gọn chiều kênh ngay từ lớp đầu, số tham số mô hình gần như không đổi khi giảm kênh đầu vào (90536 / 90440 / 90408 tham số cho teacher/3C/1C). Do đó, đóng góp thực nghiệm ở đây cần được hiểu đúng là \textbf{"giảm điện cực cho phép dùng cảm biến rẻ hơn, đơn giản hơn, và pipeline vẫn khả thi thời gian thực trên phần cứng biên chi phí thấp"}, chứ \textbf{không phải} "student suy luận nhanh hơn teacher đáng kể" -- một khẳng định mà số liệu không ủng hộ.
-
-\begin{table}[h]
-\caption{Tổng độ trễ ước lượng (tiền xử lý filter-bank đo riêng + forward pass đo riêng, cộng lại) trên Raspberry Pi 4, trung bình $\pm$ CI95\% qua 7 lần chạy độc lập (FB-tCNN, cửa sổ 1.0 s). Đây không phải độ trễ end-to-end đo liên tục.}
-\label{tab:pi4}
-\begin{center}
-\begin{tabular}{lccc}
-\toprule
-Cấu hình & Tham số & Độ trễ 1 luồng (ms) & Độ trễ 4 luồng (ms) \\
-\midrule
-Teacher (9C) & 90536 & $17.24 \pm 0.05$ & $14.04 \pm 0.12$ \\
-Student (3C) & 90440 & $16.82 \pm 0.23$ & $13.44 \pm 0.10$ \\
-Student (1C) & 90408 & $16.53 \pm 0.21$ & $13.15 \pm 0.10$ \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-Để đặt các con số độ trễ trên vào bối cảnh, chúng tôi bổ sung hai phân tích: (i) so sánh với một CPU máy chủ hiệu năng cao và (ii) tác động thực tế của độ trễ đo được lên Information Transfer Rate (ITR).
-
-Chạy cùng script benchmark, cùng số luồng, trên CPU máy chủ AMD EPYC 9124 (nút HPC, không dùng GPU, tải hệ thống thấp) cho thấy Raspberry Pi 4 chậm hơn khoảng $6$--$8.5$ lần so với CPU máy chủ (ví dụ cấu hình 1 điện cực: $16.53$ ms trên Pi so với $1.95$ ms trên EPYC 9124 ở 1 luồng, tương ứng $8.46\times$; $13.15$ ms so với $2.09$ ms ở 4 luồng, tương ứng $6.30\times$). Mức chênh lệch này là dự kiến và không phải là vấn đề đối với ứng dụng: độ trễ tuyệt đối trên Pi 4 vẫn nhỏ hơn ba bậc độ lớn so với cửa sổ tín hiệu 1.0 giây.
-
-Để lượng hoá tác động thực tế, chúng tôi tính ITR theo công thức Wolpaw \citep{wolpaw2002bci} với độ chính xác thực đo trong Bảng~\ref{tab:overall}, so sánh giữa ITR lý tưởng (chỉ tính thời gian cửa sổ tín hiệu và chuyển hướng nhìn, giả định thời gian tính toán bằng 0 -- cách tính ITR phổ biến trong tài liệu) và ITR thực tế (cộng thêm độ trễ pipeline đo được trên Pi 4, 1 luồng). Bảng~\ref{tab:itr} cho thấy việc cộng thêm độ trễ tính toán thực tế chỉ làm giảm ITR khoảng $1.1\%$ ở tất cả các cấu hình và bộ dữ liệu -- mức ảnh hưởng không đáng kể, khẳng định rằng chi phí suy luận trên phần cứng biên giá rẻ này không phải là nút thắt cổ chai (bottleneck) đối với hệ thống SSVEP thời gian thực.
-
-\begin{table}[h]
-\caption{ITR (Wolpaw, bits/phút) lý tưởng so với thực tế (cộng thêm tổng độ trễ ước lượng trên Raspberry Pi 4, 1 luồng), tính từ độ chính xác CCKD trong Bảng~\ref{tab:overall}.}
-\label{tab:itr}
-\begin{center}
-\begin{tabular}{llcccc}
-\toprule
-Dataset & Cấu hình & Acc (\%) & ITR lý tưởng & ITR thực tế & Giảm (\%) \\
-\midrule
-\multirow{3}{*}{Benchmark} & Teacher (9C) & 65.69 & 103.22 & 102.05 & 1.13 \\
- & Student (3C) & 51.44 & 70.23 & 69.45 & 1.11 \\
- & Student (1C) & 45.14 & 57.17 & 56.54 & 1.09 \\
-\multirow{3}{*}{BETA} & Teacher (9C) & 53.91 & 75.62 & 74.76 & 1.14 \\
- & Student (3C) & 39.46 & 46.18 & 45.67 & 1.11 \\
- & Student (1C) & 35.68 & 39.29 & 38.87 & 1.09 \\
-\bottomrule
-\end{tabular}
-\end{center}
-\end{table}
-
-\subsection{Discussion}
-
-Các kết quả thực nghiệm cho thấy hiệu quả của Knowledge Distillation phụ thuộc đáng kể vào dạng tri thức được truyền khi teacher và student sử dụng các cấu hình điện cực khác nhau. Trên backbone FB-tCNN, các thí nghiệm ablation chỉ ra rằng response-based Knowledge Distillation không cải thiện hiệu năng một cách nhất quán và có thể làm giảm độ chính xác tuỳ theo nhiệt độ, trong khi CCKD mang lại cải thiện dương ở cả hai cấu hình 3 điện cực và 1 điện cực trên cả hai bộ dữ liệu, đạt ý nghĩa thống kê trên BETA. Điều này cho thấy việc truyền trực tiếp phân bố đầu ra của teacher kém ổn định hơn khi hai mô hình quan sát các tập điện cực khác nhau.
-
-Thay vì khớp các biểu diễn tuyệt đối, CCKD truyền tri thức thông qua cấu trúc quan hệ giữa các mẫu trong không gian đặc trưng. Trên FB-tCNN, dạng tri thức này ít phụ thuộc vào sự khác biệt của cấu hình điện cực và phù hợp hơn cho bài toán cross-channel knowledge transfer so với response-based KD.
-
-Mức cải thiện trên BETA nhất quán và có ý nghĩa thống kê ở cả hai cấu hình điện cực trên split subject gốc; trên Benchmark, cả hai cấu hình chưa đạt ngưỡng ý nghĩa thống kê trên riêng split gốc, nhưng kiểm tra qua 5 split subject độc lập (Bảng~\ref{tab:multisplit}) cho thấy chiều cải thiện dương thực chất nhất quán và có ý nghĩa thống kê ở cả hai cấu hình Benchmark -- bác bỏ diễn giải ban đầu (dựa trên một split đơn lẻ) rằng cấu hình 3 điện cực "gần như không đổi"; mức cải thiện trung bình qua các split của 3C ($+1.00$pp) thậm chí cao hơn 1C ($+0.71$pp).
-
-Đáng chú ý, kết quả ban đầu (một-split) trên backbone EEGNet (Mục~\ref{sec:generalization}) có vẻ \textbf{không xác nhận} giả thuyết rằng CCKD (relational thuần) tổng quát tốt sang các kiến trúc backbone khác: CCKD gần như trung tính trên Benchmark và làm giảm độ chính xác có ý nghĩa thống kê trên BETA. Tuy nhiên, đúng theo bài học phương pháp luận vừa rút ra từ FB-tCNN, xác nhận qua 5 split subject độc lập cho thấy bức tranh này \textbf{không đầy đủ}: Benchmark-3C thực chất có hiệu ứng \textbf{dương vững chắc} ($+1.09$pp, $p=0.0179$, sống sót hiệu chỉnh đa kiểm định) đã bị che khuất bởi split gốc, trong khi hiệu ứng âm trên BETA (cả hai cấu hình) được xác nhận còn vững chắc hơn qua đa-split ($p \le 0.004$). Một khảo sát độ nhạy $\lambda_{sp}$ trên dải rộng ($1$--$2000$), thực hiện trên split gốc trước khi có phát hiện đa-split, cho thấy xu hướng đơn điệu xấu đi khi tăng $\lambda_{sp}$ trên cả hai bộ dữ liệu; với phát hiện đa-split ở $\lambda_{sp}=100$, cột BETA của khảo sát này đáng tin cậy (đã được xác nhận độc lập), nhưng cột Benchmark cần được diễn giải thận trọng hơn vì rất có thể chịu cùng loại sai lệch một-split.
-
-Việc thử các dạng tri thức chưng cất khác (response-based KD thuần và hybrid kết hợp nhẹ relational) và xác nhận độc lập với cỡ mẫu lớn hơn (8 seeds) cho thấy cải thiện có ý nghĩa thống kê vững chắc trên Benchmark-3C ($+1.18$pp đến $+1.31$pp, $p=0.0020$, cải thiện toàn bộ 10/10 đối tượng) -- nhưng nay ta biết bản thân relational-only \emph{cũng} cải thiện trên đúng cấu hình này khi kiểm tra đa-split, nên đây nhiều khả năng phản ánh Benchmark-3C nói chung là một thiết lập thuận lợi cho EEGNet+KD, không phải bằng chứng cho thấy tránh relational là chìa khoá. Điểm phân biệt rõ ràng thực sự giữa các chiến lược nằm ở BETA: relational suy giảm vững chắc, trong khi response-based/hybrid chỉ trung tính (không âm). Vì vậy, phát biểu chính xác hơn là cơ chế Gram-matrix relational có một \textbf{điểm yếu cụ thể trên BETA}, chứ không phải một điểm yếu toàn diện so với chưng cất cross-channel nói chung.
-
-Để kiểm tra xem sự phụ thuộc backbone/dataset này có mang tính hệ thống hay chỉ đặc thù cho hai backbone đã thử, chúng tôi đánh giá thêm CCKD (relational thuần) trên ba backbone khác được công bố (DeepConvNet và ShallowConvNet \citep{schirrmeister2017deep}, Compact-CNN \citep{waytowich2018compact}), chọn \emph{trước khi biết kết quả}, và xác nhận cả ba qua 5 split subject độc lập trước khi báo cáo (Mục~\ref{sec:results}, Bảng~\ref{tab:five_backbones}, \ref{tab:multisplit_gen}). Kết quả trên cả năm backbone \textbf{không cho thấy một mẫu hình đơn giản nào theo đặc điểm kiến trúc}: ba backbone cùng dùng conv thường để thu gọn kênh (FB-tCNN, DeepConvNet, ShallowConvNet) cho \emph{ba} bức tranh khác nhau -- FB-tCNN dương vững chắc ở cả 4/4 cấu hình, DeepConvNet dương vững chắc ở 3/4, còn ShallowConvNet cho hiệu ứng \textbf{âm nhất quán và vững chắc} trên Benchmark nhưng trung tính-hơi-dương trên BETA; Compact-CNN (depthwise) vẫn là backbone trung tính nhất quán nhất, kể cả sau kiểm tra đa-split. EEGNet (depthwise) là backbone duy nhất có bằng chứng âm tính vững chắc, tái lập nhiều lần trên \textbf{BETA} -- nhưng đồng thời cũng là backbone duy nhất (cùng ShallowConvNet) thể hiện đảo chiều hiệu ứng hoàn toàn theo bộ dữ liệu, chỉ khác chiều: EEGNet dương trên Benchmark/âm trên BETA, còn ShallowConvNet âm trên Benchmark/trung tính trên BETA.
-
-Những phát hiện này cho thấy CCKD (ở dạng relational thuần được đề xuất) là một phương pháp hiệu quả nhưng \textbf{không phổ quát cho mọi kiến trúc backbone}, khác với kỳ vọng ban đầu. Tuy nhiên, sự phụ thuộc backbone này \textbf{không quy giản được về một đặc điểm kiến trúc đơn giản} như cách thu gọn số kênh đầu vào -- một giả thuyết hợp lý ban đầu nhưng không được năm backbone đã kiểm định ủng hộ một cách nhất quán. Xác định chính xác yếu tố nào (nếu có) quyết định khả năng tương thích của CCKD với một backbone cho trước vẫn là một câu hỏi mở, cần nghiên cứu thêm trước khi triển khai CCKD cho các hệ thống SSVEP ít điện cực sử dụng backbone ngoài FB-tCNN.
-
-Ba phân tích bổ sung củng cố và giới hạn phạm vi của các kết luận trên. \textbf{Độ dài cửa sổ tín hiệu} (Mục~\ref{sec:window}): lợi ích của CCKD trên cấu hình 3 điện cực dương và có ý nghĩa thống kê ở mọi cửa sổ từ 1.0 giây trở lên qua 5 split, nhưng không có kết quả 1 điện cực nào sống sót hiệu chỉnh Holm trên toàn dải cửa sổ đã thử -- cho thấy hiệu quả của CCKD ở cấu hình 1 điện cực nhạy hơn với độ dài cửa sổ so với cấu hình 3 điện cực. \textbf{Độ nhạy với $\lambda_{sp}$} (Mục~\ref{sec:lambda_val}): $\lambda_{sp}=100$ dùng xuyên suốt bài không phải luôn là lựa chọn tốt nhất theo validation trên một split (validation chọn $\lambda_{sp}=1$ trên Benchmark), nhưng kiểm tra qua 5 split cho thấy chính $\lambda_{sp}=100$ mới là giá trị có bằng chứng đa-split vững chắc, không phải $\lambda_{sp}=1$ -- một minh hoạ khác cho rủi ro của việc chọn siêu tham số dựa trên một split đơn lẻ. \textbf{Tương quan CKA--$\Delta$Acc} (Mục~\ref{sec:cka}): mức CCKD tăng cường tương đồng biểu diễn Gram-matrix (so với baseline) tương quan có ý nghĩa với mức cải thiện độ chính xác trên cả 20 tổ hợp backbone/dataset/cấu hình, cho một tín hiệu định lượng về "khi nào CCKD hiệu quả" mà nhãn kiến trúc rời rạc không giải thích được -- dù đây là tương quan trên dữ liệu khám phá, không phải quan hệ nhân quả đã kiểm chứng.
-
-Cuối cùng, cơ chế distillation chỉ được sử dụng trong giai đoạn huấn luyện. Sau khi huấn luyện hoàn tất, teacher được loại bỏ và mô hình student giữ nguyên kiến trúc cũng như chi phí suy luận, giúp CCKD (khi áp dụng với backbone phù hợp) phù hợp với các hệ thống SSVEP sử dụng ít điện cực. Kết quả benchmark trên Raspberry Pi 4 (Mục~\ref{sec:pi4}) củng cố tính ứng dụng thực tế của hướng tiếp cận này: pipeline suy luận của cả ba cấu hình điện cực đều khả thi vận hành thời gian thực trên phần cứng biên chi phí thấp. Tuy nhiên cần lưu ý rằng, do cơ chế collapse-kênh của FB-tCNN, lợi ích chính của việc giảm điện cực nằm ở việc đơn giản hoá phần cứng cảm biến (ít điện cực, ít dây dẫn, thời gian lắp đặt ngắn hơn) chứ không phải giảm đáng kể chi phí tính toán so với teacher.
-
-\section{Conclusion}
-\label{sec:conclusion}
-
-Trong nghiên cứu này, chúng tôi đã đề xuất \textbf{Cross-Channel Relational Knowledge Distillation (CCKD)} nhằm truyền tri thức từ mô hình teacher sử dụng nhiều điện cực sang mô hình student sử dụng ít điện cực cho bài toán nhận dạng SSVEP. Thay vì truyền trực tiếp phân bố đầu ra của teacher, CCKD khai thác \textbf{cấu trúc quan hệ giữa các mẫu} trong không gian đặc trưng, cho phép thực hiện \textbf{cross-channel knowledge transfer} mà không làm thay đổi kiến trúc hay chi phí suy luận của mô hình student.
-
-Kết quả thực nghiệm trên hai bộ dữ liệu SSVEP công khai cho thấy, với backbone FB-tCNN, CCKD cải thiện hiệu năng của các mô hình student sử dụng \textbf{3 điện cực} và \textbf{1 điện cực} trên BETA, đạt ý nghĩa thống kê ở cả hai cấu hình trên split subject gốc; trên Benchmark, cả hai cấu hình chưa đạt ngưỡng ý nghĩa thống kê trên riêng split gốc, nhưng kiểm tra qua 5 split subject độc lập xác nhận chiều cải thiện dương này thực chất có giá trị trung bình dương và đạt ý nghĩa thống kê ở cả bốn cấu hình (cả Benchmark lẫn BETA) -- cho thấy đánh giá trên một split subject đơn lẻ, dù phổ biến trong literature SSVEP, có thể đánh giá thấp mức cải thiện thực sự của phương pháp khi số subject kiểm thử nhỏ. Trên backbone FB-tCNN, các thí nghiệm ablation cho thấy CCKD ổn định hơn các phương pháp \textbf{response-based knowledge distillation} trong bối cảnh truyền tri thức giữa các cấu hình điện cực khác nhau. Tuy nhiên, kiểm chứng trên backbone EEGNet cho thấy hiệu quả của CCKD (relational thuần) \textbf{không phổ quát cho mọi kiến trúc mạng} -- dù bức tranh phức tạp hơn nhiều so với đánh giá ban đầu trên một split. Trên split gốc, phương pháp có vẻ gần như trung tính trên Benchmark và làm giảm độ chính xác có ý nghĩa thống kê trên BETA; nhưng xác nhận qua 5 split subject độc lập (cùng quy trình áp dụng cho FB-tCNN) tiết lộ Benchmark-3C thực chất có hiệu ứng \textbf{dương vững chắc} ($+1.09$pp, $p=0.0179$) đã bị che khuất bởi split gốc, trong khi hiệu ứng âm trên BETA (cả hai cấu hình) được xác nhận vững chắc hơn qua đa-split ($p \le 0.004$). Nói cách khác, EEGNet không "thất bại toàn diện" mà có cấu trúc phụ thuộc bộ dữ liệu: dương trên Benchmark-3C, âm trên BETA. Điều này cũng làm rõ lại vai trò của các dạng tri thức chưng cất thay thế (response-based, hybrid): cả hai cho cải thiện có ý nghĩa thống kê vững chắc trên Benchmark-3C ($p=0.0020$, cải thiện 10/10 đối tượng) -- nhưng nay ta biết relational-only \emph{cũng} cải thiện trên đúng cấu hình này, nên đây phản ánh Benchmark-3C nói chung thuận lợi cho EEGNet+KD hơn là bằng chứng cho thấy tránh relational là chìa khoá; điểm khác biệt thực sự nằm ở BETA, nơi relational suy giảm vững chắc còn các dạng khác chỉ trung tính. Mở rộng đánh giá sang ba backbone công khai khác (DeepConvNet, ShallowConvNet, Compact-CNN), cả ba đều được xác nhận qua 5 split subject độc lập (không chỉ nhiều seed trên một split), cho thấy sự phụ thuộc backbone này \textbf{không quy giản được về một đặc điểm kiến trúc đơn giản}: DeepConvNet cho mẫu hình thuận lợi và vững chắc ở 3/4 cấu hình (giống FB-tCNN); ShallowConvNet (cùng nhóm cơ chế conv thường) lại cho hiệu ứng \textbf{âm nhất quán và vững chắc trên Benchmark} nhưng trung tính trên BETA -- đảo chiều ngược với EEGNet; Compact-CNN vẫn không cho hiệu ứng đáng kể ở đâu cả, kể cả sau kiểm tra đa-split. Đáng chú ý, kiểm tra đa-split còn phát hiện một kết quả dương "đẹp" của DeepConvNet trên split gốc thực chất là nhiễu ngẫu nhiên, không phải hiệu ứng thật -- cùng với phát hiện tương tự (theo chiều ngược lại) ở EEGNet Benchmark-3C, cả hai minh hoạ rằng đánh giá trên một split đơn lẻ có thể sai lệch theo cả hai hướng. Nhìn chung, giả thuyết ban đầu về cơ chế thu gọn kênh, dù hợp lý, không được dữ liệu ủng hộ một cách nhất quán. Ngoài ra, benchmark trên Raspberry Pi 4 cho thấy tổng độ trễ ước lượng (tiền xử lý filter-bank cộng forward pass, đo riêng rồi cộng) của cả ba cấu hình điện cực đều ở mức 13--17 mili-giây, thấp hơn nhiều so với cửa sổ tín hiệu 1.0 giây) trên phần cứng biên chi phí thấp, củng cố tính khả dụng thực tế của hướng tiếp cận giảm điện cực.
-
-Trong tương lai, chúng tôi sẽ tập trung tìm hiểu nguyên nhân thực sự đứng sau sự phụ thuộc backbone của CCKD -- vốn không được giải thích bởi giả thuyết về cơ chế thu gọn kênh đã kiểm định trong nghiên cứu này -- có thể thông qua phân tích trực tiếp không gian đặc trưng (thay vì chỉ suy diễn từ kết quả cuối), đồng thời điều chỉnh cơ chế relational distillation để ổn định hơn qua nhiều kiến trúc, và đánh giá trên các bộ dữ liệu và thiết lập thực nghiệm đa dạng hơn nhằm kiểm chứng khả năng tổng quát hóa của phương pháp.
-
-\nocite{li2024ssvep}
-\bibliography{main}
-\bibliographystyle{tmlr}
 
 \end{document}

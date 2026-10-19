@@ -31,3 +31,6 @@ deploy/pi4_latency/.credentials.local
 deploy/**/*credentials*
 deploy/**/*.local
 .claude/settings.local.json
+paper/latex/*.fdb_latexmk
+paper/latex/*.fls
+results/module3/n0_smoke/

@@ -43,6 +43,7 @@ KD_LAYERS = {
     "last": ["last"],
     "mid": ["mid"],
     "both": ["mid", "last"],
+    "mid736": ["mid736"],   # FB-tCNN only: the legacy pre-conv4 fused map
 }
 CKA_LAYERS = ("mid", "last")
 FS_PHYS = 250

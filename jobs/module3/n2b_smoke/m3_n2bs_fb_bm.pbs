@@ -1,0 +1,22 @@
+#!/bin/bash
+#PBS -N m3_n2bs_fb_bm
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=16gb:gpu_slots=1
+#PBS -l walltime=01:00:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_n2bs_fb_bm.pbs.out
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/m3_n2bs_fb_bm_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+cd "$PROJ"
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  "$PY" tests/test_module3_features.py --old_backbones results/module3/n0_smoke/old_cckd_backbones_HEAD.py
+  "$PY" training/train_cckd.py --dataset benchmark --data_root /gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark \
+    --backbone fbtcnn --n_bands 3 --window_s 1.0 --split_seed 2026 --seeds 2026 --students 3C 1C \
+    --modes relational --kd_layers last mid736 --lambda_sp 1 100 --epochs 2 --output_dir $PROJ/results/module3/n2b_smoke/benchmark_fbtcnn --device cuda
+  echo "END: $(date) | STATUS: SUCCESS"
+} > "$LOG" 2>&1

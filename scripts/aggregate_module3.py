@@ -33,13 +33,15 @@ def main():
         c = r["config"]
         kl = "+".join(c.get("kd_layers", ["legacy"]))
         ds = Path(f).name.split("_")[2]
+        students = sorted(c.get("students", {"3C": 0, "1C": 0}), key=len, reverse=True)
+        lsp_cfg = c["lambda_sp"][0] if isinstance(c["lambda_sp"], list) else c["lambda_sp"]
         for k, v in r["runs"].items():
             if "paired_vs_baseline" not in v:
                 continue
-            student = k.split("_")[0] if "@" not in k else k.split("_")[0]
-            base = r["runs"][f"{student}_baseline"] if f"{student}_baseline" in r["runs"] else \
-                r["runs"][k.rsplit("_", 1)[0].split("@")[0].rsplit("_", 1)[0] + "_baseline"]
-            g = (ds, c["backbone"], kl, c["lambda_sp"], k)
+            student = next(s for s in students if k.startswith(s + "_"))
+            base = r["runs"][f"{student}_baseline"]
+            lsp = float(k.split("@lsp")[1]) if "@lsp" in k else lsp_cfg
+            g = (ds, c["backbone"], kl, lsp, k)
             groups[g][c["split_seed"]] = {
                 "delta": v["paired_vs_baseline"]["mean_delta_pp"],
                 "acc": v["mean_acc"] * 100, "base_acc": base["mean_acc"] * 100,

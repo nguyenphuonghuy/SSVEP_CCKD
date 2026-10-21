@@ -18,8 +18,9 @@ Module 3 (TMLR multi-backbone study): matched distillation levels, alternative
 montages and per-run teacher-student CKA, e.g.
     python training/train_cckd.py --dataset benchmark --backbone eegnet ... \
         --students 3C 1C 3C_PPO 1C_POz --kd_layers mid both --output_dir results/module3/...
-Several --kd_layers values share one teacher/baseline per seed; result keys then
-become "<student>_<mode>@<kd_layers>".
+Several --kd_layers and/or --lambda_sp values share one teacher/baseline per seed; result
+keys then become "<student>_<mode>[@<kd_layers>][@lsp<lambda>]" (a suffix only for the
+argument given several values).
 
 Smoke test:
     python training/train_cckd.py --dataset benchmark --data_root ... \
@@ -75,7 +76,7 @@ def parse_args():
     ap.add_argument("--modes", nargs="+", default=["relational"],
                      choices=["logit", "relational", "hybrid", "fitnets", "attention"])
     ap.add_argument("--kd_layers", nargs="+", default=["legacy"],
-                     choices=["legacy", "last", "mid", "both"],
+                     choices=["legacy", "last", "mid", "both", "mid736"],
                      help="feature levels to distill; 'legacy' = Module 2 behaviour")
     ap.add_argument("--no_cka", action="store_true",
                      help="skip teacher-student linear CKA on the test set")
@@ -85,7 +86,8 @@ def parse_args():
     ap.add_argument("--weight_decay", type=float, default=1e-4)
     ap.add_argument("--tau", type=float, default=4.0)
     ap.add_argument("--lambda_kd", type=float, default=1.0)
-    ap.add_argument("--lambda_sp", type=float, default=100.0)
+    ap.add_argument("--lambda_sp", type=float, nargs="+", default=[100.0],
+                     help="one or more KD weights; several values share teacher/baseline per seed")
     ap.add_argument("--output_dir", required=True)
     ap.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
     return ap.parse_args()
@@ -93,6 +95,8 @@ def parse_args():
 
 def main():
     a = parse_args()
+    if "mid736" in a.kd_layers and a.backbone != "fbtcnn":
+        raise SystemExit("--kd_layers mid736 exists only for fbtcnn")
     bad = [c for c in a.students if c not in P.CH_POS or c == "9C"]
     if bad:
         raise SystemExit(f"unknown student config(s) {bad}; choose from {[k for k in P.CH_POS if k != '9C']}")
@@ -154,13 +158,18 @@ def main():
                    "students": {c: [P.CH_NAMES[i] for i in P.CH_POS[c]] for c in a.students}},
         "runs": {},
     }
-    variants = [(md, kl) for md in a.modes for kl in a.kd_layers]
+    variants = [(md, kl, ls) for md in a.modes for kl in a.kd_layers for ls in a.lambda_sp]
 
-    def vkey(c, md, kl):
-        return f"{c}_{md}" if len(a.kd_layers) == 1 else f"{c}_{md}@{kl}"
+    def vkey(c, md, kl, ls):
+        k = f"{c}_{md}"
+        if len(a.kd_layers) > 1:
+            k += f"@{kl}"
+        if len(a.lambda_sp) > 1:
+            k += f"@lsp{ls:g}"
+        return k
 
     store_keys = [f"{c}_baseline" for c in a.students] + \
-                 [vkey(c, md, kl) for c in a.students for md, kl in variants]
+                 [vkey(c, md, kl, ls) for c in a.students for md, kl, ls in variants]
     do_cka = not a.no_cka
     store = {k: [] for k in store_keys}
     teacher_te = []
@@ -246,11 +255,12 @@ def main():
                 seed_cka[f"{c}_baseline"] = P.cka_vs_teacher(t_feats, base, inp[c]["te"][0], device)
                 cka_txt = " | CKA " + " ".join(f"{n}={v:.3f}" for n, v in seed_cka[f"{c}_baseline"].items())
             log(f"  {c} baseline: test={np.mean(list(b_acc.values())):.4f}{cka_txt}")
-            for md, kl in variants:
-                k = vkey(c, md, kl)
+            for md, kl, ls in variants:
+                k = vkey(c, md, kl, ls)
                 stud = build(c)
                 stud, kva = P.train_kd(stud, teacher, Xtr_c, inp["9C"]["tr"][0], ytr_c,
-                                        Xva_c, yva_c, sva_c, CONFIG, device, mode=md, kd_layers=kl)
+                                        Xva_c, yva_c, sva_c, {**CONFIG, "lambda_sp": ls}, device,
+                                        mode=md, kd_layers=kl)
                 k_acc = P.eval_per_subject(stud, *inp[c]["te"], device)
                 seed_store[k] = k_acc
                 seed_val[k] = float(kva)
@@ -290,8 +300,8 @@ def main():
         results["runs"][f"{c}_baseline"] = base_sum
         log(f"\n  {c} baseline: {base_sum['mean_acc']*100:.2f}% +/- {base_sum['std_acc']*100:.2f} SD(subj) "
             f"(ITR={base_sum['itr']:.1f})")
-        for md, kl in variants:
-            k = vkey(c, md, kl)
+        for md, kl, ls in variants:
+            k = vkey(c, md, kl, ls)
             kd_sum = P.summarize(store[k], a.window_s)
             results["runs"][k] = kd_sum
             gain = (kd_sum["mean_acc"] - base_sum["mean_acc"]) * 100
@@ -321,7 +331,7 @@ def main():
 
     # Per-subject long-format CSV + run config, named
     # {dataset}_{model}_{setting}_seed{N}_{YYYYMMDD} (seed range when several seeds).
-    setting = f"{'+'.join(a.kd_layers)}_lsp{a.lambda_sp:g}_split{a.split_seed}_w{a.window_s:g}s"
+    setting = f"{'+'.join(a.kd_layers)}_lsp{'+'.join(f'{x:g}' for x in a.lambda_sp)}_split{a.split_seed}_w{a.window_s:g}s"
     seed_tag = f"{a.seeds[0]}" if len(a.seeds) == 1 else f"{a.seeds[0]}-{a.seeds[-1]}"
     stem = f"{a.dataset}_{a.backbone}_{setting}_seed{seed_tag}_{datetime.now():%Y%m%d}"
     with open(out_dir / f"{stem}.csv", "w", newline="") as f:

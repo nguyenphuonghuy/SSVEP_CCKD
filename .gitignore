@@ -34,3 +34,4 @@ deploy/**/*.local
 paper/latex/*.fdb_latexmk
 paper/latex/*.fls
 results/module3/n0_smoke/
+results/module3/n2b_smoke/

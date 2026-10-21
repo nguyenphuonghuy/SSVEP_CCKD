@@ -2,7 +2,7 @@
 #PBS -N m3_n2a_fb_bm_s3026
 #PBS -q sharedgpu
 #PBS -l select=1:ncpus=4:mem=32gb:gpu_slots=1
-#PBS -l walltime=06:00:00
+#PBS -l walltime=12:00:00
 #PBS -j oe
 #PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_n2a_fb_bm_s3026.pbs.out
 # Module 3 / N2a: FB-tCNN distilling the LAST level only (matched protocol), lambda_sp=100,
@@ -26,7 +26,7 @@ get_ticks() {
   awk -F') ' '{print $2}' "$stat" | awk '{print $12+$13}'
 }
 
-DEADLINE=$(( $(date +%s) + 6*3600 - 1200 ))   # walltime minus 20 min margin
+DEADLINE=$(( $(date +%s) + 12*3600 - 1200 ))   # walltime minus 20 min margin
 HANG_LIMIT_S=1200; CHECK_EVERY=60; MAX_ATTEMPTS=3
 attempt=0; success=0
 while [ "$attempt" -lt "$MAX_ATTEMPTS" ] && [ "$(date +%s)" -lt "$DEADLINE" ]; do
@@ -39,12 +39,13 @@ while [ "$attempt" -lt "$MAX_ATTEMPTS" ] && [ "$(date +%s)" -lt "$DEADLINE" ]; d
     --students 3C 1C --modes relational --kd_layers last \
     --epochs 100 --tau 4.0 --lambda_kd 1.0 --lambda_sp 100.0 \
     --output_dir "$OUT_DIR" --device cuda >> "$LOG" 2>&1 &
-  PID=$!; hang=0; last=-1
+  PID=$!; hang=0; last=-1; n=0
   while kill -0 "$PID" 2>/dev/null; do
     sleep $CHECK_EVERY
     t=$(get_ticks "$PID")
     if [ "$t" = "$last" ]; then hang=$((hang+CHECK_EVERY)); else hang=0; fi
     last=$t
+    n=$((n+1)); if [ $((n % 10)) -eq 0 ]; then echo "GPU $(date +%H:%M) $(nvidia-smi --query-gpu=utilization.gpu,memory.used,memory.total --format=csv,noheader 2>/dev/null | tr '\n' ' ')" >> "$LOG"; fi
     if [ "$hang" -ge "$HANG_LIMIT_S" ] || [ "$(date +%s)" -ge "$DEADLINE" ]; then
       echo "KILL attempt $attempt: hang=${hang}s or deadline (ticks=$t)" >> "$LOG"
       kill -9 "$PID" 2>/dev/null; sleep 10; break

@@ -190,22 +190,22 @@ Across these five areas, three gaps motivate the present study, all bearing on t
 \subsection{CCKD}
 \label{sec:cckd}
 
-The teacher receives input from nine parieto-occipital electrodes, is pretrained with cross-entropy, and is then kept fixed. The student shares the teacher's architecture but receives only three or one electrode. For a mini-batch of $N$ samples, let $F_T^{(l)} \in \mathbb{R}^{N \times d_T}$ and $F_S^{(l)} \in \mathbb{R}^{N \times d_S}$ denote the teacher and student features at layer $l$. The Gram matrix of each model is $G^{(l)} = F^{(l)} (F^{(l)})^{\top} \in \mathbb{R}^{N \times N}$; because the Gram matrix always has size $N \times N$, CCKD does not require $d_T = d_S$. Each row is normalized by its $\ell_2$ norm, $\hat{G}^{(l)}[i,:] = G^{(l)}[i,:] / \lVert G^{(l)}[i,:] \rVert_2$, and the relational loss at layer $l$ is
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/method_overview.pdf}
+\caption{Block diagram of CCKD. The fixed teacher (blue, solid) and the trainable student (green, dashed) both output features at the \texttt{mid} and \texttt{last} layers; each layer computes a row-normalized Gram matrix, which is then matched by $\mathcal{L}_{\text{CCKD}}$ (red). The total loss $\mathcal{L}$ adds the student's cross-entropy loss.}
+\label{fig:method}
+\end{figure}
+\FloatBarrier
+
+Figure~\ref{fig:method} summarizes the CCKD architecture described below. The teacher receives input from nine parieto-occipital electrodes, is pretrained with cross-entropy, and is then kept fixed. The student shares the teacher's architecture but receives only three or one electrode. For a mini-batch of $N$ samples, let $F_T^{(l)} \in \mathbb{R}^{N \times d_T}$ and $F_S^{(l)} \in \mathbb{R}^{N \times d_S}$ denote the teacher and student features at layer $l$. The Gram matrix of each model is $G^{(l)} = F^{(l)} (F^{(l)})^{\top} \in \mathbb{R}^{N \times N}$; because the Gram matrix always has size $N \times N$, CCKD does not require $d_T = d_S$. Each row is normalized by its $\ell_2$ norm, $\hat{G}^{(l)}[i,:] = G^{(l)}[i,:] / \lVert G^{(l)}[i,:] \rVert_2$, and the relational loss at layer $l$ is
 \begin{equation}
 \mathcal{L}_{\text{CCKD}}^{(l)} = \frac{1}{N^2} \bigl\lVert \hat{G}_{T}^{(l)} - \hat{G}_{S}^{(l)} \bigr\rVert_F^2 .
 \label{eq:relloss}
 \end{equation}
 For a set of distillation layers $\mathcal{K}$, the student optimizes $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \, |\mathcal{K}|^{-1} \sum_{l \in \mathcal{K}} \mathcal{L}_{\text{CCKD}}^{(l)}$, where $\mathcal{L}_{\text{CE}}$ is the student's cross-entropy loss and $\lambda_{sp}$ is the distillation weight. After training, the teacher is discarded, so CCKD does not change the student's architecture, parameter count, or inference cost \cite{R82}.
 
-In \cite{R82}, FB-tCNN was distilled at two layers, while the other architectures were distilled only at the last layer, so architecture and distillation-layer count were confounded. This paper defines the same two layers for every backbone. The \textbf{intermediate layer} (\texttt{mid}) is the output of the spatial convolution block immediately after batch normalization and the nonlinearity; its width does not depend on the number of input electrodes. The \textbf{last layer} (\texttt{last}) is the penultimate feature, the classifier's input. The main protocol distills only the last layer ($\mathcal{K}=\{\texttt{last}\}$); the intervention experiment in Section~\ref{sec:rq2} additionally compares $\mathcal{K}=\{\texttt{mid}\}$ and $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$. Figure~\ref{fig:method} summarizes this teacher-student architecture and the two distillation points.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.50\linewidth]{figures/method_overview.pdf}
-\caption{Block diagram of CCKD. The fixed teacher (blue, solid) and the trainable student (green, dashed) both output features at the \texttt{mid} and \texttt{last} layers; each layer computes a row-normalized Gram matrix, which is then matched by $\mathcal{L}_{\text{CCKD}}$ (red). The total loss $\mathcal{L}$ adds the student's cross-entropy loss.}
-\label{fig:method}
-\end{figure}
-\FloatBarrier
+In \cite{R82}, FB-tCNN was distilled at two layers, while the other architectures were distilled only at the last layer, so architecture and distillation-layer count were confounded. This paper defines the same two layers for every backbone. The \textbf{intermediate layer} (\texttt{mid}) is the output of the spatial convolution block immediately after batch normalization and the nonlinearity; its width does not depend on the number of input electrodes. The \textbf{last layer} (\texttt{last}) is the penultimate feature, the classifier's input. The main protocol distills only the last layer ($\mathcal{K}=\{\texttt{last}\}$); the intervention experiment in Section~\ref{sec:rq2} additionally compares $\mathcal{K}=\{\texttt{mid}\}$ and $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$.
 
 \subsection{Five Backbones}
 \label{sec:backbones}

@@ -190,22 +190,22 @@ Trong năm lĩnh vực nêu trên, có ba khoảng trống là động lực cho
 \subsection{CCKD}
 \label{sec:cckd}
 
-Teacher nhận tín hiệu từ chín điện cực đỉnh--chẩm, được huấn luyện trước bằng cross-entropy rồi giữ cố định. Student có cùng kiến trúc với teacher nhưng chỉ nhận ba hoặc một điện cực. Với một mini-batch $N$ mẫu, gọi $F_T^{(l)} \in \mathbb{R}^{N \times d_T}$ và $F_S^{(l)} \in \mathbb{R}^{N \times d_S}$ là đặc trưng của teacher và student tại lớp $l$. Ma trận Gram của mỗi mô hình là $G^{(l)} = F^{(l)} (F^{(l)})^{\top} \in \mathbb{R}^{N \times N}$; vì ma trận Gram luôn có kích thước $N \times N$, CCKD không đòi hỏi $d_T = d_S$. Mỗi hàng được chuẩn hóa theo chuẩn $\ell_2$, $\hat{G}^{(l)}[i,:] = G^{(l)}[i,:] / \lVert G^{(l)}[i,:] \rVert_2$, và hàm mất mát quan hệ tại lớp $l$ là
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=\linewidth]{figures/method_overview.pdf}
+\caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
+\label{fig:method}
+\end{figure}
+\FloatBarrier
+
+Hình~\ref{fig:method} tóm tắt kiến trúc CCKD được mô tả dưới đây. Teacher nhận tín hiệu từ chín điện cực đỉnh--chẩm, được huấn luyện trước bằng cross-entropy rồi giữ cố định. Student có cùng kiến trúc với teacher nhưng chỉ nhận ba hoặc một điện cực. Với một mini-batch $N$ mẫu, gọi $F_T^{(l)} \in \mathbb{R}^{N \times d_T}$ và $F_S^{(l)} \in \mathbb{R}^{N \times d_S}$ là đặc trưng của teacher và student tại lớp $l$. Ma trận Gram của mỗi mô hình là $G^{(l)} = F^{(l)} (F^{(l)})^{\top} \in \mathbb{R}^{N \times N}$; vì ma trận Gram luôn có kích thước $N \times N$, CCKD không đòi hỏi $d_T = d_S$. Mỗi hàng được chuẩn hóa theo chuẩn $\ell_2$, $\hat{G}^{(l)}[i,:] = G^{(l)}[i,:] / \lVert G^{(l)}[i,:] \rVert_2$, và hàm mất mát quan hệ tại lớp $l$ là
 \begin{equation}
 \mathcal{L}_{\text{CCKD}}^{(l)} = \frac{1}{N^2} \bigl\lVert \hat{G}_{T}^{(l)} - \hat{G}_{S}^{(l)} \bigr\rVert_F^2 .
 \label{eq:relloss}
 \end{equation}
 Với tập lớp chưng cất $\mathcal{K}$, student tối ưu $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \, |\mathcal{K}|^{-1} \sum_{l \in \mathcal{K}} \mathcal{L}_{\text{CCKD}}^{(l)}$, trong đó $\mathcal{L}_{\text{CE}}$ là cross-entropy của student và $\lambda_{sp}$ là trọng số distillation. Sau huấn luyện, teacher bị loại bỏ, nên CCKD không làm thay đổi kiến trúc, số tham số hay chi phí suy luận của student \cite{R82}.
 
-Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các kiến trúc khác chỉ ở lớp cuối, nên kiến trúc và số lớp distill bị lẫn vào nhau. Bài báo này định nghĩa hai lớp giống nhau cho mọi backbone: \textbf{lớp giữa} (\texttt{mid}, đầu ra khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, độ rộng không phụ thuộc số điện cực đầu vào) và \textbf{lớp cuối} (\texttt{last}, đặc trưng áp chót, đầu vào bộ phân loại). Giao thức chính distill chỉ lớp cuối ($\mathcal{K}=\{\texttt{last}\}$); thí nghiệm can thiệp ở Mục~\ref{sec:rq2} so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$. Hình~\ref{fig:method} tóm tắt kiến trúc teacher-student này cùng hai điểm distill.
-
-\begin{figure}[htbp]
-\centering
-\includegraphics[width=0.50\linewidth]{figures/method_overview.pdf}
-\caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
-\label{fig:method}
-\end{figure}
-\FloatBarrier
+Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các kiến trúc khác chỉ ở lớp cuối, nên kiến trúc và số lớp distill bị lẫn vào nhau. Bài báo này định nghĩa hai lớp giống nhau cho mọi backbone: \textbf{lớp giữa} (\texttt{mid}, đầu ra khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, độ rộng không phụ thuộc số điện cực đầu vào) và \textbf{lớp cuối} (\texttt{last}, đặc trưng áp chót, đầu vào bộ phân loại). Giao thức chính distill chỉ lớp cuối ($\mathcal{K}=\{\texttt{last}\}$); thí nghiệm can thiệp ở Mục~\ref{sec:rq2} so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$.
 
 \subsection{Năm backbone}
 \label{sec:backbones}

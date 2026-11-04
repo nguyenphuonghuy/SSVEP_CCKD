@@ -134,7 +134,7 @@ Triển khai nhúng}
 {\color{RoyalBlue} \rule{\linewidth}{0.4mm}}
 
 \vspace{.5em}
-\small{Giảm số điện cực của một giao diện não-máy (BCI) dựa trên điện thế gợi thị giác trạng thái ổn định (SSVEP) giúp tăng khả năng đeo được cho các ứng dụng điều khiển xe lăn và đánh vần, nhưng làm giảm độ chính xác giải mã. Chưng cất tri thức quan hệ liên-kênh (CCKD) khôi phục một phần độ chính xác bị mất bằng cách truyền cấu trúc quan hệ của một teacher nhiều điện cực sang một student ít điện cực, lợi ích đã báo cáo trước đây cho một backbone duy nhất, FB-tCNN, trên một split đối tượng. Bài báo này mở rộng đánh giá đó sang năm backbone công khai, hai tập dữ liệu SSVEP 40 lớp mục tiêu, và hai montage student, mỗi trường hợp dùng năm split đối tượng độc lập và tám seed trên mỗi split. Ở một trọng số distillation cố định, chỉ 2 trong 20 trường hợp backbone-tập dữ liệu-montage còn giữ ý nghĩa thống kê sau hiệu chỉnh Holm-Bonferroni, và cả hai đều âm. Đánh giá trên một split duy nhất đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trong 20 trường hợp, và đổi montage student làm đảo dấu hiệu ứng trong 12 trong 40 trường hợp. Mức cải thiện độ chính xác tương quan với mức CCKD làm tăng CKA (centered kernel alignment) giữa đặc trưng của teacher và student (hệ số tương quan Pearson $r=0.55$, $p=0.012$), và distill đồng thời một lớp trung gian cùng lớp cuối đạt bằng hoặc vượt lựa chọn một-lớp tốt hơn trong 8 trong 20 trường hợp. Triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104 xác nhận độ trễ và độ chính xác sau lượng tử hóa khả thi trên cả hai board, khả năng tổng hợp PL và độ chính xác trên board cho backbone nhỏ nhất, cùng công suất board trên ZCU104, đều trong ngân sách. Các kết quả này cho thấy chưng cất tri thức quan hệ liên-montage phụ thuộc vào backbone và montage, và đánh giá trên một split là không đáng tin cậy ở mức hiệu ứng thường gặp trong lĩnh vực này.
+\small{Giảm số điện cực của một giao diện não-máy (BCI) dựa trên điện thế gợi thị giác trạng thái ổn định (SSVEP) giúp tăng khả năng đeo được cho các ứng dụng điều khiển xe lăn và đánh vần, nhưng làm giảm độ chính xác giải mã. Chưng cất tri thức quan hệ liên-kênh (CCKD) khôi phục một phần độ chính xác bị mất bằng cách truyền cấu trúc quan hệ của một teacher nhiều điện cực sang một student ít điện cực, lợi ích đã báo cáo trước đây cho một backbone duy nhất, FB-tCNN, trên một split đối tượng. Bài báo này mở rộng đánh giá đó sang năm backbone công khai, hai tập dữ liệu SSVEP 40 lớp mục tiêu (40 tần số kích thích có thể chọn), và hai montage student (cách bố trí điện cực), mỗi trường hợp dùng năm split đối tượng độc lập và tám seed trên mỗi split. Ở một trọng số distillation cố định, chỉ 2 trong 20 trường hợp backbone-tập dữ liệu-montage còn giữ ý nghĩa thống kê sau hiệu chỉnh Holm-Bonferroni, và cả hai đều âm. Đánh giá trên một split duy nhất đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trong 20 trường hợp, và đổi montage student làm đảo dấu hiệu ứng trong 12 trong 40 trường hợp. Mức cải thiện độ chính xác tương quan với mức CCKD làm tăng CKA (centered kernel alignment) giữa đặc trưng của teacher và student (hệ số tương quan Pearson $r=0.55$, $p=0.012$), và distill đồng thời một lớp trung gian cùng lớp cuối đạt bằng hoặc vượt lựa chọn một-lớp tốt hơn trong 8 trong 20 trường hợp. Triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104 xác nhận độ chính xác sau lượng tử hóa trên cả hai board, độ trễ suy luận thấp hơn nhiều một ngân sách vòng điều khiển minh họa, không có nguồn cụ thể, và với backbone nhỏ nhất, tổng hợp thành công lên PL (programmable logic) của ZCU104 trong ngân sách tài nguyên của board, với độ chính xác và độ trễ trên board đúng như kỳ vọng và công suất board không cao hơn rõ rệt mức tiêu thụ khi rảnh. Các kết quả này cho thấy chưng cất tri thức quan hệ liên-montage phụ thuộc vào backbone và montage, và đánh giá trên một split là không đáng tin cậy ở mức hiệu ứng thường gặp trong lĩnh vực này.
 }
 \\
 \\
@@ -159,7 +159,7 @@ Bài báo này mở rộng đánh giá một-backbone ở bài hội nghị trư
 \item[(i)] Một đánh giá có kiểm soát CCKD trên năm backbone công khai (FB-tCNN, DeepConvNet, ShallowConvNet, EEGNet và Compact-CNN), hai tập dữ liệu 40 lớp mục tiêu và hai montage ít điện cực, mỗi trường hợp dùng năm split đối tượng độc lập và tám seed trên mỗi split, có hiệu chỉnh Holm-Bonferroni cho so sánh đa biến.
 \item[(ii)] Một phân tích CKA giữa đặc trưng của teacher và student như một đại lượng dự đoán lợi ích của distillation, kèm một can thiệp distill vào lớp trung gian thay vì lớp kề cuối đã dùng trong công trình trước.
 \item[(iii)] Một so sánh trực tiếp giữa đánh giá một-split và đánh giá nhiều-split trên cùng dữ liệu, định lượng tần suất đánh giá một-split đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng.
-\item[(iv)] Một lần triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104, hai lớp phần cứng dùng trong các mẫu thử điều khiển xe lăn và bộ đánh vần SSVEP, báo cáo độ trễ quyết định so với chu kỳ cập nhật vòng điều khiển mà các mẫu thử đó yêu cầu, độ chính xác sau lượng tử hóa, khả năng tổng hợp PL và độ chính xác thật trên board cho backbone nhỏ nhất, cùng công suất ở mức board trên ZCU104 (Raspberry Pi 4 không có cảm biến công suất tích hợp).
+\item[(iv)] Một lần triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104, hai lớp phần cứng dùng trong các mẫu thử điều khiển xe lăn và bộ đánh vần SSVEP, báo cáo độ trễ quyết định so với một chu kỳ cập nhật vòng điều khiển minh họa (không có nguồn từ một mẫu thử cụ thể), độ chính xác sau lượng tử hóa, khả năng tổng hợp PL và độ chính xác thật trên board cho backbone nhỏ nhất, cùng công suất ở mức board trên ZCU104 (Raspberry Pi 4 không có cảm biến công suất tích hợp).
 \end{itemize}
 
 \section{Tổng quan tài liệu}
@@ -246,7 +246,9 @@ Mọi mô hình huấn luyện 100 epoch bằng Adam (tốc độ học $10^{-3}
 
 Với RQ1 (so sánh công bằng giữa backbone), $\lambda_{sp}=100$ được giữ cố định cho mọi backbone, dùng cùng giao thức distill-lớp-cuối thống nhất ở Mục~\ref{sec:cckd} -- khác với giao thức cũ, nơi FB-tCNN và các backbone khác không cùng số lớp distill. Với RQ1b, RQ2 và thí nghiệm can thiệp lớp, $\lambda_{sp}$ được chọn riêng cho từng cặp (dataset, backbone) theo đa số phiếu của $\lambda_{sp}$ tốt nhất trên validation qua năm split (Bảng~\ref{tab:lambda}), để mỗi backbone được đánh giá ở mức trọng số gần tối ưu cho nó, không bị ép dùng $\lambda_{sp}=100$ nếu giá trị đó không phù hợp.
 
-Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-rank qua subject. Qua năm split, ý nghĩa được kiểm bằng kiểm định $t$ một mẫu trên năm giá trị $\Delta$ ($H_0$: $\bar\Delta = 0$). Khi nhiều kiểm định thuộc cùng một họ (20 tổ hợp backbone--dataset--montage ở RQ1), giá trị $p$ được hiệu chỉnh Holm--Bonferroni \cite{R86}.
+Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-rank qua subject. Qua năm split, ý nghĩa được kiểm bằng kiểm định $t$ một mẫu trên năm giá trị $\Delta$ ($H_0$: $\bar\Delta = 0$). Khi nhiều kiểm định thuộc cùng một họ (20 tổ hợp backbone--dataset--montage ở RQ1), giá trị $p$ được hiệu chỉnh Holm--Bonferroni \cite{R86}: hiệu chỉnh này hạ ngưỡng ý nghĩa thống kê khi càng nhiều kiểm định được chạy cùng lúc, để giữ xác suất dương tính giả trên toàn họ kiểm định ở mức kiểm soát được, thay vì cộng dồn theo từng kiểm định riêng lẻ.
+
+Với các thí nghiệm triển khai nhúng (RQ4, Mục~\ref{sec:rq4}), các ngưỡng chấp nhận và dự đoán định lượng sau được khoá trước khi đo bất kỳ số liệu RQ4 nào: lượng tử hóa sau huấn luyện giữ cùng dấu với FP32 ở ít nhất 80\% số tổ hợp có ý nghĩa ở FP32, với độ lệch cùng bậc với độ lệch chuẩn giữa các split ($\leq 0{,}5$~pp); điểm gãy độ chính xác theo độ rộng bit nằm trong khoảng 8--10 bit; thứ hạng độ trễ suy luận khớp thứ hạng dự đoán theo kernel thời gian tối đa của mỗi backbone (Bảng~\ref{tab:backbones}) ở ít nhất 4 trong 5 backbone trên cả hai board; và backbone nhỏ nhất tổng hợp được lên PL (programmable logic, phần cứng khả trình của FPGA) của ZCU104 dùng dưới 70\% LUT/DSP/Block~RAM sẵn có, với độ chính xác trên board trong 1~pp so với mô phỏng bit-chính-xác H2.
 
 \begin{table}[htbp]
 \caption{$\lambda_{sp}$ theo đa số phiếu trên validation (5 split), dùng cho RQ1b, RQ2 và thí nghiệm can thiệp lớp.}
@@ -298,10 +300,10 @@ Compact-CNN & +0.18 (0.646) & $-0.43$ (0.124) & $-0.16$ (0.485) & $-0.15$ (0.221
 
 Bảng~\ref{tab:rq1b} so sánh mức cải thiện ở montage gốc với hai montage thay thế cho mỗi cấu hình 3C/1C, ở $\lambda_{sp}$ chọn theo Bảng~\ref{tab:lambda} (40 tổ hợp thay thế).
 
-Đổi montage student sang một tập con điện cực khác làm đảo dấu hiệu ứng trong 12 trên 40 trường hợp. Dấu hiệu bị đảo xuất hiện ở cả hai hướng (từ có lợi thành không có lợi và ngược lại) và không tập trung vào một backbone hay một dataset cụ thể, dù ShallowConvNet và Compact-CNN có tỷ lệ đảo dấu cao hơn. Điều này cho thấy lợi ích của CCKD nhạy với vị trí điện cực, không chỉ với số điện cực.
+Đổi montage student sang một tập con điện cực khác làm đảo dấu hiệu ứng trong 12 trên 40 trường hợp. Dấu hiệu bị đảo xuất hiện ở cả hai hướng (từ có lợi thành không có lợi và ngược lại) và không tập trung vào một backbone hay một dataset cụ thể, dù ShallowConvNet và Compact-CNN có tỷ lệ đảo dấu cao hơn. Các so sánh montage này không được kiểm định ý nghĩa thống kê riêng, và phần lớn mức đảo dấu nhỏ: 11 trong 12 trường hợp có độ lớn dưới 0,3~pp, thấp hơn độ lệch chuẩn giữa các split trung vị 0,48~pp của $\Delta$ quan sát được trên 20 tổ hợp RQ1 (Bảng~\ref{tab:rq1}), nên tỷ lệ đảo dấu thật sự vượt quá nhiễu đo là thấp hơn con số thô này gợi ý. Điều này cho thấy lợi ích của CCKD nhạy với vị trí điện cực, không chỉ với số điện cực, dù việc xác nhận độ nhạy này bằng kiểm định ý nghĩa thống kê riêng ở các montage thay thế còn để lại cho nghiên cứu sau.
 
 \begin{table}[htbp]
-\caption{Mức cải thiện ($\bar\Delta$, pp, qua 5 split) ở montage gốc so với hai montage thay thế mỗi cấu hình. $^\star$: đổi dấu so với montage gốc.}
+\caption{Mức cải thiện ($\bar\Delta$, pp, qua 5 split) ở montage gốc so với hai montage thay thế mỗi cấu hình. $^\star$: đổi dấu so với montage gốc. Montage 3 điện cực: Gốc $=\{$O1, Oz, O2$\}$, PPO $=\{$PO3, POz, PO4$\}$, POO $=\{$POz, O1, O2$\}$. Montage 1 điện cực: Gốc $=\{$Oz$\}$, POz $=\{$POz$\}$, O1 $=\{$O1$\}$.}
 \label{tab:rq1b}
 \begin{center}
 \footnotesize
@@ -335,7 +337,7 @@ Compact-CNN & +0.01 & $-0.03^\star$ & +0.14 & +0.16 & $-0.00^\star$ & +0.03 \\
 
 Hàm mất mát~\eqref{eq:relloss} kéo ma trận Gram của student về phía ma trận Gram của teacher; nếu CCKD có ích bằng cơ chế này, mức cải thiện độ chính xác phải đi cùng mức tăng CKA. CKA tuyến tính được đo giữa đặc trưng lớp cuối của teacher và student trên tập test, ở $\lambda_{sp}$ theo Bảng~\ref{tab:lambda}. Ký hiệu $\Delta$CKA là CKA của student distill trừ CKA của student baseline, trung bình qua 5 split và 8 seed.
 
-Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.55$, $p=0.012$; Spearman $\rho=0.57$, $p=0.009$), xem Hình~\ref{fig:rq2a}. CKA của student baseline (trước distillation) không tương quan với mức cải thiện (Pearson $r=-0.11$, $p=0.65$; Spearman $\rho=-0.03$, $p=0.91$). Như vậy, mức chênh biểu diễn ban đầu giữa teacher và student không dự đoán được hiệu quả của CCKD; điều dự đoán được là \emph{mức CCKD thu hẹp chênh lệch đó}, phù hợp với cơ chế của hàm mất mát.
+Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.55$, mức tương quan dương trung bình-đến-mạnh, $p=0.012$; Spearman $\rho=0.57$, $p=0.009$), xem Hình~\ref{fig:rq2a}. CKA của student baseline (trước distillation) không tương quan với mức cải thiện (Pearson $r=-0.11$, $p=0.65$; Spearman $\rho=-0.03$, $p=0.91$). Như vậy, mức chênh biểu diễn ban đầu giữa teacher và student không dự đoán được hiệu quả của CCKD; điều dự đoán được là \emph{mức CCKD thu hẹp chênh lệch đó}, phù hợp với cơ chế của hàm mất mát. 20 điểm này không hoàn toàn độc lập: mỗi backbone đóng góp bốn điểm (hai dataset $\times$ hai montage) cùng chung kiến trúc, nên tương quan và giá trị $p$ danh nghĩa này mô tả xu hướng chung giữa các tổ hợp hơn là một kiểm định với 20 bậc tự do độc lập.
 
 \begin{figure}[htbp]
 \centering
@@ -348,7 +350,7 @@ Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.5
 \subsubsection{Thí nghiệm can thiệp theo lớp distill}
 \label{sec:layer_intervention}
 
-Tương quan ở trên không phân biệt được hai cách giải thích: mức tăng CKA gây ra cải thiện, hoặc cả hai cùng do một tính chất khác của kiến trúc. Để tách hai khả năng, chúng tôi thay đổi tập lớp distill $\mathcal{K} \in \{\texttt{last}, \texttt{mid}, \{\texttt{mid},\texttt{last}\}\}$ trong khi giữ nguyên backbone, dataset, montage và $\lambda_{sp}$.
+Tương quan ở trên chỉ mang tính quan sát: nó không chứng minh mức tăng CKA gây ra mức cải thiện độ chính xác, vì cả hai có thể cùng phụ thuộc vào một tính chất khác của kiến trúc. Như một so sánh thực nghiệm riêng, chúng tôi thay đổi tập lớp distill $\mathcal{K} \in \{\texttt{last}, \texttt{mid}, \{\texttt{mid},\texttt{last}\}\}$ để kiểm tra lớp nào cho mức cải thiện lớn hơn, trong khi giữ nguyên backbone, dataset, montage và $\lambda_{sp}$.
 
 Trên 20 tổ hợp: distill riêng lớp cuối cho mức cải thiện lớn hơn distill riêng lớp giữa chỉ trong 5 tổ hợp; distill đồng thời cả hai lớp đạt bằng hoặc vượt lựa chọn một-lớp tốt hơn trong 8 tổ hợp. Nói cách khác, giao thức chính (distill lớp cuối \cite{R82}) không phải là lựa chọn tốt nhất ở phần lớn tổ hợp -- distill lớp giữa, riêng hoặc kết hợp với lớp cuối, thường cho kết quả bằng hoặc tốt hơn. Độ chính xác và $\Delta$CKA chi tiết theo từng tổ hợp tại lớp được distill nằm trong kho mã nguồn đi kèm bài báo (xem mục Khả năng tái lập).
 
@@ -360,7 +362,7 @@ Bảng~\ref{tab:rq3} so sánh kết luận rút ra từ một split (2026, kiể
 Đánh giá trên một split đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trên 20 tổ hợp -- đúng một nửa. Sai lệch xảy ra theo cả hai chiều: một split có thể bỏ sót một cải thiện hoặc suy giảm ổn định (ví dụ FB-tCNN Benchmark-3C, DeepConvNet 1C ở cả hai tập dữ liệu), hoặc báo cáo một hiệu ứng không lặp lại khi dùng nhiều split (ví dụ ShallowConvNet BETA-3C). Hai kiểm định không cùng đơn vị lặp (Wilcoxon lặp qua subject, kiểm định $t$ lặp qua split), nên bảng không cho biết kiểm định nào có công suất thống kê cao hơn; điều bảng cho thấy là một nghiên cứu chỉ báo cáo một split có thể đi đến kết luận ngược với kết luận khi lặp lại trên các tập subject khác, ở mức hiệu ứng điển hình của tài liệu CCKD cho SSVEP (dưới 1--2~pp).
 
 \begin{table}[htbp]
-\caption{Kết luận trên một split (2026) so với năm split, $\lambda_{sp}=100$. $+$/$-$/$0$: cải thiện/suy giảm/không có ý nghĩa ($p<0.05$). $^\star$: kết luận khác nhau (dấu hoặc ý nghĩa thống kê).}
+\caption{Kết luận trên một split (2026) so với năm split, $\lambda_{sp}=100$. $+$/$-$/$0$: cải thiện/suy giảm/không có ý nghĩa ($p<0.05$). $^\star$: kết luận khác nhau (dấu hoặc ý nghĩa thống kê). Montage student: 3C $=\{$O1, Oz, O2$\}$ (3 điện cực), 1C $=\{$Oz$\}$ (1 điện cực).}
 \label{tab:rq3}
 \begin{center}
 \footnotesize
@@ -387,12 +389,17 @@ Compact-CNN & 3C & $-0.15$ (0.820) & $+0.18$ (0.646) & $0 \to 0$ $^\star$ & $0 \
 \subsection{RQ4: triển khai nhúng}
 \label{sec:rq4}
 
-Chúng tôi lượng tử hóa sau huấn luyện tĩnh (static post-training quantization, PTQ) sang INT8 cho
+Mục này dùng bốn sơ đồ lượng tử hóa/số học cố định khác nhau, mỗi thí nghiệm con một sơ đồ, vì mỗi
+thí nghiệm nhắm vào một tính chất khác nhau (giữ độ chính xác, độ nhạy theo độ rộng bit qua mô
+phỏng, độ trễ CPU, tổng hợp FPGA) và không sơ đồ nào thỏa ràng buộc của cả bốn công cụ cùng lúc;
+chúng không được đánh giá chung như một sản phẩm triển khai duy nhất, mỗi sơ đồ được nêu rõ tên bên
+dưới. Chúng tôi lượng tử hóa sau huấn luyện tĩnh (static post-training quantization, PTQ) sang INT8 cho
 mô hình student đã huấn luyện ở RQ1, chỉ đánh giá lại trên tập test, không huấn luyện lại. Ở 2 tổ
 hợp backbone--dataset--montage còn ý nghĩa thống kê sau hiệu chỉnh Holm--Bonferroni (RQ1, cả hai
 trên EEGNet với BETA, montage 3C và 1C), độ lệch độ chính xác do PTQ gây ra giữ cùng dấu với FP32
-trong toàn bộ 10/10 tổ hợp split--seed (100\%) và không vượt quá 0,26~pp, nằm trong khoảng nhiễu nền
-0,3--0,5~pp đã đo ở RQ3.
+trong toàn bộ 10/10 tổ hợp split--seed (100\%) và không vượt quá 0,26~pp, nhỏ hơn độ lệch chuẩn giữa
+các split điển hình của $\Delta$ trên 20 tổ hợp RQ1 (trung vị 0,48~pp, khoảng tứ phân vị 0,31--0,69~pp,
+tính từ các giá trị $sd_{pp}$ theo từng tổ hợp làm nền cho Bảng~\ref{tab:rq1}).
 
 Chúng tôi tiếp tục quét độ rộng số học cố định (fixed-point) $\{16,12,10,8\}$ bit bằng mô phỏng
 bit-chính-xác (bit-accurate) của hls4ml cho EEGNet và DeepConvNet, backbone nhỏ nhất và lớn nhất
@@ -437,23 +444,39 @@ cho thấy ở quy mô mô hình rất nhỏ này, chi phí thực thi trên CPU
 số, kernel hay FLOPs lý thuyết.
 
 Chúng tôi tổng hợp EEGNet (montage 1C, BETA split 2026/seed 2026, student CCKD $\lambda_{sp}=100$,
-độ rộng 10 bit) lên PL của ZCU104. Lần đầu dùng backend VivadoAccelerator của hls4ml (AXI-Stream và
-AXI DMA); hướng này tổng hợp và sinh bitstream được, nhưng gặp lỗi dai dẳng ở tín hiệu TLAST trên cổng
-ra, không hết sau sáu lượt sửa lỗi khác nhau của thư viện, nên không dùng được trên board thật. Vì
-vậy chúng tôi bọc lại chính kernel suy luận đã kiểm chứng đó bằng giao diện AXI ánh xạ bộ nhớ (m\_axi)
-viết tay cùng một thanh ghi điều khiển AXI-Lite, bỏ hẳn đường AXI-Stream; Vitis HLS và Vivado 2024.2
-tổng hợp, triển khai (place and route) và sinh bitstream đều thành công ở xung nhịp 100~MHz, timing
-đóng với biên dư 2,074~ns. Tài nguyên toàn thiết kế (lõi xử lý Zynq và IP suy luận) dùng 11,75\% LUT,
-6,54\% FF và 9,13\% số khối BRAM của board XCZU7EV, không dùng DSP nào, dưới xa ngưỡng 70\% đã khoá ở
-Mục 4. Chúng tôi nạp bitstream này lên ZCU104 và chạy suy luận trên toàn bộ 3200 cửa sổ test thật của
-BETA cho cấu hình này: độ chính xác trên board là 24,06\%, so với 24,09\% của mô phỏng bit-chính-xác
-H2 ở cùng độ rộng 10 bit, chênh lệch 0,03~pp, nằm rất sâu trong ngưỡng 1~pp đã khoá ở Mục 4. Công suất
-board khi suy luận liên tục (10,45--10,50~W) không cao hơn rõ rệt mức nền khi rảnh (10,55~W) ở độ phân
-giải của cảm biến INA226 trên board, phù hợp với mức sử dụng tài nguyên thấp của thiết kế PL này.
+độ rộng 10 bit) lên PL (programmable logic, phần cứng khả trình của FPGA) của ZCU104. Cấu hình này là
+một trong hai tổ hợp (EEGNet, BETA, montage 3C và 1C) mà CCKD làm suy giảm có ý nghĩa thống kê sau
+hiệu chỉnh Holm--Bonferroni (RQ1, Bảng~\ref{tab:rq1}), được đo ở đây tại một split và một seed duy
+nhất (2026/2026) thay vì lấy trung bình trên năm split như những phần khác của bài báo; vì vậy phép đo
+trên board dưới đây kiểm tra việc triển khai phần cứng có tái tạo đúng mô phỏng bit-chính-xác của
+chính nó hay không, chứ không kiểm tra CCKD có lợi ở tổ hợp này hay không. Lần đầu dùng
+\texttt{hls4ml}, một công cụ dịch mạng đã huấn luyện thành đặc tả phần cứng số học cố định
+bit-chính-xác để mô phỏng và tổng hợp, qua backend VivadoAccelerator của nó (AXI-Stream và AXI DMA,
+một giao diện truyền dữ liệu dạng luồng có tín hiệu đóng khung/bắt tay riêng); hướng này tổng hợp và
+sinh bitstream được, nhưng gặp lỗi dai dẳng ở tín hiệu TLAST (tín hiệu đánh dấu từ cuối cùng của một
+lần truyền dữ liệu) trên cổng ra, không hết sau sáu lượt sửa lỗi khác nhau của thư viện, nên không
+dùng được trên board thật. Vì vậy chúng tôi bọc lại chính kernel suy luận đã kiểm chứng đó bằng giao
+diện AXI ánh xạ bộ nhớ (m\_axi) viết tay cùng một thanh ghi điều khiển AXI-Lite, một giao diện dạng
+thanh ghi đơn giản hơn tránh hẳn vấn đề đóng khung của AXI-Stream; Vitis HLS và Vivado 2024.2 tổng
+hợp, triển khai (place and route) và sinh bitstream đều thành công ở xung nhịp 100~MHz, timing đóng
+với biên dư 2,074~ns. Tài nguyên toàn thiết kế (lõi xử lý Zynq và IP suy luận) dùng 11,75\% bảng tra
+cứu (LUT), 6,54\% flip-flop (FF) và 9,13\% số khối BRAM của board XCZU7EV, không dùng khối xử lý tín
+hiệu số (DSP) nào, dưới xa ngưỡng 70\% đã khoá trước (Mục~\ref{sec:setup}). Độ trễ đầu-cuối, tính
+bằng tổng thời gian thực đo trên 3200 lần suy luận liên tiếp chia cho số cửa sổ (gồm cả thời gian ghi
+thanh ghi AXI-Lite, vòng lặp chờ cờ hoàn tất phía host, và đóng gói dữ liệu của PYNQ, không chỉ chu kỳ
+tính toán nội bộ của FPGA), là 1,17~ms mỗi cửa sổ. Chúng tôi nạp bitstream này lên ZCU104 và chạy suy
+luận trên toàn bộ 3200 cửa sổ test thật của BETA cho cấu hình này: độ chính xác trên board là
+24,06\%, so với 24,09\% của mô phỏng bit-chính-xác H2 ở cùng độ rộng 10 bit, chênh lệch 0,03~pp, nằm
+rất sâu trong ngưỡng 1~pp đã khoá trước (Mục~\ref{sec:setup}). Để đối chiếu, độ chính xác baseline
+(chưa distill) của chính tổ hợp này là 25,35\%, gần cận dưới của khoảng 22,50--55,83\% độ chính xác
+baseline trên toàn bộ 20 tổ hợp backbone--dataset--montage trong bài báo, phù hợp với hiệu ứng làm
+suy giảm của CCKD ở tổ hợp này (RQ1). Công suất board khi suy luận liên tục (10,45--10,50~W) không
+cao hơn rõ rệt mức nền khi rảnh (10,55~W) ở độ phân giải của cảm biến INA226 trên board, phù hợp với
+mức sử dụng tài nguyên thấp của thiết kế PL này.
 
 \section{Kết luận}
 
-CCKD không mang lại lợi ích nhất quán khi mở rộng từ FB-tCNN sang bốn backbone khác: trong 20 tổ hợp backbone--dataset--montage, chỉ 2 còn ý nghĩa thống kê sau hiệu chỉnh cho so sánh đa biến, và cả hai đều là suy giảm (RQ1). Lợi ích của CCKD, khi có, nhạy với việc chọn montage cụ thể, không chỉ với số điện cực (RQ1b). Mức tăng CKA giữa teacher và student do distillation gây ra dự đoán được mức cải thiện độ chính xác, nhưng mức chênh CKA trước distillation thì không; distill lớp giữa, riêng hoặc kết hợp với lớp cuối, thường tốt hơn giao thức distill-lớp-cuối \cite{R82} (RQ2). Đánh giá trên một split subject, giao thức phổ biến trong tài liệu KD cho EEG, đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng ở một nửa số tổ hợp (RQ3). Mô hình student qua CCKD giữ dấu lợi ích sau lượng tử hóa INT8 ở các tổ hợp còn ý nghĩa thống kê, chịu được lượng tử hóa fixed-point tới 8--10 bit cho hầu hết backbone đã kiểm, và mọi backbone đều đạt độ trễ tính toán thuần dưới xa một ngân sách vòng điều khiển xe lăn minh họa dù ở độ rộng số học thấp nhất đã đo, chưa tính cửa sổ kích thích SSVEP; tuy nhiên độ trễ đo được không xếp hạng theo kernel thời gian tối đa hay theo FLOPs ở mức đa số backbone, nên việc chọn backbone cho một nền tảng nhúng cụ thể cần đo trực tiếp, không suy ra từ kiến trúc (RQ4). Backbone nhỏ nhất (EEGNet) tổng hợp được trên PL của ZCU104 trong ngân sách tài nguyên của board (dưới 12\% LUT, 7\% FF, 10\% BRAM, không dùng DSP) với timing đóng, và độ chính xác suy luận thật trên board khớp mô phỏng bit-chính-xác H2 trong 0,03~pp, nằm rất sâu trong ngưỡng 1~pp. Nhìn chung, các kết quả này cho thấy chưng cất quan hệ liên-montage phụ thuộc vào backbone và vị trí điện cực, và các mức cải thiện dưới 1--2~pp điển hình trong tài liệu này cần được đánh giá trên nhiều split subject có hiệu chỉnh thống kê, không nên dừng ở một split.
+CCKD không mang lại lợi ích nhất quán khi mở rộng từ FB-tCNN sang bốn backbone khác: trong 20 tổ hợp backbone--dataset--montage, chỉ 2 còn ý nghĩa thống kê sau hiệu chỉnh cho so sánh đa biến, và cả hai đều là suy giảm (RQ1). Lợi ích của CCKD, khi có, nhạy với việc chọn montage cụ thể, không chỉ với số điện cực (RQ1b). Mức tăng CKA do distillation gây ra tương quan với mức cải thiện độ chính xác qua các backbone, nhưng tương quan này chỉ mang tính quan sát và mức chênh CKA trước distillation thì không dự đoán được mức cải thiện; trong ba lựa chọn lớp distill đã kiểm, distill lớp giữa, riêng hoặc kết hợp với lớp cuối, thường tốt hơn giao thức distill-lớp-cuối \cite{R82} (RQ2). Đánh giá trên một split subject, giao thức phổ biến trong tài liệu KD cho EEG, đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng ở một nửa số tổ hợp (RQ3). Hiệu ứng độ chính xác của mô hình student qua CCKD giữ nguyên dấu sau lượng tử hóa INT8 ở 2 tổ hợp còn ý nghĩa thống kê (cả hai đều là suy giảm), chịu được lượng tử hóa fixed-point tới 8--10 bit cho hai backbone đã kiểm (EEGNet và DeepConvNet), và mọi backbone đều đạt độ trễ tính toán thuần dưới xa một ngân sách vòng điều khiển xe lăn minh họa, không có nguồn cụ thể, dù ở độ rộng số học thấp nhất đã đo, chưa tính cửa sổ kích thích SSVEP; tuy nhiên độ trễ đo được không xếp hạng theo kernel thời gian tối đa hay theo FLOPs ở mức đa số backbone, nên việc chọn backbone cho một nền tảng nhúng cụ thể cần đo trực tiếp, không suy ra từ kiến trúc (RQ4). Backbone nhỏ nhất (EEGNet) tổng hợp được trên PL của ZCU104 trong ngân sách tài nguyên của board (dưới 12\% LUT, 7\% FF, 10\% BRAM, không dùng DSP) với timing đóng và độ trễ đầu-cuối 1,17~ms mỗi lần suy luận; độ chính xác trên board khớp mô phỏng bit-chính-xác H2 trong 0,03~pp, nằm rất sâu trong ngưỡng 1~pp, tại tổ hợp duy nhất đã kiểm, vốn là tổ hợp mà CCKD làm suy giảm có ý nghĩa thống kê, nên kết quả này xác nhận độ trung thực giữa phần cứng và mô phỏng chứ không phải lợi ích của CCKD. Nhìn chung, các kết quả này cho thấy chưng cất quan hệ liên-montage phụ thuộc vào backbone và vị trí điện cực, và các mức cải thiện dưới 1--2~pp điển hình trong tài liệu này cần được đánh giá trên nhiều split subject có hiệu chỉnh thống kê, không nên dừng ở một split; về mặt thực hành, điều này gợi ý dùng $\Delta$CKA đo trên validation split làm phép sàng lọc chi phí thấp trước khi triển khai, để biết CCKD có khả năng giúp ích cho một cặp backbone--montage cụ thể hay không, đồng thời vẫn phải xác nhận dấu của hiệu ứng trên các subject chưa dùng trước khi dựa vào nó trong một vòng điều khiển xe lăn, bộ đánh vần hay tay máy, thay vì mặc định lợi ích đã báo cáo cho một backbone trên một split trong công trình trước.
 
 \noindent \textbf{Khả năng tái lập.} Mã nguồn huấn luyện, tiền xử lý và phân tích thống kê, danh sách phân chia subject theo từng split, các seed, và kết quả theo từng lần chạy được công khai tại \url{https://github.com/nguyenphuonghuy/SSVEP_CCKD}. Môi trường phần mềm được khóa phiên bản. Vì huấn luyện trên GPU không tái lập đúng từng bit, các lần chạy lại dao động trong khoảng đã đo ở Mục~\ref{sec:rq3} (RQ3).
 \\

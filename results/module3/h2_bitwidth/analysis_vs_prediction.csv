@@ -1,0 +1,4 @@
+backbone,student,drop_pp_W16,drop_pp_W12,drop_pp_W10,drop_pp_W8,drop_pp_W6,ket_luan
+deepconvnet,3C,-0.021,-0.017,0.045,1.531,20.419,"LECH NHE: diem gay giua 6-8 bit (thap hon du doan 8-10 bit, nhung chua toi nguong <=6bit cua NO-GO)"
+eegnet,1C,0.043,0.038,0.148,4.016,,"GO: diem gay trong 8-10 bit, dung du doan G2"
+eegnet,3C,-0.002,0.01,0.719,14.428,,"GO: diem gay trong 8-10 bit, dung du doan G2"

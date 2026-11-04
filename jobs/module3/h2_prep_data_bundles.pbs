@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N m3_h2_prep_data
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_h2_prep_data.pbs.out
+# H2: precompute test/calib numpy bundles (20x, one per backbone/student/split) for
+# the hls4ml bit-width sweep, which runs on ubuntu-huy (no access to this data).
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/m3_h2_prep_data_${PBS_JOBID}.log
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+"$PY" scripts/h2_prep_data_bundles.py > "$LOG" 2>&1

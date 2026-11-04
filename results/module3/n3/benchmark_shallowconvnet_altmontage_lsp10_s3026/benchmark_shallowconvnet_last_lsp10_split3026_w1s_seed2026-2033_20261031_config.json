@@ -1,0 +1,113 @@
+{
+  "args": {
+    "dataset": "benchmark",
+    "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark",
+    "config": null,
+    "backbone": "shallowconvnet",
+    "n_bands": 3,
+    "window_s": 1.0,
+    "t_start": 0.14,
+    "split": null,
+    "split_seed": 3026,
+    "seeds": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033
+    ],
+    "students": [
+      "3C_PPO",
+      "3C_POO",
+      "1C_POz",
+      "1C_O1"
+    ],
+    "modes": [
+      "relational"
+    ],
+    "kd_layers": [
+      "last"
+    ],
+    "no_cka": false,
+    "epochs": 100,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "tau": 4.0,
+    "lambda_kd": 1.0,
+    "lambda_sp": [
+      10.0
+    ],
+    "output_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module3/n3/benchmark_shallowconvnet_altmontage_lsp10_s3026",
+    "device": "cuda"
+  },
+  "fingerprint": {
+    "dataset": "benchmark",
+    "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/benchmark",
+    "config_path": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/benchmark.yaml",
+    "teacher_channel_indices": [
+      47,
+      53,
+      54,
+      55,
+      56,
+      57,
+      60,
+      61,
+      62
+    ],
+    "mat_key": "data",
+    "backbone": "shallowconvnet",
+    "n_bands": 3,
+    "window_s": 1.0,
+    "t_start": 0.14,
+    "split": [
+      21,
+      4,
+      10
+    ],
+    "split_seed": 3026,
+    "n_samples": 250,
+    "students": [
+      "3C_PPO",
+      "3C_POO",
+      "1C_POz",
+      "1C_O1"
+    ],
+    "modes": [
+      "relational"
+    ],
+    "kd_layers": [
+      "last"
+    ],
+    "cka": true,
+    "train": {
+      "epochs": 100,
+      "batch_size": 64,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "tau": 4.0,
+      "lambda_kd": 1.0,
+      "lambda_sp": [
+        10.0
+      ]
+    }
+  },
+  "git_commit": "f10fe67ca23bcd29d164b73e78d916da3b27dacc",
+  "git_dirty": false,
+  "seeds": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033
+  ],
+  "results_json": "cckd_shallowconvnet_benchmark_1.0s_20261031_103108.json",
+  "per_subject_csv": "benchmark_shallowconvnet_last_lsp10_split3026_w1s_seed2026-2033_20261031.csv"
+}

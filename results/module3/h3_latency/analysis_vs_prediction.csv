@@ -1,0 +1,6 @@
+backbone,max_temporal_kernel,n_params_3C,pi4_4thr_fp32_ms,pi4_4thr_fp32_total_ms,pi4_4thr_int8_ms,pi4_4thr_int8_total_ms,zcu104_4thr_fp32_ms,zcu104_4thr_fp32_total_ms,zcu104_4thr_int8_ms,zcu104_4thr_int8_total_ms,mflops_3C
+fbtcnn,250,90440,7.915,13.518,7.82,13.44,15.33,24.396,15.521,24.529,19.692
+deepconvnet,10,101190,3.857,3.857,3.546,3.546,5.481,5.481,5.343,5.343,6.185
+shallowconvnet,25,55560,2.848,2.848,2.605,2.605,3.998,3.998,3.96,3.96,4.029
+eegnet,64,5672,3.078,3.078,3.054,3.054,4.564,4.564,4.766,4.766,0.869
+compactcnn,64,44680,5.973,5.973,5.854,5.854,9.179,9.179,9.369,9.369,10.806

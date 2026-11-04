@@ -1,0 +1,11 @@
+backbone,montage,n_channels,flops,mflops
+fbtcnn,3C,3,19691624,19.692
+fbtcnn,1C,1,19643624,19.644
+deepconvnet,3C,3,6185140,6.185
+deepconvnet,1C,1,5297640,5.298
+eegnet,3C,3,868680,0.869
+eegnet,1C,1,338568,0.339
+compactcnn,3C,3,10805992,10.806
+compactcnn,1C,1,4541032,4.541
+shallowconvnet,3C,3,4029240,4.029
+shallowconvnet,1C,1,1409240,1.409

@@ -1,0 +1,21 @@
+#!/bin/bash
+#PBS -N m3_h3_flops
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=2:mem=4gb
+#PBS -l walltime=00:10:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_h3_flops.pbs.out
+# H3 G3 fallback: real FLOPs cho 5 backbone x 2 montage (CPU only, no GPU needed).
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/m3_h3_flops_${PBS_JOBID}.log
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+
+{
+  echo "START: $(date) | NODE: $(hostname)"
+  "$PY" scripts/module3_count_flops.py
+  echo "END: $(date)"
+} > "$LOG" 2>&1

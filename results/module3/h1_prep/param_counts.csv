@@ -1,0 +1,11 @@
+backbone,montage,n_channels,n_params
+fbtcnn,3C,3,90440
+fbtcnn,1C,1,90408
+deepconvnet,3C,3,101190
+deepconvnet,1C,1,99940
+eegnet,3C,3,5672
+eegnet,1C,1,5640
+compactcnn,3C,3,44680
+compactcnn,1C,1,44488
+shallowconvnet,3C,3,55560
+shallowconvnet,1C,1,52360

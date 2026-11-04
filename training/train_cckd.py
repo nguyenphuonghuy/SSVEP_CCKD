@@ -90,6 +90,9 @@ def parse_args():
                      help="one or more KD weights; several values share teacher/baseline per seed")
     ap.add_argument("--output_dir", required=True)
     ap.add_argument("--device", default="auto", choices=["auto", "cuda", "cpu"])
+    ap.add_argument("--save_ckpt_dir", default=None,
+                     help="if set, also save baseline/CCKD student state_dict (.pt) per seed here "
+                          "(H1/H2 embedded-deployment prep; off by default, no effect on results)")
     return ap.parse_args()
 
 
@@ -224,6 +227,22 @@ def main():
         C = len(P.CH_POS[cfg_key])
         return build_backbone(a.backbone, C, n_samples, n_classes, n_bands=a.n_bands)
 
+    ckpt_dir = Path(a.save_ckpt_dir) if a.save_ckpt_dir else None
+    if ckpt_dir:
+        ckpt_dir.mkdir(parents=True, exist_ok=True)
+
+    def save_model_ckpt(tag, model, student, seed_, extra):
+        if not ckpt_dir:
+            return
+        path = ckpt_dir / f"{a.dataset}_{a.backbone}_{student}_{tag}_split{a.split_seed}_seed{seed_}.pt"
+        torch.save({
+            "state_dict": model.state_dict(),
+            "backbone": a.backbone, "student": student, "n_channels": len(P.CH_POS[student]),
+            "n_samples": n_samples, "n_classes": n_classes, "n_bands": a.n_bands,
+            "dataset": a.dataset, "split_seed": a.split_seed, "seed": seed_,
+            **extra,
+        }, path)
+
     for seed in a.seeds:
         if seed in ckpt["completed_seeds"]:
             log(f"----- SEED {seed} (from checkpoint) -----\n")
@@ -250,6 +269,7 @@ def main():
             b_acc = P.eval_per_subject(base, *inp[c]["te"], device)
             seed_store[f"{c}_baseline"] = b_acc
             seed_val[f"{c}_baseline"] = float(bva)
+            save_model_ckpt("baseline", base, c, seed, {"val_acc": float(bva)})
             cka_txt = ""
             if do_cka:
                 seed_cka[f"{c}_baseline"] = P.cka_vs_teacher(t_feats, base, inp[c]["te"][0], device)
@@ -264,6 +284,8 @@ def main():
                 k_acc = P.eval_per_subject(stud, *inp[c]["te"], device)
                 seed_store[k] = k_acc
                 seed_val[k] = float(kva)
+                save_model_ckpt(f"cckd_{md}_{kl}_lsp{ls:g}", stud, c, seed,
+                                 {"val_acc": float(kva), "mode": md, "kd_layers": kl, "lambda_sp": ls})
                 cka_txt = ""
                 if do_cka:
                     seed_cka[k] = P.cka_vs_teacher(t_feats, stud, inp[c]["te"][0], device)

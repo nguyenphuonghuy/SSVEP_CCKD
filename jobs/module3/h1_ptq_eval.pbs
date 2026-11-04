@@ -1,0 +1,17 @@
+#!/bin/bash
+#PBS -N m3_h1_ptq_eval
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=16gb
+#PBS -l walltime=02:00:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_h1_ptq_eval.pbs.out
+# H1 (mo-hinh-hoa G1): static INT8 PTQ of the 90 FP32 ONNX models + re-eval on the
+# existing held-out test set, calibrated on validation-split trials. CPU only.
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/m3_h1_ptq_eval_${PBS_JOBID}.log
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+"$PY" scripts/h1_ptq_eval.py > "$LOG" 2>&1

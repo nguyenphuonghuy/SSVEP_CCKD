@@ -1,0 +1,105 @@
+{
+  "args": {
+    "dataset": "beta",
+    "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta",
+    "config": null,
+    "backbone": "fbtcnn",
+    "n_bands": 3,
+    "window_s": 1.0,
+    "t_start": 0.14,
+    "split": null,
+    "split_seed": 4026,
+    "seeds": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033
+    ],
+    "students": [
+      "3C",
+      "1C"
+    ],
+    "modes": [
+      "relational"
+    ],
+    "kd_layers": [
+      "last"
+    ],
+    "no_cka": false,
+    "epochs": 100,
+    "batch_size": 64,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "tau": 4.0,
+    "lambda_kd": 1.0,
+    "lambda_sp": 100.0,
+    "output_dir": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/results/module3/n2a/beta_fbtcnn_last_lsp100_s4026",
+    "device": "cuda"
+  },
+  "fingerprint": {
+    "dataset": "beta",
+    "data_root": "/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta",
+    "config_path": "/gpfs0/users/gv_bvnam/projects/cckd_ssvep/configs/beta.yaml",
+    "teacher_channel_indices": [
+      47,
+      53,
+      54,
+      55,
+      56,
+      57,
+      60,
+      61,
+      62
+    ],
+    "mat_key": "data",
+    "backbone": "fbtcnn",
+    "n_bands": 3,
+    "window_s": 1.0,
+    "t_start": 0.14,
+    "split": [
+      42,
+      8,
+      20
+    ],
+    "split_seed": 4026,
+    "n_samples": 250,
+    "students": [
+      "3C",
+      "1C"
+    ],
+    "modes": [
+      "relational"
+    ],
+    "kd_layers": [
+      "last"
+    ],
+    "cka": true,
+    "train": {
+      "epochs": 100,
+      "batch_size": 64,
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "tau": 4.0,
+      "lambda_kd": 1.0,
+      "lambda_sp": 100.0
+    }
+  },
+  "git_commit": "07f486fb368d739e9b7a08ff42c881ba36ca591a",
+  "git_dirty": false,
+  "seeds": [
+    2026,
+    2027,
+    2028,
+    2029,
+    2030,
+    2031,
+    2032,
+    2033
+  ],
+  "results_json": "cckd_fbtcnn_beta_1.0s_20261020_180558.json",
+  "per_subject_csv": "beta_fbtcnn_last_lsp100_split4026_w1s_seed2026-2033_20261020.csv"
+}

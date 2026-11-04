@@ -1,0 +1,16 @@
+#!/bin/bash
+#PBS -N m3_h1_export_onnx
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=2:mem=8gb
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_h1_export_onnx.pbs.out
+# H1/H2: export the 90 retrained checkpoints (results/module3/h1_retrain/*/ckpt/*.pt) to ONNX, verified.
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+LOG=$PROJ/logs/m3_h1_export_onnx_${PBS_JOBID}.log
+mkdir -p "$PROJ/logs"
+cd "$PROJ"
+"$PY" scripts/export_onnx.py --root results/module3/h1_retrain > "$LOG" 2>&1

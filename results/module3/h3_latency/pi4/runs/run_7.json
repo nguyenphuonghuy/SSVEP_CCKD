@@ -1,0 +1,375 @@
+{
+  "device": "Raspberry Pi 4",
+  "platform": "Linux-6.12.75+rpt-rpi-v8-aarch64-with-glibc2.41",
+  "python": "3.13.5",
+  "torch": "2.13.0+cpu",
+  "window_s": 1.0,
+  "n_samples": 250,
+  "n_channels": 3,
+  "n_classes": 40,
+  "n_bands": 3,
+  "note": "H3 (mo-hinh-hoa/embedded_h1h4_20261101.md). Trong so ngau nhien (seed=0), latency khong phu thuoc gia tri trong so. INT8 = torch.quantization.quantize_dynamic({Conv2d,Linear}, qint8) -- static quantization (qnnpack) bi NotImplementedError tren FB-tCNN/DeepConvNet/ShallowConvNet (elu/pow chua co kernel QuantizedCPU), nen dung dynamic cho ca 5 backbone de dong nhat; dynamic quant chi luong tu hoa trong so Conv/Linear, kich hoat van fp32.",
+  "configs": {
+    "1_threads": {
+      "fbtcnn_fp32": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.5931438100742525,
+          "std_ms": 0.18202775835348028,
+          "median_ms": 5.547046999708982,
+          "p95_ms": 5.7673728500503785,
+          "p99_ms": 6.62452181032677,
+          "min_ms": 5.479466999531724,
+          "max_ms": 6.793199000640016,
+          "n_trials": 100
+        },
+        "model_forward": {
+          "mean_ms": 11.174533669982338,
+          "std_ms": 0.12624545817967675,
+          "median_ms": 11.148620499625395,
+          "p95_ms": 11.281557400070596,
+          "p99_ms": 11.909767749539242,
+          "min_ms": 11.076973999479378,
+          "max_ms": 12.042600999848219,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 16.76767748005659
+      },
+      "fbtcnn_int8": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.578571180003564,
+          "std_ms": 0.1809922366775006,
+          "median_ms": 5.538449499908893,
+          "p95_ms": 5.742658199824291,
+          "p99_ms": 6.419938019462282,
+          "min_ms": 5.464828999720339,
+          "max_ms": 7.020177000413241,
+          "n_trials": 100
+        },
+        "model_forward": {
+          "mean_ms": 11.007546549953986,
+          "std_ms": 0.07712036914533826,
+          "median_ms": 10.994624999966618,
+          "p95_ms": 11.150788349823415,
+          "p99_ms": 11.268245770297654,
+          "min_ms": 10.878798999328865,
+          "max_ms": 11.31910899948707,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 16.58611772995755
+      },
+      "deepconvnet_fp32": {
+        "n_channels": 3,
+        "n_params": 101190,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.928141630058235,
+          "std_ms": 0.2405867491478088,
+          "median_ms": 3.891291999934765,
+          "p95_ms": 3.960221750094206,
+          "p99_ms": 4.9137302200506445,
+          "min_ms": 3.8306509995891247,
+          "max_ms": 6.070071999602078,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.928141630058235
+      },
+      "deepconvnet_int8": {
+        "n_channels": 3,
+        "n_params": 101190,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.5667891000230156,
+          "std_ms": 0.034237260440899676,
+          "median_ms": 3.563475499959168,
+          "p95_ms": 3.628447900109677,
+          "p99_ms": 3.6815021600159525,
+          "min_ms": 3.4846100006689085,
+          "max_ms": 3.683201000058034,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.5667891000230156
+      },
+      "eegnet_fp32": {
+        "n_channels": 3,
+        "n_params": 5672,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.9255344099419744,
+          "std_ms": 0.05551581968204313,
+          "median_ms": 2.921455999967293,
+          "p95_ms": 3.007884500129876,
+          "p99_ms": 3.1082679900100634,
+          "min_ms": 2.8365629996187636,
+          "max_ms": 3.2253839999611955,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.9255344099419744
+      },
+      "eegnet_int8": {
+        "n_channels": 3,
+        "n_params": 5672,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.843578059964784,
+          "std_ms": 0.04752538489475419,
+          "median_ms": 2.849207500275952,
+          "p95_ms": 2.9061869503038906,
+          "p99_ms": 3.0244303898325597,
+          "min_ms": 2.763433999461995,
+          "max_ms": 3.064563999942038,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.843578059964784
+      },
+      "compactcnn_fp32": {
+        "n_channels": 3,
+        "n_params": 44680,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 6.563844109987258,
+          "std_ms": 0.1942335650513212,
+          "median_ms": 6.542217500282277,
+          "p95_ms": 6.657101800192322,
+          "p99_ms": 6.976174399605959,
+          "min_ms": 6.467095999141748,
+          "max_ms": 8.38062799994077,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 6.563844109987258
+      },
+      "compactcnn_int8": {
+        "n_channels": 3,
+        "n_params": 44680,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 6.3581120800517965,
+          "std_ms": 0.05652594652837082,
+          "median_ms": 6.3573490001545,
+          "p95_ms": 6.456155749810932,
+          "p99_ms": 6.543932609265539,
+          "min_ms": 6.2719709994780715,
+          "max_ms": 6.629628000155208,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 6.3581120800517965
+      },
+      "shallowconvnet_fp32": {
+        "n_channels": 3,
+        "n_params": 55560,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.857941290058079,
+          "std_ms": 0.031904015843720726,
+          "median_ms": 2.860249000150361,
+          "p95_ms": 2.8950835001523956,
+          "p99_ms": 2.921785240823738,
+          "min_ms": 2.7994420006507426,
+          "max_ms": 3.030609999768785,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.857941290058079
+      },
+      "shallowconvnet_int8": {
+        "n_channels": 3,
+        "n_params": 55560,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.6159295000161364,
+          "std_ms": 0.03117677868734406,
+          "median_ms": 2.6213615001324797,
+          "p95_ms": 2.667993999693863,
+          "p99_ms": 2.703168540047045,
+          "min_ms": 2.561250999860931,
+          "max_ms": 2.7064890000474406,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.6159295000161364
+      }
+    },
+    "4_threads": {
+      "fbtcnn_fp32": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.544817840054748,
+          "std_ms": 0.1864597039783558,
+          "median_ms": 5.503382999449968,
+          "p95_ms": 5.681160750464187,
+          "p99_ms": 6.265496180049017,
+          "min_ms": 5.444391999844811,
+          "max_ms": 7.124042000214104,
+          "n_trials": 100
+        },
+        "model_forward": {
+          "mean_ms": 7.926685710035599,
+          "std_ms": 0.3333135683509179,
+          "median_ms": 7.849414000247634,
+          "p95_ms": 8.053992250097508,
+          "p99_ms": 9.430989969841908,
+          "min_ms": 7.767656999931205,
+          "max_ms": 10.37821900081326,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 13.471503550090347
+      },
+      "fbtcnn_int8": {
+        "n_channels": 3,
+        "n_params": 90440,
+        "filterbank": {
+          "mean_ms": 5.579764800013436,
+          "std_ms": 0.19294622984614304,
+          "median_ms": 5.5311229998551426,
+          "p95_ms": 5.736476250012856,
+          "p99_ms": 6.700332860136769,
+          "min_ms": 5.473590000292461,
+          "max_ms": 6.867430999591306,
+          "n_trials": 100
+        },
+        "model_forward": {
+          "mean_ms": 7.825777329981065,
+          "std_ms": 0.23146403895993878,
+          "median_ms": 7.773177000217402,
+          "p95_ms": 7.9497754496060224,
+          "p99_ms": 9.17705390934316,
+          "min_ms": 7.683677000386524,
+          "max_ms": 9.538889999930689,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 13.405542129994501
+      },
+      "deepconvnet_fp32": {
+        "n_channels": 3,
+        "n_params": 101190,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.799851600033435,
+          "std_ms": 0.037609529784831855,
+          "median_ms": 3.800070499892172,
+          "p95_ms": 3.847114650216099,
+          "p99_ms": 3.8976937000006733,
+          "min_ms": 3.711565000230621,
+          "max_ms": 4.004188000180875,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.799851600033435
+      },
+      "deepconvnet_int8": {
+        "n_channels": 3,
+        "n_params": 101190,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.5558180499901937,
+          "std_ms": 0.18181298604338544,
+          "median_ms": 3.53532949975488,
+          "p95_ms": 3.6401102999661816,
+          "p99_ms": 3.721557869848774,
+          "min_ms": 3.4557760000097915,
+          "max_ms": 5.303267999806849,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.5558180499901937
+      },
+      "eegnet_fp32": {
+        "n_channels": 3,
+        "n_params": 5672,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.119551740019233,
+          "std_ms": 0.4990354641366895,
+          "median_ms": 3.056790999835357,
+          "p95_ms": 3.183943649582943,
+          "p99_ms": 3.9871026199580433,
+          "min_ms": 2.9630330000145477,
+          "max_ms": 7.9512229995089,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.119551740019233
+      },
+      "eegnet_int8": {
+        "n_channels": 3,
+        "n_params": 5672,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 3.017360690055284,
+          "std_ms": 0.047764080561372185,
+          "median_ms": 3.0146600006446533,
+          "p95_ms": 3.076651299761579,
+          "p99_ms": 3.1626706501356243,
+          "min_ms": 2.9368349996730103,
+          "max_ms": 3.2732189993112115,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 3.017360690055284
+      },
+      "compactcnn_fp32": {
+        "n_channels": 3,
+        "n_params": 44680,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 5.97058341993943,
+          "std_ms": 0.13079098206897352,
+          "median_ms": 5.948010500105738,
+          "p95_ms": 6.094559599841887,
+          "p99_ms": 6.267522259768161,
+          "min_ms": 5.873123000128544,
+          "max_ms": 7.102711999323219,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 5.97058341993943
+      },
+      "compactcnn_int8": {
+        "n_channels": 3,
+        "n_params": 44680,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 5.9883102100138785,
+          "std_ms": 0.5925985912839052,
+          "median_ms": 5.895355500342703,
+          "p95_ms": 6.066865550064904,
+          "p99_ms": 8.820338940049634,
+          "min_ms": 5.804655000247294,
+          "max_ms": 10.855079999601003,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 5.9883102100138785
+      },
+      "shallowconvnet_fp32": {
+        "n_channels": 3,
+        "n_params": 55560,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.8495403999932023,
+          "std_ms": 0.03211376716712627,
+          "median_ms": 2.855953499874886,
+          "p95_ms": 2.8868002493254608,
+          "p99_ms": 2.968178069768328,
+          "min_ms": 2.7622240004347987,
+          "max_ms": 2.9685810004593804,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.8495403999932023
+      },
+      "shallowconvnet_int8": {
+        "n_channels": 3,
+        "n_params": 55560,
+        "filterbank": null,
+        "model_forward": {
+          "mean_ms": 2.6373515500199574,
+          "std_ms": 0.2389525625186465,
+          "median_ms": 2.5992250002673245,
+          "p95_ms": 2.659952349586092,
+          "p99_ms": 3.838070010688173,
+          "min_ms": 2.5539530006426503,
+          "max_ms": 4.348713000581483,
+          "n_trials": 100
+        },
+        "total_pipeline_mean_ms": 2.6373515500199574
+      }
+    }
+  },
+  "peak_rss_mb": 310.98
+}

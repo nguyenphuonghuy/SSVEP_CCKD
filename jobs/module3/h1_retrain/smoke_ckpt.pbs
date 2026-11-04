@@ -1,0 +1,39 @@
+#!/bin/bash
+#PBS -N m3_h1_smoke_ckpt
+#PBS -q sharedgpu
+#PBS -l select=1:ncpus=4:mem=16gb:gpu_slots=1
+#PBS -l walltime=00:30:00
+#PBS -j oe
+#PBS -o /gpfs0/users/gv_bvnam/projects/cckd_ssvep/logs/m3_h1_smoke_ckpt.pbs.out
+# Smoke test for the new --save_ckpt_dir arg in train_cckd.py before queuing the 15 real H1/H2 retrain jobs.
+
+set -euo pipefail
+PROJ=/gpfs0/users/gv_bvnam/projects/cckd_ssvep
+PY=/gpfs0/users/gv_bvnam/envs/erd_tta_bci/bin/python
+DATA_ROOT=/gpfs0/users/gv_nphuy/projects/ssvep_ensemble/data/raw/beta
+OUT_DIR=$PROJ/results/module3/h1_retrain/_smoke
+CKPT_DIR=$OUT_DIR/ckpt
+LOG=$PROJ/logs/m3_h1_smoke_ckpt_${PBS_JOBID}.log
+export PYTHONUNBUFFERED=1
+export CUDA_MPS_PIPE_DIRECTORY=/dev/null
+mkdir -p "$PROJ/logs" "$OUT_DIR" "$CKPT_DIR"
+cd "$PROJ"
+
+"$PY" training/train_cckd.py \
+  --dataset beta --data_root "$DATA_ROOT" \
+  --backbone eegnet --n_bands 3 --window_s 1.0 --split_seed 2026 \
+  --seeds 2026 \
+  --students 3C --modes relational --kd_layers last \
+  --epochs 2 --tau 4.0 --lambda_kd 1.0 --lambda_sp 10 \
+  --output_dir "$OUT_DIR" --save_ckpt_dir "$CKPT_DIR" --device cuda > "$LOG" 2>&1
+
+echo "--- ckpt dir ---" >> "$LOG"
+ls -la "$CKPT_DIR" >> "$LOG" 2>&1
+"$PY" - <<'EOF' >> "$LOG" 2>&1
+import torch
+import glob
+for p in glob.glob("results/module3/h1_retrain/_smoke/ckpt/*.pt"):
+    d = torch.load(p, map_location="cpu")
+    print(p, "->", {k: (v if not hasattr(v, "shape") else v.shape) for k, v in d.items() if k != "state_dict"},
+          "n_tensors=", len(d["state_dict"]))
+EOF

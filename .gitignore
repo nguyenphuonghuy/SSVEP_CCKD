@@ -25,6 +25,15 @@ paper/latex/*.log
 paper/latex/*.out
 paper/latex/*.toc
 paper/latex/*.synctex.gz
+paper/ijrcs/**/*.aux
+paper/ijrcs/**/*.bbl
+paper/ijrcs/**/*.blg
+paper/ijrcs/**/*.log
+paper/ijrcs/**/*.out
+paper/ijrcs/**/*.toc
+paper/ijrcs/**/*.synctex.gz
+paper/ijrcs/**/*.fdb_latexmk
+paper/ijrcs/**/*.fls
 
 # secrets / local-only deploy config - never commit
 deploy/pi4_latency/.credentials.local

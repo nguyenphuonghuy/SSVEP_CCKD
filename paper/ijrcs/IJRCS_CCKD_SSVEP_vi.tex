@@ -205,7 +205,6 @@ Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các
 \caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
 \label{fig:method}
 \end{figure}
-\FloatBarrier
 
 \subsection{Năm backbone}
 \label{sec:backbones}
@@ -230,7 +229,6 @@ Compact-CNN & depthwise & ELU & 64 \\
 \end{tabular}}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{Tập dữ liệu và montage}
 \label{sec:data}
@@ -264,7 +262,6 @@ BETA & 100 & 1000 & 10 & 100 & 10 \\
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \section{Kết quả và Thảo luận}
 
@@ -293,7 +290,6 @@ Compact-CNN & +0.18 (0.646) & $-0.43$ (0.124) & $-0.16$ (0.485) & $-0.15$ (0.221
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ1b: độ nhạy theo montage}
 \label{sec:rq1b}
@@ -328,7 +324,6 @@ Compact-CNN & +0.01 & $-0.03^\star$ & +0.14 & +0.16 & $-0.00^\star$ & +0.03 \\
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ2: đại lượng dự đoán mức cải thiện}
 \label{sec:rq2}
@@ -345,7 +340,6 @@ Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.5
 \caption{Mức tăng CKA lớp cuối do CCKD gây ra so với mức cải thiện độ chính xác, 20 tổ hợp backbone--dataset--montage. Đường đứt: hồi quy tuyến tính. Hình tròn: Benchmark; tam giác: BETA.}
 \label{fig:rq2a}
 \end{figure}
-\FloatBarrier
 
 \subsubsection{Thí nghiệm can thiệp theo lớp distill}
 \label{sec:layer_intervention}
@@ -384,7 +378,6 @@ Compact-CNN & 3C & $-0.15$ (0.820) & $+0.18$ (0.646) & $0 \to 0$ $^\star$ & $0 \
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ4: triển khai nhúng}
 \label{sec:rq4}

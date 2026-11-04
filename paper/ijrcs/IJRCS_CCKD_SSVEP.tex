@@ -200,7 +200,6 @@ In \cite{R82}, FB-tCNN was distilled at two layers, while the other architecture
 \caption{Block diagram of CCKD. The fixed teacher (blue, solid) and the trainable student (green, dashed) both output features at the \texttt{mid} and \texttt{last} layers; each layer computes a row-normalized Gram matrix, which is then matched by $\mathcal{L}_{\text{CCKD}}$ (red). The total loss $\mathcal{L}$ adds the student's cross-entropy loss.}
 \label{fig:method}
 \end{figure}
-\FloatBarrier
 
 \subsection{Five Backbones}
 \label{sec:backbones}
@@ -225,7 +224,6 @@ Compact-CNN & depthwise & ELU & 64 \\
 \end{tabular}}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{Datasets and Montages}
 \label{sec:data}
@@ -259,7 +257,6 @@ BETA & 100 & 1000 & 10 & 100 & 10 \\
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \section{Result and Discussion}
 
@@ -288,7 +285,6 @@ Compact-CNN & +0.18 (0.646) & $-0.43$ (0.124) & $-0.16$ (0.485) & $-0.15$ (0.221
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ1b: Sensitivity to Montage}
 \label{sec:rq1b}
@@ -323,7 +319,6 @@ Compact-CNN & +0.01 & $-0.03^\star$ & +0.14 & +0.16 & $-0.00^\star$ & +0.03 \\
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ2: Predictors of the Gain}
 \label{sec:rq2}
@@ -340,7 +335,6 @@ Across the 20 settings, $\Delta$CKA correlates with $\bar\Delta$ (Pearson $r=0.5
 \caption{Last-layer CKA increase induced by CCKD versus accuracy gain, for 20 backbone--dataset--montage settings. Dashed line: linear regression. Circles: Benchmark; triangles: BETA.}
 \label{fig:rq2a}
 \end{figure}
-\FloatBarrier
 
 \subsubsection{Distillation-Layer Intervention Experiment}
 \label{sec:layer_intervention}
@@ -379,7 +373,6 @@ Compact-CNN & 3C & $-0.15$ (0.820) & $+0.18$ (0.646) & $0 \to 0$ $^\star$ & $0 \
 \end{tabular}
 \end{center}
 \end{table}
-\FloatBarrier
 
 \subsection{RQ4: Embedded Deployment}
 \label{sec:rq4}

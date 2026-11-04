@@ -1,0 +1,1066 @@
+
+****** Vivado v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:34:34 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Wed Nov  4 18:41:05 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source build_overlay_maxi.tcl
+# set_param general.maxThreads 2 
+# set root [file normalize .]
+# create_project eegnet_ov $root/vivado_eegnet_maxi -part xczu7ev-ffvc1156-2-e -force
+# set bp [lindex [lsort [get_board_parts -quiet *zcu104*]] end]
+# puts "board_part = $bp"
+board_part = xilinx.com:zcu104:part0:1.1
+# set_property board_part $bp [current_project]
+# set_property ip_repo_paths $root/eegnet_maxi_prj/sol/impl/ip [current_project]
+# update_ip_catalog
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/eegnet_maxi_prj/sol/impl/ip'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/Xilinx/Vivado/2024.2/data/ip'.
+# create_bd_design eegnet
+Wrote  : </home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.srcs/sources_1/bd/eegnet/eegnet.bd> 
+# create_bd_cell -type ip -vlnv [get_ipdefs -filter {NAME == zynq_ultra_ps_e}] ps
+# apply_bd_automation -rule xilinx.com:bd_rule:zynq_ultra_ps_e -config {apply_board_preset "1"} [get_bd_cells ps]
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+# set_property -dict [list CONFIG.PSU__USE__M_AXI_GP0 {1} CONFIG.PSU__USE__M_AXI_GP1 {0} CONFIG.PSU__USE__M_AXI_GP2 {0} \
+#   CONFIG.PSU__USE__S_AXI_GP2 {1} CONFIG.PSU__FPGA_PL0_ENABLE {1} \
+#   CONFIG.PSU__CRL_APB__PL0_REF_CTRL__FREQMHZ {100}] [get_bd_cells ps]
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+# create_bd_cell -type ip -vlnv [get_ipdefs -filter {NAME == eegnet_m_axi}] eegnet_0
+# apply_bd_automation -rule xilinx.com:bd_rule:axi4 -config [list Clk_master {/ps/pl_clk0} Clk_slave {/ps/pl_clk0} Clk_xbar {/ps/pl_clk0} \
+#    Master {/ps/M_AXI_HPM0_FPD} Slave /eegnet_0/s_axi_control ddr_seg {Auto} intc_ip {Auto} master_apm {0}] [get_bd_intf_pins eegnet_0/s_axi_control]
+Slave segment '/eegnet_0/s_axi_control/Reg' is being assigned into address space '/ps/Data' at <0xA000_0000 [ 64K ]>.
+# create_bd_cell -type ip -vlnv [get_ipdefs -filter {NAME == smartconnect}] sc_mem
+# set_property -dict [list CONFIG.NUM_SI {1} CONFIG.NUM_MI {1}] [get_bd_cells sc_mem]
+# connect_bd_intf_net [get_bd_intf_pins eegnet_0/m_axi_gmem] [get_bd_intf_pins sc_mem/S00_AXI]
+# connect_bd_intf_net [get_bd_intf_pins sc_mem/M00_AXI] [get_bd_intf_pins ps/S_AXI_HP0_FPD]
+# connect_bd_net [get_bd_pins ps/pl_clk0] [get_bd_pins sc_mem/aclk] [get_bd_pins ps/saxihp0_fpd_aclk]
+# set rst [lindex [get_bd_cells -filter {VLNV =~ *proc_sys_reset*}] 0]
+# connect_bd_net [get_bd_pins $rst/peripheral_aresetn] [get_bd_pins sc_mem/aresetn]
+# assign_bd_address
+INFO: [BD 41-3093] Triggering Legacy Auto Assign Algorithm
+Slave segment '/ps/SAXIGP2/HP0_DDR_LOW' is being assigned into address space '/eegnet_0/Data_m_axi_gmem' at <0x0000_0000 [ 2G ]>.
+Slave segment '/ps/SAXIGP2/HP0_QSPI' is being assigned into address space '/eegnet_0/Data_m_axi_gmem' at <0xC000_0000 [ 512M ]>.
+Slave segment '/ps/SAXIGP2/HP0_LPS_OCM' is being assigned into address space '/eegnet_0/Data_m_axi_gmem' at <0xFF00_0000 [ 16M ]>.
+WARNING: [BD 41-1051] Slave segment '/ps/SAXIGP2/HP0_LPS_OCM' with 'register' usage does not match address space '/eegnet_0/Data_m_axi_gmem' with 'memory' usage so will be excluded from this address space. Please use the 'include_bd_addr_seg' command to override this precaution if required.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+# validate_bd_design
+WARNING: [BD 41-1629] Slave segment </ps/SAXIGP2/HP0_LPS_OCM> is excluded from all addressing paths.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+INFO: [PSU-1]  DP_AUDIO clock source: RPLL is also being used by other peripheral clocks. Their outputs may get impacted if any driver changes DP_AUDIO PLL source to support runtime audio change 
+INFO: [BD 5-943] Reserving offset range <0x0000_0000 [ 2G ]> from slave interface '/sc_mem/S00_AXI' to master interface '/sc_mem/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [BD 5-943] Reserving offset range <0xC000_0000 [ 512M ]> from slave interface '/sc_mem/S00_AXI' to master interface '/sc_mem/M00_AXI'. This will be used by smartconnect on path for routing.
+INFO: [xilinx.com:ip:smartconnect:1.0-1] eegnet_sc_mem_0: SmartConnect eegnet_sc_mem_0 is in High-performance Mode.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+Excluding slave segment /ps/SAXIGP2/HP0_LPS_OCM from address space /eegnet_0/Data_m_axi_gmem.
+WARNING: [BD 41-237] Bus Interface property AWUSER_WIDTH does not match between /ps_axi_periph/s00_couplers/auto_ds/S_AXI(0) and /ps/M_AXI_HPM0_FPD(16)
+WARNING: [BD 41-237] Bus Interface property ARUSER_WIDTH does not match between /ps_axi_periph/s00_couplers/auto_ds/S_AXI(0) and /ps/M_AXI_HPM0_FPD(16)
+WARNING: [BD 41-237] Bus Interface property AWUSER_WIDTH does not match between /ps/S_AXI_HP0_FPD(1) and /sc_mem/M00_AXI(0)
+WARNING: [BD 41-237] Bus Interface property ARUSER_WIDTH does not match between /ps/S_AXI_HP0_FPD(1) and /sc_mem/M00_AXI(0)
+# save_bd_design
+Wrote  : </home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.srcs/sources_1/bd/eegnet/eegnet.bd> 
+INFO: [BD 41-1662] The design 'eegnet.bd' is already validated. Therefore parameter propagation will not be re-run.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_awlock'(1) to pin: '/eegnet_0/m_axi_gmem_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_arlock'(1) to pin: '/eegnet_0/m_axi_gmem_ARLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/synth/eegnet.v
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_awlock'(1) to pin: '/eegnet_0/m_axi_gmem_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_arlock'(1) to pin: '/eegnet_0/m_axi_gmem_ARLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/sim/eegnet.v
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/hdl/eegnet_wrapper.v
+# set wrap [make_wrapper -files [get_files eegnet.bd] -top]
+# add_files -norecurse $wrap
+# set_property top eegnet_wrapper [current_fileset]
+# launch_runs impl_1 -to_step write_bitstream -jobs 1
+INFO: [BD 41-1662] The design 'eegnet.bd' is already validated. Therefore parameter propagation will not be re-run.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_awlock'(1) to pin: '/eegnet_0/m_axi_gmem_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_arlock'(1) to pin: '/eegnet_0/m_axi_gmem_ARLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/synth/eegnet.v
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_awlock'(1) to pin: '/eegnet_0/m_axi_gmem_AWLOCK'(2) - Only lower order bits will be connected.
+WARNING: [BD 41-2384] Width mismatch when connecting pin: '/sc_mem/S00_AXI_arlock'(1) to pin: '/eegnet_0/m_axi_gmem_ARLOCK'(2) - Only lower order bits will be connected.
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/sim/eegnet.v
+Verilog Output written to : /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/hdl/eegnet_wrapper.v
+INFO: [xilinx.com:ip:zynq_ultra_ps_e:3.5-0] eegnet_ps_0: 
+Changes in your design (including the PCW configuration settings) are not automatically exported from Vivado to Amd's SDK, Petalinux or Yocto.
+This is by design to avoid disrupting existing embedded development efforts. To have any changes of your design taking effect in the embedded software flow please export your
+design by going through Vivado's main menu, click on File, then Export finally select Export Hardware, please ensure you click on the Include BitStream option.
+The auto-generated HDF file is all you need to import in Amd's SDK, Petalinux or Yocto for your changes to be reflected in the Embedded Software Flow.
+For more information, please consult PG201, section: Exporting PCW Settings to Embedded Software Flows
+INFO: [PSU-0] Address Range of DDR (0x7ff00000 to 0x7fffffff) is reserved by PMU for internal purpose.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'M_AXI_HPM0_FPD'. A default connection has been created.
+INFO: [IP_Flow 19-5611] Unable to find an associated reset port for the interface 'S_AXI_HP0_FPD'. A default connection has been created.
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ps .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block eegnet_0 .
+WARNING: [IP_Flow 19-4994] Overwriting existing constraint file '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_ooc.xdc'
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ps_axi_periph/s00_couplers/auto_ds .
+WARNING: [IP_Flow 19-4994] Overwriting existing constraint file '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_pc_0/eegnet_ps_axi_periph_imp_auto_pc_0_ooc.xdc'
+INFO: [BD 41-1029] Generation completed for the IP Integrator block ps_axi_periph/s00_couplers/auto_pc .
+INFO: [BD 41-1029] Generation completed for the IP Integrator block rst_ps_100M .
+Exporting to file /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/hw_handoff/eegnet_sc_mem_0.hwh
+Generated Hardware Definition File /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/synth/eegnet_sc_mem_0.hwdef
+INFO: [BD 41-1029] Generation completed for the IP Integrator block sc_mem .
+Exporting to file /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/hw_handoff/eegnet.hwh
+Generated Hardware Definition File /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/synth/eegnet.hwdef
+INFO: [IP_Flow 19-6930] IPCACHE: runCacheChecks() number of threads = 8
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_eegnet_0_0
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_ps_0
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_ps_axi_periph_imp_auto_ds_0
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_ps_axi_periph_imp_auto_pc_0
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_rst_ps_100M_0
+INFO: [IP_Flow 19-6921] IPCACHE: Adding cache check func to thread queue for IP eegnet_sc_mem_0
+INFO: [IP_Flow 19-8020] IPCACHE: runCacheChecks() calling threadPool finishWork()
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_eegnet_0_0
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_ps_0
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_ps_axi_periph_imp_auto_ds_0
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_rst_ps_100M_0
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_ps_axi_periph_imp_auto_pc_0
+INFO: [IP_Flow 19-6924] IPCACHE: Running cache check for IP inst: eegnet_sc_mem_0
+[Wed Nov  4 18:41:35 2026] Launched eegnet_ps_axi_periph_imp_auto_ds_0_synth_1, eegnet_rst_ps_100M_0_synth_1, eegnet_sc_mem_0_synth_1, eegnet_eegnet_0_0_synth_1, eegnet_ps_axi_periph_imp_auto_pc_0_synth_1, eegnet_ps_0_synth_1, synth_1...
+Run output will be captured here:
+eegnet_ps_axi_periph_imp_auto_ds_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_ps_axi_periph_imp_auto_ds_0_synth_1/runme.log
+eegnet_rst_ps_100M_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_rst_ps_100M_0_synth_1/runme.log
+eegnet_sc_mem_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_sc_mem_0_synth_1/runme.log
+eegnet_eegnet_0_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_eegnet_0_0_synth_1/runme.log
+eegnet_ps_axi_periph_imp_auto_pc_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_ps_axi_periph_imp_auto_pc_0_synth_1/runme.log
+eegnet_ps_0_synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/eegnet_ps_0_synth_1/runme.log
+synth_1: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/synth_1/runme.log
+[Wed Nov  4 18:41:35 2026] Launched impl_1...
+Run output will be captured here: /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/runme.log
+launch_runs: Time (s): cpu = 00:00:20 ; elapsed = 00:00:21 . Memory (MB): peak = 1870.176 ; gain = 245.086 ; free physical = 10017 ; free virtual = 14508
+# wait_on_run impl_1
+[Wed Nov  4 18:41:35 2026] Waiting for impl_1 to finish...
+
+*** Running vivado
+    with args -log eegnet_wrapper.vdi -applog -m64 -product Vivado -messageDb vivado.pb -mode batch -source eegnet_wrapper.tcl -notrace
+
+
+****** Vivado v2024.2 (64-bit)
+  **** SW Build 5239630 on Fri Nov 08 22:34:34 MST 2024
+  **** IP Build 5239520 on Sun Nov 10 16:12:51 MST 2024
+  **** SharedData Build 5239561 on Fri Nov 08 14:39:27 MST 2024
+  **** Start of session at: Wed Nov  4 18:48:39 2026
+    ** Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
+    ** Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
+
+source eegnet_wrapper.tcl -notrace
+INFO: [IP_Flow 19-234] Refreshing IP repositories
+INFO: [IP_Flow 19-1700] Loaded user IP repository '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/eegnet_maxi_prj/sol/impl/ip'.
+INFO: [IP_Flow 19-2313] Loaded Vivado IP repository '/tools/Xilinx/Vivado/2024.2/data/ip'.
+Command: link_design -top eegnet_wrapper -part xczu7ev-ffvc1156-2-e
+Design is defaulting to srcset: sources_1
+Design is defaulting to constrset: constrs_1
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_eegnet_0_0/eegnet_eegnet_0_0.dcp' for cell 'eegnet_i/eegnet_0'
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_0/eegnet_ps_0.dcp' for cell 'eegnet_i/ps'
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_rst_ps_100M_0/eegnet_rst_ps_100M_0.dcp' for cell 'eegnet_i/rst_ps_100M'
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/eegnet_sc_mem_0.dcp' for cell 'eegnet_i/sc_mem'
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0.dcp' for cell 'eegnet_i/ps_axi_periph/s00_couplers/auto_ds'
+INFO: [Project 1-454] Reading design checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_pc_0/eegnet_ps_axi_periph_imp_auto_pc_0.dcp' for cell 'eegnet_i/ps_axi_periph/s00_couplers/auto_pc'
+Netlist sorting complete. Time (s): cpu = 00:00:00.31 ; elapsed = 00:00:00.31 . Memory (MB): peak = 2506.945 ; gain = 0.000 ; free physical = 8285 ; free virtual = 12988
+INFO: [Netlist 29-17] Analyzing 3242 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2024.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_0/eegnet_ps_0.xdc] for cell 'eegnet_i/ps/inst'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_0/eegnet_ps_0.xdc] for cell 'eegnet_i/ps/inst'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_rst_ps_100M_0/eegnet_rst_ps_100M_0_board.xdc] for cell 'eegnet_i/rst_ps_100M/U0'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_rst_ps_100M_0/eegnet_rst_ps_100M_0_board.xdc] for cell 'eegnet_i/rst_ps_100M/U0'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_rst_ps_100M_0/eegnet_rst_ps_100M_0.xdc] for cell 'eegnet_i/rst_ps_100M/U0'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_rst_ps_100M_0/eegnet_rst_ps_100M_0.xdc] for cell 'eegnet_i/rst_ps_100M/U0'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/ip/ip_1/bd_9a31_psr_aclk_0_board.xdc] for cell 'eegnet_i/sc_mem/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/ip/ip_1/bd_9a31_psr_aclk_0_board.xdc] for cell 'eegnet_i/sc_mem/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/ip/ip_1/bd_9a31_psr_aclk_0.xdc] for cell 'eegnet_i/sc_mem/inst/clk_map/psr_aclk/U0'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/bd_0/ip/ip_1/bd_9a31_psr_aclk_0.xdc] for cell 'eegnet_i/sc_mem/inst/clk_map/psr_aclk/U0'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/smartconnect.xdc] for cell 'eegnet_i/sc_mem/inst'
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_sc_mem_0/smartconnect.xdc] for cell 'eegnet_i/sc_mem/inst'
+Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc] for cell 'eegnet_i/ps_axi_periph/s00_couplers/auto_ds/inst'
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:9]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:12]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:15]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:18]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:21]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:24]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:27]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:30]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:33]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-1' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:36]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:39]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:42]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-10' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:45]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-2' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:48]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-11' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:51]
+WARNING: [Vivado_Tcl 4-921] Waiver ID 'CDC-11' -to list should not be empty. [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc:54]
+Finished Parsing XDC File [/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/ip/eegnet_ps_axi_periph_imp_auto_ds_0/eegnet_ps_axi_periph_imp_auto_ds_0_clocks.xdc] for cell 'eegnet_i/ps_axi_periph/s00_couplers/auto_ds/inst'
+INFO: [Project 1-1714] 22 XPM XDC files have been applied to the design.
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+INFO: [Project 1-1687] 16 scoped IP constraints or related sub-commands were skipped due to synthesis logic optimizations usually triggered by constant connectivity or unconnected output pins. To review the skipped constraints and messages, run the command 'set_param netlist.IPMsgFiltering false' before opening the design.
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3504.727 ; gain = 0.000 ; free physical = 7510 ; free virtual = 12214
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 357 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 96 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 55 instances
+  RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
+  RAM64M => RAM64M (RAMD64E(x4)): 9 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 193 instances
+
+18 Infos, 16 Warnings, 0 Critical Warnings and 0 Errors encountered.
+link_design completed successfully
+link_design: Time (s): cpu = 00:00:26 ; elapsed = 00:00:24 . Memory (MB): peak = 3504.727 ; gain = 2028.055 ; free physical = 7510 ; free virtual = 12214
+Command: opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+Running DRC as a precondition to command opt_design
+
+Starting DRC Task
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Project 1-461] DRC finished with 0 Errors
+INFO: [Project 1-462] Please refer to the DRC report (report_drc) for more information.
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:00.88 . Memory (MB): peak = 3504.727 ; gain = 0.000 ; free physical = 7502 ; free virtual = 12206
+
+Starting Cache Timing Information Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Cache Timing Information Task | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 3504.727 ; gain = 0.000 ; free physical = 7486 ; free virtual = 12190
+
+Starting Logic Optimization Task
+
+Phase 1 Initialization
+
+Phase 1.1 Core Generation And Design Setup
+Phase 1.1 Core Generation And Design Setup | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.05 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+
+Phase 1.2 Setup Constraints And Sort Netlist
+Phase 1.2 Setup Constraints And Sort Netlist | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.06 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Phase 1 Initialization | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:00.07 ; elapsed = 00:00:00.06 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+
+Phase 2 Timer Update And Timing Data Collection
+
+Phase 2.1 Timer Update
+Phase 2.1 Timer Update | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+
+Phase 2.2 Timing Data Collection
+Phase 2.2 Timing Data Collection | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Phase 2 Timer Update And Timing Data Collection | Checksum: 2694ac2a9
+
+Time (s): cpu = 00:00:02 ; elapsed = 00:00:01 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+
+Phase 3 Retarget
+INFO: [Opt 31-1851] Number of loadless carry chains removed were: 0
+INFO: [Opt 31-1834] Total Chains To Be Transformed Were: 0 AND Number of Transformed insts Created are: 0
+INFO: [Opt 31-1566] Pulled 3 inverters resulting in an inversion of 25 pins
+INFO: [Opt 31-138] Pushed 31 inverter(s) to 3999 load pin(s).
+INFO: [Opt 31-49] Retargeted 0 cell(s).
+Phase 3 Retarget | Checksum: 1b57ca074
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Retarget | Checksum: 1b57ca074
+INFO: [Opt 31-389] Phase Retarget created 60 cells and removed 364 cells
+INFO: [Opt 31-1021] In phase Retarget, 48 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 4 Constant propagation
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Phase 4 Constant propagation | Checksum: 1d3985bb0
+
+Time (s): cpu = 00:00:03 ; elapsed = 00:00:02 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Constant propagation | Checksum: 1d3985bb0
+INFO: [Opt 31-389] Phase Constant propagation created 27 cells and removed 214 cells
+INFO: [Opt 31-1021] In phase Constant propagation, 48 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 5 Sweep
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+INFO: [Constraints 18-11670] Building netlist checker database with flags, 0x8
+Done building netlist checker database: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Phase 5 Sweep | Checksum: 1982d8baf
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 3806.711 ; gain = 0.000 ; free physical = 7180 ; free virtual = 11884
+Sweep | Checksum: 1982d8baf
+INFO: [Opt 31-389] Phase Sweep created 0 cells and removed 777 cells
+INFO: [Opt 31-1021] In phase Sweep, 122 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 6 BUFG optimization
+INFO: [Opt 31-1077] Phase BUFG optimization inserted 0 global clock buffer(s) for CLOCK_LOW_FANOUT.
+Phase 6 BUFG optimization | Checksum: 1982d8baf
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7180 ; free virtual = 11884
+BUFG optimization | Checksum: 1982d8baf
+INFO: [Opt 31-662] Phase BUFG optimization created 0 cells of which 0 are BUFGs and removed 0 cells.
+
+Phase 7 Shift Register Optimization
+INFO: [Opt 31-1064] SRL Remap converted 0 SRLs to 0 registers and converted 0 registers of register chains to 0 SRLs
+Phase 7 Shift Register Optimization | Checksum: 1982d8baf
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:03 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7180 ; free virtual = 11884
+Shift Register Optimization | Checksum: 1982d8baf
+INFO: [Opt 31-389] Phase Shift Register Optimization created 0 cells and removed 0 cells
+
+Phase 8 Post Processing Netlist
+Phase 8 Post Processing Netlist | Checksum: 1a00d90d5
+
+Time (s): cpu = 00:00:05 ; elapsed = 00:00:04 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7180 ; free virtual = 11884
+Post Processing Netlist | Checksum: 1a00d90d5
+INFO: [Opt 31-389] Phase Post Processing Netlist created 0 cells and removed 0 cells
+INFO: [Opt 31-1021] In phase Post Processing Netlist, 54 netlist objects are constrained preventing optimization. Please run opt_design with -debug_log to get more detail. 
+
+Phase 9 Finalization
+
+Phase 9.1 Finalizing Design Cores and Updating Shapes
+Phase 9.1 Finalizing Design Cores and Updating Shapes | Checksum: 1f3713bec
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7196 ; free virtual = 11900
+
+Phase 9.2 Verifying Netlist Connectivity
+
+Starting Connectivity Check Task
+
+Time (s): cpu = 00:00:00.04 ; elapsed = 00:00:00.04 . Memory (MB): peak = 3838.727 ; gain = 0.000 ; free physical = 7196 ; free virtual = 11900
+Phase 9.2 Verifying Netlist Connectivity | Checksum: 1f3713bec
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7196 ; free virtual = 11900
+Phase 9 Finalization | Checksum: 1f3713bec
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7196 ; free virtual = 11900
+Opt_design Change Summary
+=========================
+
+
+-------------------------------------------------------------------------------------------------------------------------
+|  Phase                        |  #Cells created  |  #Cells Removed  |  #Constrained objects preventing optimizations  |
+-------------------------------------------------------------------------------------------------------------------------
+|  Retarget                     |              60  |             364  |                                             48  |
+|  Constant propagation         |              27  |             214  |                                             48  |
+|  Sweep                        |               0  |             777  |                                            122  |
+|  BUFG optimization            |               0  |               0  |                                              0  |
+|  Shift Register Optimization  |               0  |               0  |                                              0  |
+|  Post Processing Netlist      |               0  |               0  |                                             54  |
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Ending Logic Optimization Task | Checksum: 1f3713bec
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:05 . Memory (MB): peak = 3838.727 ; gain = 32.016 ; free physical = 7196 ; free virtual = 11900
+
+Starting Power Optimization Task
+INFO: [Pwropt 34-132] Skipping clock gating for clocks with a period < 2.00 ns.
+INFO: [Pwropt 34-9] Applying IDT optimizations ...
+INFO: [Pwropt 34-10] Applying ODC optimizations ...
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+
+
+Starting PowerOpt Patch Enables Task
+INFO: [Pwropt 34-162] WRITE_MODE attribute of 0 BRAM(s) out of a total of 41 has been updated to save power. Run report_power_opt to get a complete listing of the BRAMs updated.
+INFO: [Pwropt 34-201] Structural ODC has moved 7 WE to EN ports
+Number of BRAM Ports augmented: 4 newly gated: 13 Total Ports: 82
+Ending PowerOpt Patch Enables Task | Checksum: 2a236aea9
+
+Time (s): cpu = 00:00:00.19 ; elapsed = 00:00:00.19 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6774 ; free virtual = 11478
+Ending Power Optimization Task | Checksum: 2a236aea9
+
+Time (s): cpu = 00:00:14 ; elapsed = 00:00:07 . Memory (MB): peak = 4308.270 ; gain = 469.543 ; free physical = 6774 ; free virtual = 11478
+
+Starting Final Cleanup Task
+
+Starting Logic Optimization Task
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Ending Logic Optimization Task | Checksum: 188d69028
+
+Time (s): cpu = 00:00:06 ; elapsed = 00:00:04 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6778 ; free virtual = 11482
+Ending Final Cleanup Task | Checksum: 188d69028
+
+Time (s): cpu = 00:00:08 ; elapsed = 00:00:06 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6778 ; free virtual = 11482
+
+Starting Netlist Obfuscation Task
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6778 ; free virtual = 11482
+Ending Netlist Obfuscation Task | Checksum: 188d69028
+
+Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6778 ; free virtual = 11482
+INFO: [Common 17-83] Releasing license: Implementation
+51 Infos, 16 Warnings, 0 Critical Warnings and 0 Errors encountered.
+opt_design completed successfully
+opt_design: Time (s): cpu = 00:00:36 ; elapsed = 00:00:22 . Memory (MB): peak = 4308.270 ; gain = 803.543 ; free physical = 6778 ; free virtual = 11482
+INFO: [Vivado 12-24828] Executing command : report_drc -file eegnet_wrapper_drc_opted.rpt -pb eegnet_wrapper_drc_opted.pb -rpx eegnet_wrapper_drc_opted.rpx
+Command: report_drc -file eegnet_wrapper_drc_opted.rpt -pb eegnet_wrapper_drc_opted.pb -rpx eegnet_wrapper_drc_opted.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_drc_opted.rpt.
+report_drc completed successfully
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.22 ; elapsed = 00:00:00.06 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6754 ; free virtual = 11467
+INFO: [Common 17-1381] The checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_opt.dcp' has been generated.
+Command: place_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-83] Releasing license: Implementation
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+Running DRC as a precondition to command place_design
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 4-198] DRC finished with 0 Errors
+INFO: [Vivado_Tcl 4-199] Please refer to the DRC report (report_drc) for more information.
+INFO: [Place 30-611] Multithreading enabled for place_design using a maximum of 2 CPUs
+
+Starting Placer Task
+
+Phase 1 Placer Initialization
+
+Phase 1.1 Placer Initialization Netlist Sorting
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6736 ; free virtual = 11452
+Phase 1.1 Placer Initialization Netlist Sorting | Checksum: 177f9c609
+
+Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6736 ; free virtual = 11452
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4308.270 ; gain = 0.000 ; free physical = 6736 ; free virtual = 11452
+
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+Phase 1.2 IO Placement/ Clock Placement/ Build Placer Device | Checksum: 1348deeb8
+
+Time (s): cpu = 00:00:18 ; elapsed = 00:00:17 . Memory (MB): peak = 4651.770 ; gain = 343.500 ; free physical = 6278 ; free virtual = 11129
+
+Phase 1.3 Build Placer Netlist Model
+Phase 1.3 Build Placer Netlist Model | Checksum: 1e7243c7d
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:25 . Memory (MB): peak = 4674.785 ; gain = 366.516 ; free physical = 6202 ; free virtual = 11056
+
+Phase 1.4 Constrain Clocks/Macros
+Phase 1.4 Constrain Clocks/Macros | Checksum: 1e7243c7d
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:25 . Memory (MB): peak = 4674.785 ; gain = 366.516 ; free physical = 6202 ; free virtual = 11056
+Phase 1 Placer Initialization | Checksum: 1e7243c7d
+
+Time (s): cpu = 00:00:29 ; elapsed = 00:00:25 . Memory (MB): peak = 4674.785 ; gain = 366.516 ; free physical = 6202 ; free virtual = 11057
+
+Phase 2 Global Placement
+
+Phase 2.1 Floorplanning
+
+Phase 2.1.1 Partition Driven Placement
+
+Phase 2.1.1.1 PBP: Partition Driven Placement
+Phase 2.1.1.1 PBP: Partition Driven Placement | Checksum: 1fbc55afa
+
+Time (s): cpu = 00:00:51 ; elapsed = 00:00:38 . Memory (MB): peak = 4674.785 ; gain = 366.516 ; free physical = 6210 ; free virtual = 11066
+
+Phase 2.1.1.2 PBP: Clock Region Placement
+INFO: [Place 30-3162] Check ILP status : ILP-based clock placer completed successfully.
+Phase 2.1.1.2 PBP: Clock Region Placement | Checksum: 1fbc55afa
+
+Time (s): cpu = 00:00:52 ; elapsed = 00:00:38 . Memory (MB): peak = 4674.785 ; gain = 366.516 ; free physical = 6208 ; free virtual = 11066
+
+Phase 2.1.1.3 PBP: Compute Congestion
+Phase 2.1.1.3 PBP: Compute Congestion | Checksum: 1fbc55afa
+
+Time (s): cpu = 00:01:00 ; elapsed = 00:00:43 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5610 ; free virtual = 10895
+
+Phase 2.1.1.4 PBP: UpdateTiming
+Phase 2.1.1.4 PBP: UpdateTiming | Checksum: 18d0242ca
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+
+Phase 2.1.1.5 PBP: Add part constraints
+Phase 2.1.1.5 PBP: Add part constraints | Checksum: 18d0242ca
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+Phase 2.1.1 Partition Driven Placement | Checksum: 18d0242ca
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+Phase 2.1 Floorplanning | Checksum: 1e0200d0e
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+
+Phase 2.2 Update Timing before SLR Path Opt
+Phase 2.2 Update Timing before SLR Path Opt | Checksum: 1e0200d0e
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+
+Phase 2.3 Post-Processing in Floorplanning
+Phase 2.3 Post-Processing in Floorplanning | Checksum: 1e0200d0e
+
+Time (s): cpu = 00:01:02 ; elapsed = 00:00:44 . Memory (MB): peak = 4836.785 ; gain = 528.516 ; free physical = 5612 ; free virtual = 10897
+
+Phase 2.4 Global Place Phase1
+Phase 2.4 Global Place Phase1 | Checksum: 143845da2
+
+Time (s): cpu = 00:01:38 ; elapsed = 00:01:08 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5502 ; free virtual = 10788
+
+Phase 2.5 Global Place Phase2
+
+Phase 2.5.1 UpdateTiming Before Physical Synthesis
+Phase 2.5.1 UpdateTiming Before Physical Synthesis | Checksum: 195d79b22
+
+Time (s): cpu = 00:01:43 ; elapsed = 00:01:11 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5503 ; free virtual = 10789
+
+Phase 2.5.2 Physical Synthesis In Placer
+INFO: [Physopt 32-1035] Found 0 LUTNM shape to break, 577 LUT instances to create LUTNM shape
+INFO: [Physopt 32-1044] Break lutnm for timing: one critical 0, two critical 0, total 0, new lutff created 0
+INFO: [Physopt 32-1138] End 1 Pass. Optimized 184 nets or LUTs. Breaked 0 LUT, combined 184 existing LUTs and moved 0 existing LUT
+INFO: [Physopt 32-1030] Pass 1. Identified 25 candidate driver sets for equivalent driver rewiring.
+INFO: [Physopt 32-661] Optimized 23 nets.  Re-placed 179 instances.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 23 nets or cells. Created 0 new cell, deleted 0 existing cell and moved 179 existing cells
+Netlist sorting complete. Time (s): cpu = 00:00:00.09 ; elapsed = 00:00:00.09 . Memory (MB): peak = 4960.785 ; gain = 0.000 ; free physical = 5503 ; free virtual = 10792
+INFO: [Physopt 32-65] No nets found for high-fanout optimization.
+INFO: [Physopt 32-232] Optimized 0 net. Created 0 new instance.
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+INFO: [Physopt 32-670] No setup violation found.  DSP Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register to Pipeline Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  Shift Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  BRAM Register Optimization was not performed.
+INFO: [Physopt 32-670] No setup violation found.  URAM Register Optimization was not performed.
+INFO: [Physopt 32-949] No candidate nets found for dynamic/static region interface net replication
+INFO: [Physopt 32-775] End 1 Pass. Optimized 0 net or cell. Created 0 new cell, deleted 0 existing cell and moved 0 existing cell
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 4960.785 ; gain = 0.000 ; free physical = 5503 ; free virtual = 10792
+
+Summary of Physical Synthesis Optimizations
+============================================
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  Optimization                                     |  Added Cells  |  Removed Cells  |  Optimized Cells/Nets  |  Dont Touch  |  Iterations  |  Elapsed   |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+|  LUT Combining                                    |            0  |            184  |                   184  |           0  |           1  |  00:00:00  |
+|  Retime                                           |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Equivalent Driver Rewiring                       |            0  |              0  |                    23  |           0  |           1  |  00:00:02  |
+|  Very High Fanout                                 |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  DSP Register                                     |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register to Pipeline                       |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Shift Register                                   |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  BRAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  URAM Register                                    |            0  |              0  |                     0  |           0  |           0  |  00:00:00  |
+|  Dynamic/Static Region Interface Net Replication  |            0  |              0  |                     0  |           0  |           1  |  00:00:00  |
+|  Total                                            |            0  |            184  |                   207  |           0  |           5  |  00:00:02  |
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+Phase 2.5.2 Physical Synthesis In Placer | Checksum: 20e66251a
+
+Time (s): cpu = 00:01:48 ; elapsed = 00:01:15 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5503 ; free virtual = 10792
+Phase 2.5 Global Place Phase2 | Checksum: 2dbdfbd24
+
+Time (s): cpu = 00:02:09 ; elapsed = 00:01:27 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5502 ; free virtual = 10791
+Phase 2 Global Placement | Checksum: 2dbdfbd24
+
+Time (s): cpu = 00:02:09 ; elapsed = 00:01:27 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5502 ; free virtual = 10791
+
+Phase 3 Detail Placement
+
+Phase 3.1 Commit Multi Column Macros
+Phase 3.1 Commit Multi Column Macros | Checksum: 24e540b69
+
+Time (s): cpu = 00:02:20 ; elapsed = 00:01:33 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10793
+
+Phase 3.2 Commit Most Macros & LUTRAMs
+Phase 3.2 Commit Most Macros & LUTRAMs | Checksum: 3471f7156
+
+Time (s): cpu = 00:02:24 ; elapsed = 00:01:36 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10793
+
+Phase 3.3 Small Shape DP
+
+Phase 3.3.1 Small Shape Clustering
+Phase 3.3.1 Small Shape Clustering | Checksum: 39baf104d
+
+Time (s): cpu = 00:02:34 ; elapsed = 00:01:41 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10793
+
+Phase 3.3.2 Slice Area Swap
+
+Phase 3.3.2.1 Slice Area Swap Initial
+Phase 3.3.2.1 Slice Area Swap Initial | Checksum: 330eb3dcd
+
+Time (s): cpu = 00:02:37 ; elapsed = 00:01:43 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5506 ; free virtual = 10796
+Phase 3.3.2 Slice Area Swap | Checksum: 330eb3dcd
+
+Time (s): cpu = 00:02:37 ; elapsed = 00:01:44 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5506 ; free virtual = 10796
+Phase 3.3 Small Shape DP | Checksum: 350df6e46
+
+Time (s): cpu = 00:02:44 ; elapsed = 00:01:47 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5505 ; free virtual = 10795
+
+Phase 3.4 Re-assign LUT pins
+Phase 3.4 Re-assign LUT pins | Checksum: 2e41addd0
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:49 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5505 ; free virtual = 10795
+
+Phase 3.5 Pipeline Register Optimization
+Phase 3.5 Pipeline Register Optimization | Checksum: 35425e1bd
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:49 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5505 ; free virtual = 10795
+Phase 3 Detail Placement | Checksum: 35425e1bd
+
+Time (s): cpu = 00:02:46 ; elapsed = 00:01:49 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5505 ; free virtual = 10795
+
+Phase 4 Post Placement Optimization and Clean-Up
+
+Phase 4.1 Post Commit Optimization
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+
+Phase 4.1.1 Post Placement Optimization
+Post Placement Optimization Initialization | Checksum: 27c655472
+
+Phase 4.1.1.1 BUFG Insertion
+
+Starting Physical Synthesis Task
+
+Phase 1 Physical Synthesis Initialization
+INFO: [Physopt 32-721] Multithreading enabled for phys_opt_design using a maximum of 2 CPUs
+INFO: [Physopt 32-619] Estimated Timing Summary | WNS=3.088 | TNS=0.000 |
+Phase 1 Physical Synthesis Initialization | Checksum: 1052ba70a
+
+Time (s): cpu = 00:00:01 ; elapsed = 00:00:00.66 . Memory (MB): peak = 4960.785 ; gain = 0.000 ; free physical = 5504 ; free virtual = 10794
+INFO: [Place 46-35] Processed net eegnet_i/rst_ps_100M/U0/peripheral_aresetn[0], inserted BUFG to drive 3731 loads.
+INFO: [Place 46-45] Replicated bufg driver eegnet_i/rst_ps_100M/U0/ACTIVE_LOW_PR_OUT_DFF[0].FDRE_PER_N_replica
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/depthwise_conv_2d_cl_array_array_ap_fixed_10_5_4_0_0_16u_config10_U0/grp_depthwise_product_resource_rf_gt_nout_rem0_ap_fixed_ap_fixed_config10_mult_s_fu_1157/mul_10s_9s_19_1_1_U557/E[0], inserted BUFG to drive 2560 loads.
+INFO: [Place 46-32] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/depthwise_conv_2d_cl_array_array_ap_fixed_10_5_4_0_0_16u_config10_U0/grp_depthwise_product_resource_rf_gt_nout_rem0_ap_fixed_ap_fixed_config10_mult_s_fu_1157/outidx_2_U/CEA1, BUFG insertion was skipped because the netlist editing failed.
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/dense_array_ap_fixed_16u_array_ap_fixed_10_4_4_0_0_40u_config17_U0/grp_dense_resource_rf_leq_nin_ap_fixed_ap_fixed_10_4_4_0_0_config17_s_fu_601/w17_U/ap_condition_1227, inserted BUFG to drive 2320 loads.
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/pooling2d_cl_array_array_ap_fixed_10_6_4_0_0_16u_config15_U0/ap_CS_fsm_reg[1]_0[0], inserted BUFG to drive 1280 loads.
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/dense_array_ap_fixed_16u_array_ap_fixed_10_4_4_0_0_40u_config17_U0/grp_dense_resource_rf_leq_nin_ap_fixed_ap_fixed_10_4_4_0_0_config17_s_fu_601/empty_164_reg_3090, inserted BUFG to drive 1200 loads.
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/dense_array_ap_fixed_16u_array_ap_fixed_10_4_4_0_0_40u_config17_U0/grp_dense_resource_rf_leq_nin_ap_fixed_ap_fixed_10_4_4_0_0_config17_s_fu_601/empty_200_reg_3594[29]_i_2_n_10, inserted BUFG to drive 1200 loads.
+INFO: [Place 46-35] Processed net eegnet_i/eegnet_0/inst/grp_myproject_fu_1753/dense_array_ap_fixed_16u_array_ap_fixed_10_4_4_0_0_40u_config17_U0/grp_dense_resource_rf_leq_nin_ap_fixed_ap_fixed_10_4_4_0_0_config17_s_fu_601/w17_U/E[0], inserted BUFG to drive 1126 loads.
+INFO: [Place 46-56] BUFG insertion identified 8 candidate nets. Inserted BUFG: 7, Replicated BUFG Driver: 1, Skipped due to Placement/Routing Conflicts: 0, Skipped due to Timing Degradation: 0, Skipped due to netlist editing failed: 1.
+Ending Physical Synthesis Task | Checksum: 29d3ddd9e
+
+Time (s): cpu = 00:00:04 ; elapsed = 00:00:03 . Memory (MB): peak = 4960.785 ; gain = 0.000 ; free physical = 5504 ; free virtual = 10795
+Phase 4.1.1.1 BUFG Insertion | Checksum: 288597f45
+
+Time (s): cpu = 00:03:14 ; elapsed = 00:02:07 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10795
+
+Phase 4.1.1.2 Post Placement Timing Optimization
+INFO: [Place 30-746] Post Placement Timing Summary WNS=3.088. For the most accurate timing information please run report_timing.
+Phase 4.1.1.2 Post Placement Timing Optimization | Checksum: 27382b056
+
+Time (s): cpu = 00:03:14 ; elapsed = 00:02:08 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10795
+
+Time (s): cpu = 00:03:14 ; elapsed = 00:02:08 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10795
+Phase 4.1 Post Commit Optimization | Checksum: 27382b056
+
+Time (s): cpu = 00:03:15 ; elapsed = 00:02:08 . Memory (MB): peak = 4960.785 ; gain = 652.516 ; free physical = 5504 ; free virtual = 10795
+Netlist sorting complete. Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.14 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5410 ; free virtual = 10701
+
+Phase 4.2 Post Placement Cleanup
+Phase 4.2 Post Placement Cleanup | Checksum: 17d55574b
+
+Time (s): cpu = 00:03:27 ; elapsed = 00:02:16 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+
+Phase 4.3 Placer Reporting
+
+Phase 4.3.1 Print Estimated Congestion
+INFO: [Place 30-612] Post-Placement Estimated Congestion 
+ ________________________________________________________________________
+|           | Global Congestion | Long Congestion   | Short Congestion  |
+| Direction | Region Size       | Region Size       | Region Size       |
+|___________|___________________|___________________|___________________|
+|      North|                4x4|              16x16|                2x2|
+|___________|___________________|___________________|___________________|
+|      South|                1x1|                1x1|                2x2|
+|___________|___________________|___________________|___________________|
+|       East|                4x4|                1x1|                8x8|
+|___________|___________________|___________________|___________________|
+|       West|                1x1|                1x1|                1x1|
+|___________|___________________|___________________|___________________|
+
+Phase 4.3.1 Print Estimated Congestion | Checksum: 17d55574b
+
+Time (s): cpu = 00:03:28 ; elapsed = 00:02:17 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+Phase 4.3 Placer Reporting | Checksum: 17d55574b
+
+Time (s): cpu = 00:03:28 ; elapsed = 00:02:17 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+
+Phase 4.4 Final Placement Cleanup
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5410 ; free virtual = 10701
+
+Time (s): cpu = 00:03:28 ; elapsed = 00:02:17 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+Phase 4 Post Placement Optimization and Clean-Up | Checksum: 1794e4d3a
+
+Time (s): cpu = 00:03:28 ; elapsed = 00:02:17 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+Ending Placer Task | Checksum: def1de6c
+
+Time (s): cpu = 00:03:28 ; elapsed = 00:02:17 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+99 Infos, 16 Warnings, 0 Critical Warnings and 0 Errors encountered.
+place_design completed successfully
+place_design: Time (s): cpu = 00:03:32 ; elapsed = 00:02:19 . Memory (MB): peak = 5051.809 ; gain = 743.539 ; free physical = 5410 ; free virtual = 10701
+INFO: [Vivado 12-24838] Running report commands "report_control_sets, report_io, report_utilization" in parallel.
+Running report generation with 2 threads.
+INFO: [Vivado 12-24828] Executing command : report_io -file eegnet_wrapper_io_placed.rpt
+report_io: Time (s): cpu = 00:00:00.37 ; elapsed = 00:00:00.23 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5383 ; free virtual = 10673
+INFO: [Vivado 12-24828] Executing command : report_control_sets -verbose -file eegnet_wrapper_control_sets_placed.rpt
+report_control_sets: Time (s): cpu = 00:00:00.21 ; elapsed = 00:00:00.17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10647
+INFO: [Vivado 12-24828] Executing command : report_utilization -file eegnet_wrapper_utilization_placed.rpt -pb eegnet_wrapper_utilization_placed.pb
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.54 ; elapsed = 00:00:00.12 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5345 ; free virtual = 10658
+Wrote PlaceDB: Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5289 ; free virtual = 10655
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5289 ; free virtual = 10655
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.14 ; elapsed = 00:00:00.15 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5289 ; free virtual = 10655
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.06 ; elapsed = 00:00:00.05 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5282 ; free virtual = 10657
+Wrote Device Cache: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.02 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5282 ; free virtual = 10660
+Write Physdb Complete: Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5282 ; free virtual = 10660
+INFO: [Common 17-1381] The checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_placed.dcp' has been generated.
+write_checkpoint: Time (s): cpu = 00:00:09 ; elapsed = 00:00:05 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5288 ; free virtual = 10599
+Command: phys_opt_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+
+Starting Initial Update Timing Task
+
+Time (s): cpu = 00:00:12 ; elapsed = 00:00:07 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5323 ; free virtual = 10634
+INFO: [Vivado_Tcl 4-2279] Estimated Timing Summary | WNS= 3.093 | TNS= 0.000 | 
+INFO: [Vivado_Tcl 4-383] Design worst setup slack (WNS) is greater than or equal to 0.000 ns. All physical synthesis setup optimizations will be skipped.
+INFO: [Vivado_Tcl 4-232] No setup violation found. The netlist was not modified.
+INFO: [Common 17-83] Releasing license: Implementation
+110 Infos, 16 Warnings, 0 Critical Warnings and 0 Errors encountered.
+phys_opt_design completed successfully
+phys_opt_design: Time (s): cpu = 00:00:13 ; elapsed = 00:00:07 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5323 ; free virtual = 10634
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.46 ; elapsed = 00:00:00.1 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5299 ; free virtual = 10630
+Wrote PlaceDB: Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5245 ; free virtual = 10631
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5245 ; free virtual = 10631
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.15 ; elapsed = 00:00:00.15 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5238 ; free virtual = 10623
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.05 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5230 ; free virtual = 10625
+Wrote Device Cache: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5230 ; free virtual = 10628
+Write Physdb Complete: Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5230 ; free virtual = 10628
+INFO: [Common 17-1381] The checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_physopt.dcp' has been generated.
+Command: route_design
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+
+
+Starting Routing Task
+INFO: [Route 35-254] Multithreading enabled for route_design using a maximum of 2 CPUs
+
+Phase 1 Build RT Design
+Checksum: PlaceDB: 3a0a2297 ConstDB: 0 ShapeSum: 9e95a75e RouteDB: 6521477
+Nodegraph reading from file.  Time (s): cpu = 00:00:00.61 ; elapsed = 00:00:00.64 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5279 ; free virtual = 10616
+Post Restoration Checksum: NetGraph: 9b2bd411 | NumContArr: 56c7ea8 | Constraints: 7160b8da | Timing: c2a8fa9d
+Phase 1 Build RT Design | Checksum: 1d4a20630
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:09 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5325 ; free virtual = 10664
+
+Phase 2 Router Initialization
+
+Phase 2.1 Fix Topology Constraints
+Phase 2.1 Fix Topology Constraints | Checksum: 1d4a20630
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:09 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5325 ; free virtual = 10664
+
+Phase 2.2 Pre Route Cleanup
+Phase 2.2 Pre Route Cleanup | Checksum: 1d4a20630
+
+Time (s): cpu = 00:00:16 ; elapsed = 00:00:09 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5325 ; free virtual = 10664
+
+Phase 2.3 Global Clock Net Routing
+ Number of Nodes with overlaps = 0
+Phase 2.3 Global Clock Net Routing | Checksum: 2395898b5
+
+Time (s): cpu = 00:00:19 ; elapsed = 00:00:12 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5347 ; free virtual = 10687
+
+Phase 2.4 Update Timing
+Phase 2.4 Update Timing | Checksum: 314b83d44
+
+Time (s): cpu = 00:00:27 ; elapsed = 00:00:16 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5353 ; free virtual = 10693
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=3.465  | TNS=0.000  | WHS=-0.077 | THS=-20.867|
+
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 0.0011218 %
+  Global Horizontal Routing Utilization  = 0.000441331 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 50650
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 42989
+  Number of Partially Routed Nets     = 7661
+  Number of Node Overlaps             = 4
+
+Phase 2 Router Initialization | Checksum: 2a555d7b0
+
+Time (s): cpu = 00:00:39 ; elapsed = 00:00:24 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10695
+
+Phase 3 Global Routing
+Phase 3 Global Routing | Checksum: 2a555d7b0
+
+Time (s): cpu = 00:00:39 ; elapsed = 00:00:24 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10695
+
+Phase 4 Initial Routing
+
+Phase 4.1 Initial Net Routing Pass
+Phase 4.1 Initial Net Routing Pass | Checksum: 14289e220
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:30 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10696
+Phase 4 Initial Routing | Checksum: 20cf742a3
+
+Time (s): cpu = 00:00:50 ; elapsed = 00:00:30 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10696
+
+Phase 5 Rip-up And Reroute
+
+Phase 5.1 Global Iteration 0
+ Number of Nodes with overlaps = 12469
+ Number of Nodes with overlaps = 924
+ Number of Nodes with overlaps = 81
+ Number of Nodes with overlaps = 5
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.241  | TNS=0.000  | WHS=-0.009 | THS=-0.044 |
+
+Phase 5.1 Global Iteration 0 | Checksum: 173dc9857
+
+Time (s): cpu = 00:01:46 ; elapsed = 00:01:03 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+
+Phase 5.2 Global Iteration 1
+ Number of Nodes with overlaps = 1
+ Number of Nodes with overlaps = 0
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.241  | TNS=0.000  | WHS=N/A    | THS=N/A    |
+
+Phase 5.2 Global Iteration 1 | Checksum: 2d40375d5
+
+Time (s): cpu = 00:01:51 ; elapsed = 00:01:06 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+Phase 5 Rip-up And Reroute | Checksum: 2d40375d5
+
+Time (s): cpu = 00:01:51 ; elapsed = 00:01:06 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+
+Phase 6 Delay and Skew Optimization
+
+Phase 6.1 Delay CleanUp
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.241  | TNS=0.000  | WHS=0.010  | THS=0.000  |
+
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.241  | TNS=0.000  | WHS=0.010  | THS=0.000  |
+
+Phase 6.1 Delay CleanUp | Checksum: 2f3e328cd
+
+Time (s): cpu = 00:01:59 ; elapsed = 00:01:10 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+
+Phase 6.2 Clock Skew Optimization
+Phase 6.2 Clock Skew Optimization | Checksum: 2f3e328cd
+
+Time (s): cpu = 00:01:59 ; elapsed = 00:01:10 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+Phase 6 Delay and Skew Optimization | Checksum: 2f3e328cd
+
+Time (s): cpu = 00:01:59 ; elapsed = 00:01:10 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5356 ; free virtual = 10698
+
+Phase 7 Post Hold Fix
+
+Phase 7.1 Hold Fix Iter
+INFO: [Route 35-416] Intermediate Timing Summary | WNS=2.241  | TNS=0.000  | WHS=0.010  | THS=0.000  |
+
+Phase 7.1 Hold Fix Iter | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:05 ; elapsed = 00:01:13 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5362 ; free virtual = 10704
+Phase 7 Post Hold Fix | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:05 ; elapsed = 00:01:13 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5362 ; free virtual = 10704
+
+Phase 8 Route finalize
+
+Router Utilization Summary
+  Global Vertical Routing Utilization    = 2.93067 %
+  Global Horizontal Routing Utilization  = 3.14534 %
+  Routable Net Status*
+  *Does not include unroutable nets such as driverless and loadless.
+  Run report_route_status for detailed report.
+  Number of Failed Nets               = 0
+    (Failed Nets is the sum of unrouted and partially routed nets)
+  Number of Unrouted Nets             = 0
+  Number of Partially Routed Nets     = 0
+  Number of Node Overlaps             = 0
+
+Phase 8 Route finalize | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:06 ; elapsed = 00:01:14 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5362 ; free virtual = 10704
+
+Phase 9 Verifying routed nets
+
+ Verification completed successfully
+Phase 9 Verifying routed nets | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:06 ; elapsed = 00:01:14 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10703
+
+Phase 10 Depositing Routes
+Phase 10 Depositing Routes | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:09 ; elapsed = 00:01:16 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+
+Phase 11 Resolve XTalk
+Phase 11 Resolve XTalk | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:09 ; elapsed = 00:01:17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+
+Phase 12 Post Process Routing
+Phase 12 Post Process Routing | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+
+Phase 13 Post Router Timing
+INFO: [Route 35-57] Estimated Timing Summary | WNS=2.241  | TNS=0.000  | WHS=0.010  | THS=0.000  |
+
+INFO: [Route 35-327] The final timing numbers are based on the router estimated timing analysis. For a complete and accurate timing signoff, please run report_timing_summary.
+Phase 13 Post Router Timing | Checksum: 23b0e05c9
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+Total Elapsed time in route_design: 76.89 secs
+
+Phase 14 Post-Route Event Processing
+Phase 14 Post-Route Event Processing | Checksum: 22c264e73
+
+Time (s): cpu = 00:02:10 ; elapsed = 00:01:17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+INFO: [Route 35-16] Router Completed Successfully
+Ending Routing Task | Checksum: 22c264e73
+
+Time (s): cpu = 00:02:11 ; elapsed = 00:01:17 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+
+Routing Is Done.
+INFO: [Common 17-83] Releasing license: Implementation
+124 Infos, 16 Warnings, 0 Critical Warnings and 0 Errors encountered.
+route_design completed successfully
+route_design: Time (s): cpu = 00:02:11 ; elapsed = 00:01:18 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5361 ; free virtual = 10702
+INFO: [Vivado 12-24828] Executing command : report_drc -file eegnet_wrapper_drc_routed.rpt -pb eegnet_wrapper_drc_routed.pb -rpx eegnet_wrapper_drc_routed.rpx
+Command: report_drc -file eegnet_wrapper_drc_routed.rpt -pb eegnet_wrapper_drc_routed.pb -rpx eegnet_wrapper_drc_routed.rpx
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado_Tcl 2-168] The results of DRC are in file /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_drc_routed.rpt.
+report_drc completed successfully
+report_drc: Time (s): cpu = 00:00:10 ; elapsed = 00:00:05 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5332 ; free virtual = 10675
+INFO: [Vivado 12-24828] Executing command : report_methodology -file eegnet_wrapper_methodology_drc_routed.rpt -pb eegnet_wrapper_methodology_drc_routed.pb -rpx eegnet_wrapper_methodology_drc_routed.rpx
+Command: report_methodology -file eegnet_wrapper_methodology_drc_routed.rpt -pb eegnet_wrapper_methodology_drc_routed.pb -rpx eegnet_wrapper_methodology_drc_routed.rpx
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [DRC 23-133] Running Methodology with 2 threads
+INFO: [Vivado_Tcl 2-1520] The results of Report Methodology are in file /home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_methodology_drc_routed.rpt.
+report_methodology completed successfully
+report_methodology: Time (s): cpu = 00:00:27 ; elapsed = 00:00:14 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5330 ; free virtual = 10673
+INFO: [Vivado 12-24828] Executing command : report_timing_summary -max_paths 10 -report_unconstrained -file eegnet_wrapper_timing_summary_routed.rpt -pb eegnet_wrapper_timing_summary_routed.pb -rpx eegnet_wrapper_timing_summary_routed.rpx -warn_on_violation 
+INFO: [Timing 38-35] Done setting XDC timing constraints.
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+report_timing_summary: Time (s): cpu = 00:00:09 ; elapsed = 00:00:06 . Memory (MB): peak = 5051.809 ; gain = 0.000 ; free physical = 5334 ; free virtual = 10678
+INFO: [Vivado 12-24838] Running report commands "report_bus_skew, report_incremental_reuse, report_route_status" in parallel.
+Running report generation with 2 threads.
+INFO: [Vivado 12-24828] Executing command : report_incremental_reuse -file eegnet_wrapper_incremental_reuse_routed.rpt
+INFO: [Vivado_Tcl 4-1062] Incremental flow is disabled. No incremental reuse Info to report.
+INFO: [Vivado 12-24828] Executing command : report_bus_skew -warn_on_violation -file eegnet_wrapper_bus_skew_routed.rpt -pb eegnet_wrapper_bus_skew_routed.pb -rpx eegnet_wrapper_bus_skew_routed.rpx
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+INFO: [Vivado 12-24828] Executing command : report_route_status -file eegnet_wrapper_route_status.rpt -pb eegnet_wrapper_route_status.pb
+INFO: [Vivado 12-24828] Executing command : report_power -file eegnet_wrapper_power_routed.rpt -pb eegnet_wrapper_power_summary_routed.pb -rpx eegnet_wrapper_power_routed.rpx
+Command: report_power -file eegnet_wrapper_power_routed.rpt -pb eegnet_wrapper_power_summary_routed.pb -rpx eegnet_wrapper_power_routed.rpx
+Running Vector-less Activity Propagation...
+
+Finished Running Vector-less Activity Propagation
+WARNING: [Power 33-332] Found switching activity that implies high-fanout reset nets being asserted for excessive periods of time which may result in inaccurate power analysis.
+Resolution: To review and fix problems, please run Power Constraints Advisor in the GUI from Tools > Power Constraints Advisor or run report_power with the -advisory option to generate a text report.
+144 Infos, 17 Warnings, 0 Critical Warnings and 0 Errors encountered.
+report_power completed successfully
+report_power: Time (s): cpu = 00:00:14 ; elapsed = 00:00:09 . Memory (MB): peak = 5072.688 ; gain = 20.879 ; free physical = 5270 ; free virtual = 10632
+INFO: [Vivado 12-24828] Executing command : report_clock_utilization -file eegnet_wrapper_clock_utilization_routed.rpt
+generate_parallel_reports: Time (s): cpu = 00:01:04 ; elapsed = 00:00:38 . Memory (MB): peak = 5072.688 ; gain = 20.879 ; free physical = 5269 ; free virtual = 10631
+INFO: [Timing 38-480] Writing timing data to binary archive.
+Write ShapeDB Complete: Time (s): cpu = 00:00:00.49 ; elapsed = 00:00:00.11 . Memory (MB): peak = 5087.145 ; gain = 14.457 ; free physical = 5215 ; free virtual = 10598
+Wrote PlaceDB: Time (s): cpu = 00:00:04 ; elapsed = 00:00:02 . Memory (MB): peak = 5092.824 ; gain = 20.137 ; free physical = 5126 ; free virtual = 10562
+Wrote PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 5092.824 ; gain = 0.000 ; free physical = 5126 ; free virtual = 10562
+Writing XDEF routing.
+Writing XDEF routing logical nets.
+Writing XDEF routing special nets.
+Wrote RouteStorage: Time (s): cpu = 00:00:00.44 ; elapsed = 00:00:00.34 . Memory (MB): peak = 5092.824 ; gain = 0.000 ; free physical = 5119 ; free virtual = 10565
+Wrote Netlist Cache: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 5092.824 ; gain = 0.000 ; free physical = 5111 ; free virtual = 10567
+Wrote Device Cache: Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 5092.824 ; gain = 0.000 ; free physical = 5111 ; free virtual = 10570
+Write Physdb Complete: Time (s): cpu = 00:00:05 ; elapsed = 00:00:02 . Memory (MB): peak = 5092.824 ; gain = 20.137 ; free physical = 5111 ; free virtual = 10570
+INFO: [Common 17-1381] The checkpoint '/home/phuonghuy/cd2_h4_var/s4026/build_maxi/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper_routed.dcp' has been generated.
+INFO: [Memdata 28-167] Found XPM memory block eegnet_i/sc_mem/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the eegnet_i/sc_mem/inst/s00_nodes/s00_w_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block eegnet_i/sc_mem/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the eegnet_i/sc_mem/inst/s00_nodes/s00_r_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block eegnet_i/sc_mem/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the eegnet_i/sc_mem/inst/s00_nodes/s00_aw_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+INFO: [Memdata 28-167] Found XPM memory block eegnet_i/sc_mem/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst with a P_MEMORY_PRIMITIVE property set to distributed. A value of block is required. You will not be able to use the updatemem program to update the bitstream with new data for the eegnet_i/sc_mem/inst/s00_nodes/s00_ar_node/inst/inst_mi_handler/gen_normal_area.inst_fifo_node_payld/gen_xpm_memory_fifo.inst_fifo/gen_mem_rep[0].inst_xpm_memory/xpm_memory_base_inst block.
+Command: write_bitstream -force eegnet_wrapper.bit
+Attempting to get a license for feature 'Implementation' and/or device 'xczu7ev'
+INFO: [Common 17-349] Got license for feature 'Implementation' and/or device 'xczu7ev'
+Running DRC as a precondition to command write_bitstream
+INFO: [IP_Flow 19-1839] IP Catalog is up to date.
+INFO: [DRC 23-27] Running DRC with 2 threads
+INFO: [Vivado 12-3199] DRC finished with 0 Errors
+INFO: [Vivado 12-3200] Please refer to the DRC report (report_drc) for more information.
+INFO: [Designutils 20-2272] Running write_bitstream with 2 threads.
+Loading data files...
+Loading site data...
+Loading route data...
+Processing options...
+Creating bitmap...
+Creating bitstream...
+Writing bitstream ./eegnet_wrapper.bit...
+INFO: [Vivado 12-1842] Bitgen Completed Successfully.
+INFO: [Project 1-1876] WebTalk data collection is mandatory when using a ULT device. To see the specific WebTalk data collected for your design, open the usage_statistics_webtalk.html or usage_statistics_webtalk.xml file in the implementation directory.
+INFO: [Common 17-83] Releasing license: Implementation
+160 Infos, 17 Warnings, 0 Critical Warnings and 0 Errors encountered.
+write_bitstream completed successfully
+write_bitstream: Time (s): cpu = 00:00:21 ; elapsed = 00:00:24 . Memory (MB): peak = 5466.285 ; gain = 269.410 ; free physical = 4809 ; free virtual = 10218
+INFO: [Common 17-206] Exiting Vivado at Wed Nov  4 18:54:34 2026...
+[Wed Nov  4 18:54:35 2026] impl_1 finished
+wait_on_runs: Time (s): cpu = 00:14:44 ; elapsed = 00:13:00 . Memory (MB): peak = 1870.176 ; gain = 0.000 ; free physical = 9153 ; free virtual = 14561
+# puts "IMPL_STATUS = [get_property STATUS [get_runs impl_1]]"
+IMPL_STATUS = write_bitstream Complete!
+# open_run impl_1
+INFO: [Device 21-403] Loading part xczu7ev-ffvc1156-2-e
+Netlist sorting complete. Time (s): cpu = 00:00:00.29 ; elapsed = 00:00:00.29 . Memory (MB): peak = 2755.199 ; gain = 0.000 ; free physical = 8093 ; free virtual = 13502
+INFO: [Netlist 29-17] Analyzing 3233 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-479] Netlist was created with Vivado 2024.2
+INFO: [Project 1-570] Preparing netlist for logic optimization
+Read ShapeDB Complete: Time (s): cpu = 00:00:00.1 ; elapsed = 00:00:00.1 . Memory (MB): peak = 2755.199 ; gain = 0.000 ; free physical = 8111 ; free virtual = 13520
+INFO: [Timing 38-478] Restoring timing data from binary archive.
+INFO: [Timing 38-479] Binary timing data restore complete.
+INFO: [Project 1-856] Restoring constraints from binary archive.
+INFO: [Project 1-853] Binary constraint restore complete.
+INFO: [Designutils 20-5722] Start Reading Physical Databases.
+Reading placement.
+Read Netlist Cache: Time (s): cpu = 00:00:00.05 ; elapsed = 00:00:00.06 . Memory (MB): peak = 3232.906 ; gain = 7.688 ; free physical = 7780 ; free virtual = 13189
+Reading placer database...
+Read Device Cache: Time (s): cpu = 00:00:00.02 ; elapsed = 00:00:00.02 . Memory (MB): peak = 3246.086 ; gain = 13.180 ; free physical = 7764 ; free virtual = 13173
+Read PlaceDB: Time (s): cpu = 00:00:02 ; elapsed = 00:00:02 . Memory (MB): peak = 3298.430 ; gain = 49.961 ; free physical = 7711 ; free virtual = 13121
+Read PulsedLatchDB: Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 3298.430 ; gain = 0.000 ; free physical = 7711 ; free virtual = 13121
+Reading routing.
+Read RouteStorage: Time (s): cpu = 00:00:06 ; elapsed = 00:00:06 . Memory (MB): peak = 3773.898 ; gain = 475.469 ; free physical = 7251 ; free virtual = 12660
+Read Physdb Files: Time (s): cpu = 00:00:08 ; elapsed = 00:00:07 . Memory (MB): peak = 3773.898 ; gain = 548.680 ; free physical = 7251 ; free virtual = 12660
+Restored from archive | CPU: 7.810000 secs | Memory: 484.958008 MB |
+Finished XDEF File Restore: Time (s): cpu = 00:00:08 ; elapsed = 00:00:08 . Memory (MB): peak = 3773.898 ; gain = 548.680 ; free physical = 7251 ; free virtual = 12660
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00.01 . Memory (MB): peak = 3773.898 ; gain = 0.000 ; free physical = 7251 ; free virtual = 12661
+INFO: [Project 1-111] Unisim Transformation Summary:
+  A total of 356 instances were transformed.
+  DSP48E2 => DSP48E2 (DSP_ALU, DSP_A_B_DATA, DSP_C_DATA, DSP_MULTIPLIER, DSP_M_DATA, DSP_OUTPUT, DSP_PREADD, DSP_PREADD_DATA): 96 instances
+  RAM32M => RAM32M (RAMD32(x6), RAMS32(x2)): 2 instances
+  RAM32M16 => RAM32M16 (RAMD32(x14), RAMS32(x2)): 54 instances
+  RAM32X1D => RAM32X1D (RAMD32(x2)): 2 instances
+  RAM64M => RAM64M (RAMD64E(x4)): 9 instances
+  RAM64M8 => RAM64M8 (RAMD64E(x8)): 193 instances
+
+open_run: Time (s): cpu = 00:00:21 ; elapsed = 00:00:21 . Memory (MB): peak = 3773.898 ; gain = 1903.723 ; free physical = 7251 ; free virtual = 12661
+# file mkdir $root/overlay_eegnet_maxi
+# report_timing_summary -file $root/overlay_eegnet_maxi/timing.rpt
+INFO: [Timing 38-91] UpdateTimingParams: Speed grade: -2, Temperature grade: E, Delay Type: min_max.
+INFO: [Timing 38-191] Multithreading enabled for timing update using a maximum of 2 CPUs
+report_timing_summary: Time (s): cpu = 00:00:15 ; elapsed = 00:00:08 . Memory (MB): peak = 3935.742 ; gain = 161.844 ; free physical = 7066 ; free virtual = 12476
+# report_utilization -file $root/overlay_eegnet_maxi/util.rpt
+# puts "WNS = [get_property SLACK [get_timing_paths -max_paths 1 -nworst 1 -setup]]"
+WNS = 2.236
+# file copy -force $root/vivado_eegnet_maxi/eegnet_ov.runs/impl_1/eegnet_wrapper.bit $root/overlay_eegnet_maxi/eegnet_maxi.bit
+# file copy -force [glob $root/vivado_eegnet_maxi/eegnet_ov.gen/sources_1/bd/eegnet/hw_handoff/eegnet.hwh] $root/overlay_eegnet_maxi/eegnet_maxi.hwh
+# puts "OVERLAY_DONE"
+OVERLAY_DONE
+INFO: [Common 17-206] Exiting Vivado at Wed Nov  4 18:55:04 2026...

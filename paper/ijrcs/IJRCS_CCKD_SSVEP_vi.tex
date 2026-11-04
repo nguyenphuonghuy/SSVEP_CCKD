@@ -197,14 +197,15 @@ Teacher nhận tín hiệu từ chín điện cực đỉnh--chẩm, được hu
 \end{equation}
 Với tập lớp chưng cất $\mathcal{K}$, student tối ưu $\mathcal{L} = \mathcal{L}_{\text{CE}} + \lambda_{sp} \, |\mathcal{K}|^{-1} \sum_{l \in \mathcal{K}} \mathcal{L}_{\text{CCKD}}^{(l)}$, trong đó $\mathcal{L}_{\text{CE}}$ là cross-entropy của student và $\lambda_{sp}$ là trọng số distillation. Sau huấn luyện, teacher bị loại bỏ, nên CCKD không làm thay đổi kiến trúc, số tham số hay chi phí suy luận của student \cite{R82}.
 
-Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các kiến trúc khác chỉ ở lớp cuối, nên kiến trúc và số lớp distill bị lẫn vào nhau. Bài báo này định nghĩa hai lớp giống nhau cho mọi backbone: \textbf{lớp giữa} (\texttt{mid}, đầu ra khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, độ rộng không phụ thuộc số điện cực đầu vào) và \textbf{lớp cuối} (\texttt{last}, đặc trưng áp chót, đầu vào bộ phân loại). Giao thức chính distill chỉ lớp cuối ($\mathcal{K}=\{\texttt{last}\}$); thí nghiệm can thiệp ở Mục~\ref{sec:rq2} so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$.
+Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các kiến trúc khác chỉ ở lớp cuối, nên kiến trúc và số lớp distill bị lẫn vào nhau. Bài báo này định nghĩa hai lớp giống nhau cho mọi backbone: \textbf{lớp giữa} (\texttt{mid}, đầu ra khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, độ rộng không phụ thuộc số điện cực đầu vào) và \textbf{lớp cuối} (\texttt{last}, đặc trưng áp chót, đầu vào bộ phân loại). Giao thức chính distill chỉ lớp cuối ($\mathcal{K}=\{\texttt{last}\}$); thí nghiệm can thiệp ở Mục~\ref{sec:rq2} so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$. Hình~\ref{fig:method} tóm tắt kiến trúc teacher-student này cùng hai điểm distill.
 
 \begin{figure}[htbp]
 \centering
-\includegraphics[width=\linewidth]{figures/method_overview.pdf}
+\includegraphics[width=0.60\linewidth]{figures/method_overview.pdf}
 \caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
 \label{fig:method}
 \end{figure}
+\FloatBarrier
 
 \subsection{Năm backbone}
 \label{sec:backbones}
@@ -229,6 +230,7 @@ Compact-CNN & depthwise & ELU & 64 \\
 \end{tabular}}
 \end{center}
 \end{table}
+\FloatBarrier
 
 \subsection{Tập dữ liệu và montage}
 \label{sec:data}

@@ -11,6 +11,7 @@ headsep=0.75cm,headheight=2cm,footskip=1cm]{geometry}
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage{titlesec}
 \usepackage[labelsep=period]{caption}
 \usepackage{multirow}
@@ -204,6 +205,7 @@ Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các
 \caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
 \label{fig:method}
 \end{figure}
+\FloatBarrier
 
 \subsection{Năm backbone}
 \label{sec:backbones}
@@ -228,6 +230,7 @@ Compact-CNN & depthwise & ELU & 64 \\
 \end{tabular}}
 \end{center}
 \end{table}
+\FloatBarrier
 
 \subsection{Tập dữ liệu và montage}
 \label{sec:data}
@@ -243,6 +246,8 @@ Mọi mô hình huấn luyện 100 epoch bằng Adam (tốc độ học $10^{-3}
 
 Với RQ1 (so sánh công bằng giữa backbone), $\lambda_{sp}=100$ được giữ cố định cho mọi backbone, dùng cùng giao thức distill-lớp-cuối thống nhất ở Mục~\ref{sec:cckd} -- khác với giao thức cũ, nơi FB-tCNN và các backbone khác không cùng số lớp distill. Với RQ1b, RQ2 và thí nghiệm can thiệp lớp, $\lambda_{sp}$ được chọn riêng cho từng cặp (dataset, backbone) theo đa số phiếu của $\lambda_{sp}$ tốt nhất trên validation qua năm split (Bảng~\ref{tab:lambda}), để mỗi backbone được đánh giá ở mức trọng số gần tối ưu cho nó, không bị ép dùng $\lambda_{sp}=100$ nếu giá trị đó không phù hợp.
 
+Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-rank qua subject. Qua năm split, ý nghĩa được kiểm bằng kiểm định $t$ một mẫu trên năm giá trị $\Delta$ ($H_0$: $\bar\Delta = 0$). Khi nhiều kiểm định thuộc cùng một họ (20 tổ hợp backbone--dataset--montage ở RQ1), giá trị $p$ được hiệu chỉnh Holm--Bonferroni \cite{R86}.
+
 \begin{table}[htbp]
 \caption{$\lambda_{sp}$ theo đa số phiếu trên validation (5 split), dùng cho RQ1b, RQ2 và thí nghiệm can thiệp lớp.}
 \label{tab:lambda}
@@ -257,8 +262,7 @@ BETA & 100 & 1000 & 10 & 100 & 10 \\
 \end{tabular}
 \end{center}
 \end{table}
-
-Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-rank qua subject. Qua năm split, ý nghĩa được kiểm bằng kiểm định $t$ một mẫu trên năm giá trị $\Delta$ ($H_0$: $\bar\Delta = 0$). Khi nhiều kiểm định thuộc cùng một họ (20 tổ hợp backbone--dataset--montage ở RQ1), giá trị $p$ được hiệu chỉnh Holm--Bonferroni \cite{R86}.
+\FloatBarrier
 
 \section{Kết quả và Thảo luận}
 
@@ -266,6 +270,8 @@ Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-
 \label{sec:rq1}
 
 Bảng~\ref{tab:rq1} tổng hợp mức cải thiện của CCKD trên năm backbone, hai tập dữ liệu và hai montage, ở $\lambda_{sp}=100$ cố định và giao thức distill-lớp-cuối thống nhất cho mọi backbone (20 tổ hợp, mỗi tổ hợp 5 split $\times$ 8 seed).
+
+Trong 20 tổ hợp, 5 cải thiện có ý nghĩa và 4 suy giảm có ý nghĩa trước hiệu chỉnh; sau Holm--Bonferroni, chỉ 2 tổ hợp còn ý nghĩa, cả hai đều âm (EEGNet trên BETA, cả 3C và 1C). Kết quả không xếp được theo nhóm kiến trúc: FB-tCNN và DeepConvNet có xu hướng cải thiện (dương ở 3/4 và 3/4 thiết lập), ShallowConvNet suy giảm trên Benchmark nhưng cải thiện trên BETA, còn EEGNet đổi dấu giữa hai tập dữ liệu (cải thiện trên Benchmark, suy giảm có ý nghĩa mạnh trên BETA). Điều này cho thấy kết luận trước đó rằng CCKD cải thiện FB-tCNN \cite{R82} không khái quát được cho CCKD nói chung; mức cải thiện phụ thuộc vào cả backbone và tập dữ liệu.
 
 \begin{table}[htbp]
 \caption{Mức cải thiện CCKD qua 5 split ($\lambda_{sp}=100$ cho mọi backbone, distill lớp cuối). Mỗi ô: $\bar\Delta$ (pp) và $p$ của kiểm định $t$ một mẫu qua split. \textbf{Đậm}: $p<0.05$ (chưa hiệu chỉnh). $^\dagger$: còn ý nghĩa sau hiệu chỉnh Holm--Bonferroni trên cả 20 kiểm định ($p_{\text{Holm}}<0.05$).}
@@ -285,14 +291,14 @@ Compact-CNN & +0.18 (0.646) & $-0.43$ (0.124) & $-0.16$ (0.485) & $-0.15$ (0.221
 \end{tabular}
 \end{center}
 \end{table}
-
-Trong 20 tổ hợp, 5 cải thiện có ý nghĩa và 4 suy giảm có ý nghĩa trước hiệu chỉnh; sau Holm--Bonferroni, chỉ 2 tổ hợp còn ý nghĩa, cả hai đều âm (EEGNet trên BETA, cả 3C và 1C). Kết quả không xếp được theo nhóm kiến trúc: FB-tCNN và DeepConvNet có xu hướng cải thiện (dương ở 3/4 và 3/4 thiết lập), ShallowConvNet suy giảm trên Benchmark nhưng cải thiện trên BETA, còn EEGNet đổi dấu giữa hai tập dữ liệu (cải thiện trên Benchmark, suy giảm có ý nghĩa mạnh trên BETA). Điều này cho thấy kết luận trước đó rằng CCKD cải thiện FB-tCNN \cite{R82} không khái quát được cho CCKD nói chung; mức cải thiện phụ thuộc vào cả backbone và tập dữ liệu.
-
+\FloatBarrier
 
 \subsection{RQ1b: độ nhạy theo montage}
 \label{sec:rq1b}
 
 Bảng~\ref{tab:rq1b} so sánh mức cải thiện ở montage gốc với hai montage thay thế cho mỗi cấu hình 3C/1C, ở $\lambda_{sp}$ chọn theo Bảng~\ref{tab:lambda} (40 tổ hợp thay thế).
+
+Đổi montage student sang một tập con điện cực khác làm đảo dấu hiệu ứng trong 12 trên 40 trường hợp. Dấu hiệu bị đảo xuất hiện ở cả hai hướng (từ có lợi thành không có lợi và ngược lại) và không tập trung vào một backbone hay một dataset cụ thể, dù ShallowConvNet và Compact-CNN có tỷ lệ đảo dấu cao hơn. Điều này cho thấy lợi ích của CCKD nhạy với vị trí điện cực, không chỉ với số điện cực.
 
 \begin{table}[htbp]
 \caption{Mức cải thiện ($\bar\Delta$, pp, qua 5 split) ở montage gốc so với hai montage thay thế mỗi cấu hình. $^\star$: đổi dấu so với montage gốc.}
@@ -320,8 +326,7 @@ Compact-CNN & +0.01 & $-0.03^\star$ & +0.14 & +0.16 & $-0.00^\star$ & +0.03 \\
 \end{tabular}
 \end{center}
 \end{table}
-
-Đổi montage student sang một tập con điện cực khác làm đảo dấu hiệu ứng trong 12 trên 40 trường hợp. Dấu hiệu bị đảo xuất hiện ở cả hai hướng (từ có lợi thành không có lợi và ngược lại) và không tập trung vào một backbone hay một dataset cụ thể, dù ShallowConvNet và Compact-CNN có tỷ lệ đảo dấu cao hơn. Điều này cho thấy lợi ích của CCKD nhạy với vị trí điện cực, không chỉ với số điện cực.
+\FloatBarrier
 
 \subsection{RQ2: đại lượng dự đoán mức cải thiện}
 \label{sec:rq2}
@@ -338,6 +343,7 @@ Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.5
 \caption{Mức tăng CKA lớp cuối do CCKD gây ra so với mức cải thiện độ chính xác, 20 tổ hợp backbone--dataset--montage. Đường đứt: hồi quy tuyến tính. Hình tròn: Benchmark; tam giác: BETA.}
 \label{fig:rq2a}
 \end{figure}
+\FloatBarrier
 
 \subsubsection{Thí nghiệm can thiệp theo lớp distill}
 \label{sec:layer_intervention}
@@ -350,6 +356,8 @@ Trên 20 tổ hợp: distill riêng lớp cuối cho mức cải thiện lớn h
 \label{sec:rq3}
 
 Bảng~\ref{tab:rq3} so sánh kết luận rút ra từ một split (2026, kiểm định Wilcoxon qua subject) với kết luận từ năm split (kiểm định $t$ qua split), cho 20 tổ hợp ở $\lambda_{sp}=100$ (giao thức RQ1).
+
+Đánh giá trên một split đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trên 20 tổ hợp -- đúng một nửa. Sai lệch xảy ra theo cả hai chiều: một split có thể bỏ sót một cải thiện hoặc suy giảm ổn định (ví dụ FB-tCNN Benchmark-3C, DeepConvNet 1C ở cả hai tập dữ liệu), hoặc báo cáo một hiệu ứng không lặp lại khi dùng nhiều split (ví dụ ShallowConvNet BETA-3C). Hai kiểm định không cùng đơn vị lặp (Wilcoxon lặp qua subject, kiểm định $t$ lặp qua split), nên bảng không cho biết kiểm định nào có công suất thống kê cao hơn; điều bảng cho thấy là một nghiên cứu chỉ báo cáo một split có thể đi đến kết luận ngược với kết luận khi lặp lại trên các tập subject khác, ở mức hiệu ứng điển hình của tài liệu CCKD cho SSVEP (dưới 1--2~pp).
 
 \begin{table}[htbp]
 \caption{Kết luận trên một split (2026) so với năm split, $\lambda_{sp}=100$. $+$/$-$/$0$: cải thiện/suy giảm/không có ý nghĩa ($p<0.05$). $^\star$: kết luận khác nhau (dấu hoặc ý nghĩa thống kê).}
@@ -374,8 +382,7 @@ Compact-CNN & 3C & $-0.15$ (0.820) & $+0.18$ (0.646) & $0 \to 0$ $^\star$ & $0 \
 \end{tabular}
 \end{center}
 \end{table}
-
-Đánh giá trên một split đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trên 20 tổ hợp -- đúng một nửa. Sai lệch xảy ra theo cả hai chiều: một split có thể bỏ sót một cải thiện hoặc suy giảm ổn định (ví dụ FB-tCNN Benchmark-3C, DeepConvNet 1C ở cả hai tập dữ liệu), hoặc báo cáo một hiệu ứng không lặp lại khi dùng nhiều split (ví dụ ShallowConvNet BETA-3C). Hai kiểm định không cùng đơn vị lặp (Wilcoxon lặp qua subject, kiểm định $t$ lặp qua split), nên bảng không cho biết kiểm định nào có công suất thống kê cao hơn; điều bảng cho thấy là một nghiên cứu chỉ báo cáo một split có thể đi đến kết luận ngược với kết luận khi lặp lại trên các tập subject khác, ở mức hiệu ứng điển hình của tài liệu CCKD cho SSVEP (dưới 1--2~pp).
+\FloatBarrier
 
 \subsection{RQ4: triển khai nhúng}
 \label{sec:rq4}

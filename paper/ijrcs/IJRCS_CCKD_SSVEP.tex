@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage[left=3cm,right=2.5cm,top=3.5cm,bottom=2.5cm,%
 headsep=0.75cm,headheight=2cm,footskip=1cm]{geometry}
 \usepackage[dvipsnames]{xcolor}
@@ -199,6 +200,7 @@ In \cite{R82}, FB-tCNN was distilled at two layers, while the other architecture
 \caption{Block diagram of CCKD. The fixed teacher (blue, solid) and the trainable student (green, dashed) both output features at the \texttt{mid} and \texttt{last} layers; each layer computes a row-normalized Gram matrix, which is then matched by $\mathcal{L}_{\text{CCKD}}$ (red). The total loss $\mathcal{L}$ adds the student's cross-entropy loss.}
 \label{fig:method}
 \end{figure}
+\FloatBarrier
 
 \subsection{Five Backbones}
 \label{sec:backbones}
@@ -223,6 +225,7 @@ Compact-CNN & depthwise & ELU & 64 \\
 \end{tabular}}
 \end{center}
 \end{table}
+\FloatBarrier
 
 \subsection{Datasets and Montages}
 \label{sec:data}
@@ -238,6 +241,8 @@ Every model is trained for 100 epochs with Adam (learning rate $10^{-3}$, weight
 
 For RQ1 (a fair comparison across backbones), $\lambda_{sp}=100$ is held fixed for every backbone, using the same unified last-layer distillation protocol from Section~\ref{sec:cckd}, unlike the earlier protocol, in which FB-tCNN and the other backbones did not use the same number of distillation layers. For RQ1b, RQ2, and the layer-intervention experiment, $\lambda_{sp}$ is chosen separately for each (dataset, backbone) pair by majority vote of the best validation $\lambda_{sp}$ across the five splits (Table~\ref{tab:lambda}), so that each backbone is evaluated at a weight close to its own optimum rather than being forced to use $\lambda_{sp}=100$ when that value does not suit it.
 
+On a single split, statistical significance is tested with the Wilcoxon signed-rank test across subjects. Across five splits, significance is tested with a one-sample $t$-test on the five $\Delta$ values ($H_0$: $\bar\Delta = 0$). When multiple tests belong to the same family (the 20 backbone--dataset--montage combinations in RQ1), $p$-values are corrected with the Holm--Bonferroni procedure \cite{R86}.
+
 \begin{table}[htbp]
 \caption{$\lambda_{sp}$ chosen by majority vote on validation (5 splits), used for RQ1b, RQ2, and the layer-intervention experiment.}
 \label{tab:lambda}
@@ -252,8 +257,7 @@ BETA & 100 & 1000 & 10 & 100 & 10 \\
 \end{tabular}
 \end{center}
 \end{table}
-
-On a single split, statistical significance is tested with the Wilcoxon signed-rank test across subjects. Across five splits, significance is tested with a one-sample $t$-test on the five $\Delta$ values ($H_0$: $\bar\Delta = 0$). When multiple tests belong to the same family (the 20 backbone--dataset--montage combinations in RQ1), $p$-values are corrected with the Holm--Bonferroni procedure \cite{R86}.
+\FloatBarrier
 
 \section{Result and Discussion}
 
@@ -261,6 +265,8 @@ On a single split, statistical significance is tested with the Wilcoxon signed-r
 \label{sec:rq1}
 
 Table~\ref{tab:rq1} summarizes the gain from CCKD across five backbones, two datasets, and two montages, at a fixed $\lambda_{sp}=100$ and the unified last-layer distillation protocol for every backbone (20 settings, each with 5 splits $\times$ 8 seeds).
+
+Of the 20 settings, 5 improved significantly and 4 degraded significantly before correction; after Holm--Bonferroni correction, only 2 settings remained significant, and both were negative (EEGNet on BETA, both 3C and 1C). The results do not rank by architecture family: FB-tCNN and DeepConvNet tend to improve (positive in 3/4 and 3/4 settings), ShallowConvNet degrades on Benchmark but improves on BETA, and EEGNet flips sign between the two datasets (improving on Benchmark, degrading strongly and significantly on BETA). This shows that the earlier conclusion that CCKD improves FB-tCNN \cite{R82} does not generalize to CCKD in general; the gain depends on both the backbone and the dataset.
 
 \begin{table}[htbp]
 \caption{CCKD gain over 5 splits ($\lambda_{sp}=100$ for every backbone, last-layer distillation). Each cell: $\bar\Delta$ (pp) and $p$ from the one-sample $t$-test across splits. \textbf{Bold}: $p<0.05$ (uncorrected). $^\dagger$: still significant after Holm--Bonferroni correction over all 20 tests ($p_{\text{Holm}}<0.05$).}
@@ -280,14 +286,14 @@ Compact-CNN & +0.18 (0.646) & $-0.43$ (0.124) & $-0.16$ (0.485) & $-0.15$ (0.221
 \end{tabular}
 \end{center}
 \end{table}
-
-Of the 20 settings, 5 improved significantly and 4 degraded significantly before correction; after Holm--Bonferroni correction, only 2 settings remained significant, and both were negative (EEGNet on BETA, both 3C and 1C). The results do not rank by architecture family: FB-tCNN and DeepConvNet tend to improve (positive in 3/4 and 3/4 settings), ShallowConvNet degrades on Benchmark but improves on BETA, and EEGNet flips sign between the two datasets (improving on Benchmark, degrading strongly and significantly on BETA). This shows that the earlier conclusion that CCKD improves FB-tCNN \cite{R82} does not generalize to CCKD in general; the gain depends on both the backbone and the dataset.
-
+\FloatBarrier
 
 \subsection{RQ1b: Sensitivity to Montage}
 \label{sec:rq1b}
 
 Table~\ref{tab:rq1b} compares the gain at the original montage with two alternative montages for each 3C/1C setting, at $\lambda_{sp}$ chosen according to Table~\ref{tab:lambda} (40 alternative settings).
+
+Swapping the student montage for a different electrode subset flipped the sign of the effect in 12 of 40 cases. The sign flips occur in both directions (from beneficial to not beneficial and the reverse) and are not concentrated in one backbone or one dataset, although ShallowConvNet and Compact-CNN show a higher flip rate. This shows that the benefit of CCKD is sensitive to electrode placement, not only to electrode count.
 
 \begin{table}[htbp]
 \caption{Gain ($\bar\Delta$, pp, over 5 splits) at the original montage compared with two alternative montages per setting. $^\star$: sign flips relative to the original montage.}
@@ -315,8 +321,7 @@ Compact-CNN & +0.01 & $-0.03^\star$ & +0.14 & +0.16 & $-0.00^\star$ & +0.03 \\
 \end{tabular}
 \end{center}
 \end{table}
-
-Swapping the student montage for a different electrode subset flipped the sign of the effect in 12 of 40 cases. The sign flips occur in both directions (from beneficial to not beneficial and the reverse) and are not concentrated in one backbone or one dataset, although ShallowConvNet and Compact-CNN show a higher flip rate. This shows that the benefit of CCKD is sensitive to electrode placement, not only to electrode count.
+\FloatBarrier
 
 \subsection{RQ2: Predictors of the Gain}
 \label{sec:rq2}
@@ -333,6 +338,7 @@ Across the 20 settings, $\Delta$CKA correlates with $\bar\Delta$ (Pearson $r=0.5
 \caption{Last-layer CKA increase induced by CCKD versus accuracy gain, for 20 backbone--dataset--montage settings. Dashed line: linear regression. Circles: Benchmark; triangles: BETA.}
 \label{fig:rq2a}
 \end{figure}
+\FloatBarrier
 
 \subsubsection{Distillation-Layer Intervention Experiment}
 \label{sec:layer_intervention}
@@ -345,6 +351,8 @@ Across the 20 settings, distilling the last layer alone gave a larger gain than 
 \label{sec:rq3}
 
 Table~\ref{tab:rq3} compares the conclusion drawn from a single split (2026, Wilcoxon test across subjects) with the conclusion from five splits ($t$-test across splits), for the 20 settings at $\lambda_{sp}=100$ (the RQ1 protocol).
+
+Single-split evaluation misjudges the sign or statistical significance of the effect in 10 of 20 settings -- exactly half. The discrepancies go in both directions: a single split can miss a stable improvement or degradation (for example, FB-tCNN Benchmark-3C, DeepConvNet 1C on both datasets), or it can report an effect that does not replicate under multiple splits (for example, ShallowConvNet BETA-3C). The two tests do not share the same unit of replication (Wilcoxon replicates across subjects, the $t$-test replicates across splits), so the table does not indicate which test has higher statistical power; what the table shows is that a study reporting only a single split can reach a conclusion opposite to the one reached when repeating the evaluation on different subject sets, at the effect sizes typical of the SSVEP CCKD literature (under 1--2~pp).
 
 \begin{table}[htbp]
 \caption{Conclusion from a single split (2026) versus five splits, $\lambda_{sp}=100$. $+$/$-$/$0$: improves/degrades/not significant ($p<0.05$). $^\star$: conclusions differ (in sign or statistical significance).}
@@ -369,8 +377,7 @@ Compact-CNN & 3C & $-0.15$ (0.820) & $+0.18$ (0.646) & $0 \to 0$ $^\star$ & $0 \
 \end{tabular}
 \end{center}
 \end{table}
-
-Single-split evaluation misjudges the sign or statistical significance of the effect in 10 of 20 settings -- exactly half. The discrepancies go in both directions: a single split can miss a stable improvement or degradation (for example, FB-tCNN Benchmark-3C, DeepConvNet 1C on both datasets), or it can report an effect that does not replicate under multiple splits (for example, ShallowConvNet BETA-3C). The two tests do not share the same unit of replication (Wilcoxon replicates across subjects, the $t$-test replicates across splits), so the table does not indicate which test has higher statistical power; what the table shows is that a study reporting only a single split can reach a conclusion opposite to the one reached when repeating the evaluation on different subject sets, at the effect sizes typical of the SSVEP CCKD literature (under 1--2~pp).
+\FloatBarrier
 
 \subsection{RQ4: Embedded Deployment}
 \label{sec:rq4}

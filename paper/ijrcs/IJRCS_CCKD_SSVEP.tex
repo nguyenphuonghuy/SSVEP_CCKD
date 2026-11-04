@@ -48,6 +48,9 @@ headsep=0.75cm,headheight=2cm,footskip=1cm]{geometry}
   \color{RoyalBlue}\leaders\hrule height \headrulewidth\hfill}}
 
 \setlength{\parskip}{0.3em}
+\raggedbottom
+\widowpenalty=10000
+\clubpenalty=10000
 
 % Draft-only marker, same convention as paper/latex/main.tex: strip before submission.
 \newcommand{\tbd}[1]{\textcolor{red}{[TBD: #1]}}
@@ -125,7 +128,7 @@ Embedded deployment}
 {\color{RoyalBlue} \rule{\linewidth}{0.4mm}}
 
 \vspace{.5em}
-\small{Reducing the number of electrodes in a steady-state visual evoked potential (SSVEP) brain-computer interface (BCI) improves wearability for applications such as wheelchair navigation and SSVEP-based spelling, but it degrades decoding accuracy. Cross-channel relational knowledge distillation (CCKD) recovers part of this loss by transferring the relational structure of a multi-electrode teacher to a low-electrode student. Our earlier work reported this gain for a single backbone, FB-tCNN, evaluated on one subject split. We extend that evaluation to five public backbones (FB-tCNN, DeepConvNet, ShallowConvNet, EEGNet, and Compact-CNN), two 40-target datasets (Benchmark and BETA), and two student montages, each with five independent subject splits and eight seeds per split. At a fixed distillation weight, 5 of 20 backbone-dataset-montage settings improved significantly and 4 degraded significantly before correction for multiple comparisons; only 2 settings, both on EEGNet with BETA, survived Holm-Bonferroni correction, and both were negative. Evaluation on a single subject split, the protocol used in our earlier work, misjudged the sign or significance of the effect in 10 of 20 settings. Swapping the student montage for an alternative electrode subset flipped the sign of the effect in 12 of 40 cases. The accuracy gain correlated with how much CCKD increased centered kernel alignment (CKA) between teacher and student features (Pearson $r=0.55$, $p=0.012$); CKA measured before distillation did not predict the gain ($r=-0.11$, $p=0.65$). Distilling the last layer alone gave a larger gain than distilling an intermediate layer alone in only 5 of 20 settings; distilling both layers together matched or exceeded whichever single-layer choice was better in 8 of 20 settings. We further deploy the resulting student models on a Raspberry Pi 4 and a Xilinx ZCU104, the hardware classes used in wheelchair-control and SSVEP-speller prototypes, and report latency and post-quantization accuracy on both boards, PL synthesis feasibility and on-board accuracy for the smallest backbone, and board-level power on the ZCU104, where an on-board sensor is available (the Raspberry Pi 4 exposes no on-board power telemetry). These results show that cross-montage relational knowledge distillation is backbone- and montage-dependent, that single-split evaluation is unreliable at the effect sizes typical of this literature, and that the resulting low-electrode students remain feasible on both embedded targets at the latency, resource, and accuracy budgets measured.
+\small{Reducing electrode count in a steady-state visual evoked potential (SSVEP) brain-computer interface improves wearability for wheelchair and speller applications but degrades decoding accuracy. Cross-channel relational knowledge distillation (CCKD) recovers part of this loss by transferring the relational structure of a multi-electrode teacher to a low-electrode student, a gain reported previously for one backbone, FB-tCNN, on a single subject split. We extend that evaluation to five public backbones, two 40-target datasets, and two student montages, each with five independent subject splits and eight seeds per split. At a fixed distillation weight, only 2 of 20 backbone-dataset-montage settings remained significant after Holm-Bonferroni correction, and both were negative. Single-split evaluation misjudged the sign or significance of the effect in 10 of 20 settings, and swapping the student montage flipped the sign in 12 of 40 cases. The accuracy gain correlated with the CCKD-induced increase in centered kernel alignment between teacher and student features (Pearson $r=0.55$, $p=0.012$), and distilling an intermediate layer together with the last layer matched or exceeded the better single-layer choice in 8 of 20 settings. Deploying the resulting students on a Raspberry Pi 4 and a Xilinx ZCU104 confirms feasible latency and post-quantization accuracy on both boards, PL synthesis feasibility and on-board accuracy for the smallest backbone, and ZCU104 board power, all within budget. These results show that cross-montage relational distillation is backbone- and montage-dependent, and that single-split evaluation is unreliable at the effect sizes typical of this literature.
 }
 \\
 \\
@@ -190,7 +193,7 @@ For a set of distillation layers $\mathcal{K}$, the student optimizes $\mathcal{
 
 In \cite{R82}, FB-tCNN was distilled at two layers, while the other architectures were distilled only at the last layer, so architecture and distillation-layer count were confounded. This paper defines the same two layers for every backbone: the \textbf{intermediate layer} (\texttt{mid}, the output of the spatial convolution block immediately after batch normalization and the nonlinearity, whose width does not depend on the number of input electrodes) and the \textbf{last layer} (\texttt{last}, the penultimate feature, the classifier's input). The main protocol distills only the last layer ($\mathcal{K}=\{\texttt{last}\}$); the intervention experiment in Section~\ref{sec:rq2} additionally compares $\mathcal{K}=\{\texttt{mid}\}$ and $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/method_overview.pdf}
 \caption{Block diagram of CCKD. The fixed teacher (blue, solid) and the trainable student (green, dashed) both output features at the \texttt{mid} and \texttt{last} layers; each layer computes a row-normalized Gram matrix, which is then matched by $\mathcal{L}_{\text{CCKD}}$ (red). The total loss $\mathcal{L}$ adds the student's cross-entropy loss.}
@@ -202,7 +205,7 @@ In \cite{R82}, FB-tCNN was distilled at two layers, while the other architecture
 
 Table~\ref{tab:backbones} lists the five public backbones used in the evaluation: FB-tCNN \cite{R16}, DeepConvNet and ShallowConvNet \cite{R83}, EEGNet \cite{R84}, and Compact-CNN \cite{R85}. A few hyperparameters were adjusted for the 1.0~s window (250 samples at 250~Hz): DeepConvNet keeps three convolution--pooling blocks instead of four; ShallowConvNet uses pooling of 35 samples with stride 7; Compact-CNN uses a temporal kernel of 64 instead of 256.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{The five backbones and the architectural properties used as explanatory variables in RQ2.}
 \label{tab:backbones}
 \begin{center}
@@ -235,7 +238,7 @@ Every model is trained for 100 epochs with Adam (learning rate $10^{-3}$, weight
 
 For RQ1 (a fair comparison across backbones), $\lambda_{sp}=100$ is held fixed for every backbone, using the same unified last-layer distillation protocol from Section~\ref{sec:cckd}, unlike the earlier protocol, in which FB-tCNN and the other backbones did not use the same number of distillation layers. For RQ1b, RQ2, and the layer-intervention experiment, $\lambda_{sp}$ is chosen separately for each (dataset, backbone) pair by majority vote of the best validation $\lambda_{sp}$ across the five splits (Table~\ref{tab:lambda}), so that each backbone is evaluated at a weight close to its own optimum rather than being forced to use $\lambda_{sp}=100$ when that value does not suit it.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{$\lambda_{sp}$ chosen by majority vote on validation (5 splits), used for RQ1b, RQ2, and the layer-intervention experiment.}
 \label{tab:lambda}
 \begin{center}
@@ -259,7 +262,7 @@ On a single split, statistical significance is tested with the Wilcoxon signed-r
 
 Table~\ref{tab:rq1} summarizes the gain from CCKD across five backbones, two datasets, and two montages, at a fixed $\lambda_{sp}=100$ and the unified last-layer distillation protocol for every backbone (20 settings, each with 5 splits $\times$ 8 seeds).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{CCKD gain over 5 splits ($\lambda_{sp}=100$ for every backbone, last-layer distillation). Each cell: $\bar\Delta$ (pp) and $p$ from the one-sample $t$-test across splits. \textbf{Bold}: $p<0.05$ (uncorrected). $^\dagger$: still significant after Holm--Bonferroni correction over all 20 tests ($p_{\text{Holm}}<0.05$).}
 \label{tab:rq1}
 \begin{center}
@@ -286,7 +289,7 @@ Of the 20 settings, 5 improved significantly and 4 degraded significantly before
 
 Table~\ref{tab:rq1b} compares the gain at the original montage with two alternative montages for each 3C/1C setting, at $\lambda_{sp}$ chosen according to Table~\ref{tab:lambda} (40 alternative settings).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Gain ($\bar\Delta$, pp, over 5 splits) at the original montage compared with two alternative montages per setting. $^\star$: sign flips relative to the original montage.}
 \label{tab:rq1b}
 \begin{center}
@@ -324,7 +327,7 @@ The loss~\eqref{eq:relloss} pulls the student's Gram matrix toward the teacher's
 
 Across the 20 settings, $\Delta$CKA correlates with $\bar\Delta$ (Pearson $r=0.55$, $p=0.012$; Spearman $\rho=0.57$, $p=0.009$), see Figure~\ref{fig:rq2a}. The baseline student's CKA (before distillation) does not correlate with the gain (Pearson $r=-0.11$, $p=0.65$; Spearman $\rho=-0.03$, $p=0.91$). This shows that the initial representational gap between teacher and student does not predict the effectiveness of CCKD; what predicts it is \emph{how much CCKD narrows that gap}, consistent with the mechanism of the loss function.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.62\linewidth]{figures/rq2a_scatter.pdf}
 \caption{Last-layer CKA increase induced by CCKD versus accuracy gain, for 20 backbone--dataset--montage settings. Dashed line: linear regression. Circles: Benchmark; triangles: BETA.}
@@ -343,7 +346,7 @@ Across the 20 settings, distilling the last layer alone gave a larger gain than 
 
 Table~\ref{tab:rq3} compares the conclusion drawn from a single split (2026, Wilcoxon test across subjects) with the conclusion from five splits ($t$-test across splits), for the 20 settings at $\lambda_{sp}=100$ (the RQ1 protocol).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Conclusion from a single split (2026) versus five splits, $\lambda_{sp}=100$. $+$/$-$/$0$: improves/degrades/not significant ($p<0.05$). $^\star$: conclusions differ (in sign or statistical significance).}
 \label{tab:rq3}
 \begin{center}

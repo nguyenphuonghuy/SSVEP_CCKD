@@ -48,6 +48,9 @@ headsep=0.75cm,headheight=2cm,footskip=1cm]{geometry}
   \color{RoyalBlue}\leaders\hrule height \headrulewidth\hfill}}
 
 \setlength{\parskip}{0.3em}
+\raggedbottom
+\widowpenalty=10000
+\clubpenalty=10000
 
 % BẢN TIẾNG VIỆT NỘI BỘ -- không nộp. Đây là bản gốc để hiệu đính trước khi dịch
 % sang paper/ijrcs/IJRCS_CCKD_SSVEP.tex (bản tiếng Anh), theo quy tắc ghi trong
@@ -130,7 +133,7 @@ Triển khai nhúng}
 {\color{RoyalBlue} \rule{\linewidth}{0.4mm}}
 
 \vspace{.5em}
-\small{Giảm số điện cực của một giao diện não-máy (BCI) dựa trên điện thế gợi thị giác trạng thái ổn định (SSVEP) giúp tăng khả năng đeo được cho các ứng dụng như điều khiển xe lăn và đánh vần bằng SSVEP, nhưng làm giảm độ chính xác giải mã. Chưng cất tri thức quan hệ liên-kênh (CCKD) khôi phục một phần độ chính xác bị mất bằng cách truyền cấu trúc quan hệ của một teacher nhiều điện cực sang một student ít điện cực. Công trình trước đây của chúng tôi báo cáo lợi ích này cho một backbone duy nhất, FB-tCNN, đánh giá trên một split đối tượng. Bài báo này mở rộng đánh giá đó sang năm backbone công khai (FB-tCNN, DeepConvNet, ShallowConvNet, EEGNet và Compact-CNN), hai tập dữ liệu SSVEP 40 lớp mục tiêu (Benchmark và BETA) và hai montage student, mỗi trường hợp dùng năm split đối tượng độc lập và tám seed trên mỗi split. Ở một trọng số distillation cố định, 5 trong 20 trường hợp backbone-tập dữ liệu-montage cải thiện có ý nghĩa thống kê và 4 trường hợp suy giảm có ý nghĩa thống kê trước khi hiệu chỉnh cho so sánh đa biến; chỉ 2 trường hợp, cả hai trên EEGNet với BETA, còn giữ ý nghĩa sau hiệu chỉnh Holm-Bonferroni, và cả hai đều âm. Đánh giá trên một split đối tượng duy nhất, giao thức dùng trong công trình trước của chúng tôi, đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trong 20 trường hợp. Đổi montage student sang một tập con điện cực khác làm đảo dấu hiệu ứng trong 12 trong 40 trường hợp. Mức cải thiện độ chính xác tương quan với mức CCKD làm tăng CKA (centered kernel alignment) giữa đặc trưng của teacher và student (hệ số tương quan Pearson $r=0.55$, $p=0.012$); CKA đo trước khi distillation không dự đoán được mức cải thiện ($r=-0.11$, $p=0.65$). Distill riêng lớp kề cuối cho mức cải thiện lớn hơn distill riêng lớp trung gian chỉ trong 5 trong 20 trường hợp; distill đồng thời cả hai lớp đạt bằng hoặc vượt lựa chọn một-lớp tốt hơn trong 8 trong 20 trường hợp. Chúng tôi tiếp tục triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104, hai lớp phần cứng dùng trong các mẫu thử điều khiển xe lăn và đánh vần SSVEP, và báo cáo độ trễ cùng độ chính xác sau lượng tử hóa trên cả hai board, khả năng tổng hợp PL và độ chính xác thật trên board cho backbone nhỏ nhất, cùng công suất ở mức board trên ZCU104, nơi có cảm biến sẵn (Raspberry Pi 4 không có cảm biến công suất tích hợp). Các kết quả này cho thấy chưng cất tri thức quan hệ liên-montage phụ thuộc vào backbone và montage, đánh giá trên một split là không đáng tin cậy ở mức hiệu ứng thường gặp trong lĩnh vực này, và các mô hình student ít điện cực thu được vẫn khả thi trên cả hai nền tảng nhúng ở mức độ trễ, tài nguyên và độ chính xác đã đo.
+\small{Giảm số điện cực của một giao diện não-máy (BCI) dựa trên điện thế gợi thị giác trạng thái ổn định (SSVEP) giúp tăng khả năng đeo được cho các ứng dụng điều khiển xe lăn và đánh vần, nhưng làm giảm độ chính xác giải mã. Chưng cất tri thức quan hệ liên-kênh (CCKD) khôi phục một phần độ chính xác bị mất bằng cách truyền cấu trúc quan hệ của một teacher nhiều điện cực sang một student ít điện cực, lợi ích đã báo cáo trước đây cho một backbone duy nhất, FB-tCNN, trên một split đối tượng. Bài báo này mở rộng đánh giá đó sang năm backbone công khai, hai tập dữ liệu SSVEP 40 lớp mục tiêu, và hai montage student, mỗi trường hợp dùng năm split đối tượng độc lập và tám seed trên mỗi split. Ở một trọng số distillation cố định, chỉ 2 trong 20 trường hợp backbone-tập dữ liệu-montage còn giữ ý nghĩa thống kê sau hiệu chỉnh Holm-Bonferroni, và cả hai đều âm. Đánh giá trên một split duy nhất đánh giá sai dấu hoặc ý nghĩa thống kê của hiệu ứng trong 10 trong 20 trường hợp, và đổi montage student làm đảo dấu hiệu ứng trong 12 trong 40 trường hợp. Mức cải thiện độ chính xác tương quan với mức CCKD làm tăng CKA (centered kernel alignment) giữa đặc trưng của teacher và student (hệ số tương quan Pearson $r=0.55$, $p=0.012$), và distill đồng thời một lớp trung gian cùng lớp cuối đạt bằng hoặc vượt lựa chọn một-lớp tốt hơn trong 8 trong 20 trường hợp. Triển khai các mô hình student thu được lên Raspberry Pi 4 và Xilinx ZCU104 xác nhận độ trễ và độ chính xác sau lượng tử hóa khả thi trên cả hai board, khả năng tổng hợp PL và độ chính xác trên board cho backbone nhỏ nhất, cùng công suất board trên ZCU104, đều trong ngân sách. Các kết quả này cho thấy chưng cất tri thức quan hệ liên-montage phụ thuộc vào backbone và montage, và đánh giá trên một split là không đáng tin cậy ở mức hiệu ứng thường gặp trong lĩnh vực này.
 }
 \\
 \\
@@ -195,7 +198,7 @@ Với tập lớp chưng cất $\mathcal{K}$, student tối ưu $\mathcal{L} = \
 
 Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các kiến trúc khác chỉ ở lớp cuối, nên kiến trúc và số lớp distill bị lẫn vào nhau. Bài báo này định nghĩa hai lớp giống nhau cho mọi backbone: \textbf{lớp giữa} (\texttt{mid}, đầu ra khối tích chập không gian ngay sau chuẩn hóa batch và hàm phi tuyến, độ rộng không phụ thuộc số điện cực đầu vào) và \textbf{lớp cuối} (\texttt{last}, đặc trưng áp chót, đầu vào bộ phân loại). Giao thức chính distill chỉ lớp cuối ($\mathcal{K}=\{\texttt{last}\}$); thí nghiệm can thiệp ở Mục~\ref{sec:rq2} so sánh thêm $\mathcal{K}=\{\texttt{mid}\}$ và $\mathcal{K}=\{\texttt{mid},\texttt{last}\}$.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=\linewidth]{figures/method_overview.pdf}
 \caption{Sơ đồ khối CCKD. Teacher cố định (xanh dương, nét liền) và student cần huấn luyện (xanh lục, nét đứt) cùng xuất đặc trưng ở hai lớp \texttt{mid} và \texttt{last}; mỗi lớp tính ma trận Gram chuẩn hóa theo hàng rồi so khớp bằng $\mathcal{L}_{\text{CCKD}}$ (đỏ). Hàm mất mát tổng cộng $\mathcal{L}$ cộng thêm cross-entropy của student.}
@@ -207,7 +210,7 @@ Trong công trình \cite{R82}, FB-tCNN được distill ở hai lớp, còn các
 
 Bảng~\ref{tab:backbones} liệt kê năm backbone công khai dùng trong đánh giá: FB-tCNN \cite{R16}, DeepConvNet và ShallowConvNet \cite{R83}, EEGNet \cite{R84}, Compact-CNN \cite{R85}. Một số siêu tham số được điều chỉnh cho cửa sổ 1,0~s (250 mẫu ở 250~Hz): DeepConvNet giữ ba khối tích chập--pooling thay vì bốn; ShallowConvNet dùng pooling 35 mẫu, bước 7; Compact-CNN dùng kernel thời gian 64 thay vì 256.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Năm backbone và tính chất kiến trúc dùng làm biến giải thích ở RQ2.}
 \label{tab:backbones}
 \begin{center}
@@ -240,7 +243,7 @@ Mọi mô hình huấn luyện 100 epoch bằng Adam (tốc độ học $10^{-3}
 
 Với RQ1 (so sánh công bằng giữa backbone), $\lambda_{sp}=100$ được giữ cố định cho mọi backbone, dùng cùng giao thức distill-lớp-cuối thống nhất ở Mục~\ref{sec:cckd} -- khác với giao thức cũ, nơi FB-tCNN và các backbone khác không cùng số lớp distill. Với RQ1b, RQ2 và thí nghiệm can thiệp lớp, $\lambda_{sp}$ được chọn riêng cho từng cặp (dataset, backbone) theo đa số phiếu của $\lambda_{sp}$ tốt nhất trên validation qua năm split (Bảng~\ref{tab:lambda}), để mỗi backbone được đánh giá ở mức trọng số gần tối ưu cho nó, không bị ép dùng $\lambda_{sp}=100$ nếu giá trị đó không phù hợp.
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{$\lambda_{sp}$ theo đa số phiếu trên validation (5 split), dùng cho RQ1b, RQ2 và thí nghiệm can thiệp lớp.}
 \label{tab:lambda}
 \begin{center}
@@ -264,7 +267,7 @@ Trên một split, ý nghĩa thống kê được kiểm bằng Wilcoxon signed-
 
 Bảng~\ref{tab:rq1} tổng hợp mức cải thiện của CCKD trên năm backbone, hai tập dữ liệu và hai montage, ở $\lambda_{sp}=100$ cố định và giao thức distill-lớp-cuối thống nhất cho mọi backbone (20 tổ hợp, mỗi tổ hợp 5 split $\times$ 8 seed).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Mức cải thiện CCKD qua 5 split ($\lambda_{sp}=100$ cho mọi backbone, distill lớp cuối). Mỗi ô: $\bar\Delta$ (pp) và $p$ của kiểm định $t$ một mẫu qua split. \textbf{Đậm}: $p<0.05$ (chưa hiệu chỉnh). $^\dagger$: còn ý nghĩa sau hiệu chỉnh Holm--Bonferroni trên cả 20 kiểm định ($p_{\text{Holm}}<0.05$).}
 \label{tab:rq1}
 \begin{center}
@@ -291,7 +294,7 @@ Trong 20 tổ hợp, 5 cải thiện có ý nghĩa và 4 suy giảm có ý nghĩ
 
 Bảng~\ref{tab:rq1b} so sánh mức cải thiện ở montage gốc với hai montage thay thế cho mỗi cấu hình 3C/1C, ở $\lambda_{sp}$ chọn theo Bảng~\ref{tab:lambda} (40 tổ hợp thay thế).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Mức cải thiện ($\bar\Delta$, pp, qua 5 split) ở montage gốc so với hai montage thay thế mỗi cấu hình. $^\star$: đổi dấu so với montage gốc.}
 \label{tab:rq1b}
 \begin{center}
@@ -329,7 +332,7 @@ Hàm mất mát~\eqref{eq:relloss} kéo ma trận Gram của student về phía 
 
 Trên 20 tổ hợp, $\Delta$CKA tương quan với $\bar\Delta$ (Pearson $r=0.55$, $p=0.012$; Spearman $\rho=0.57$, $p=0.009$), xem Hình~\ref{fig:rq2a}. CKA của student baseline (trước distillation) không tương quan với mức cải thiện (Pearson $r=-0.11$, $p=0.65$; Spearman $\rho=-0.03$, $p=0.91$). Như vậy, mức chênh biểu diễn ban đầu giữa teacher và student không dự đoán được hiệu quả của CCKD; điều dự đoán được là \emph{mức CCKD thu hẹp chênh lệch đó}, phù hợp với cơ chế của hàm mất mát.
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
 \includegraphics[width=0.62\linewidth]{figures/rq2a_scatter.pdf}
 \caption{Mức tăng CKA lớp cuối do CCKD gây ra so với mức cải thiện độ chính xác, 20 tổ hợp backbone--dataset--montage. Đường đứt: hồi quy tuyến tính. Hình tròn: Benchmark; tam giác: BETA.}
@@ -348,7 +351,7 @@ Trên 20 tổ hợp: distill riêng lớp cuối cho mức cải thiện lớn h
 
 Bảng~\ref{tab:rq3} so sánh kết luận rút ra từ một split (2026, kiểm định Wilcoxon qua subject) với kết luận từ năm split (kiểm định $t$ qua split), cho 20 tổ hợp ở $\lambda_{sp}=100$ (giao thức RQ1).
 
-\begin{table}[h]
+\begin{table}[htbp]
 \caption{Kết luận trên một split (2026) so với năm split, $\lambda_{sp}=100$. $+$/$-$/$0$: cải thiện/suy giảm/không có ý nghĩa ($p<0.05$). $^\star$: kết luận khác nhau (dấu hoặc ý nghĩa thống kê).}
 \label{tab:rq3}
 \begin{center}
